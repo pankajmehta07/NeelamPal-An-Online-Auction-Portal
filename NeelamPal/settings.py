@@ -122,3 +122,19 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+# MYSQL Database
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',  # still useful for default behavior
+        'NAME': 'auction',
+        'USER': 'user',
+        'PASSWORD': 'Admin@12',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
