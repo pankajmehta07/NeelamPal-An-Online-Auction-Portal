@@ -128,7 +128,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # MYSQL Database
 
-DATABASES = {
+DATABASE = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # still useful for default behavior
         'NAME': 'auction',

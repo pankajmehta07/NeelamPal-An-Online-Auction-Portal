@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .db_utils import get_connection
+from .db_utils import get_connection,create_tables
+
 # Create your views here.
 
 def get_users(request):
@@ -25,5 +26,6 @@ def search(request):
 def login(request):
     return HttpResponse("This is login page.")
 
-def signup(request):
+def signup(request): 
+    create_tables()
     return HttpResponse("This is signup page.")
