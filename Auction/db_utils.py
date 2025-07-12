@@ -2,12 +2,13 @@ import mysql.connector
 from django.conf import settings
 
 def get_connection():
+    config = settings.DATABASES['mysql']
     return mysql.connector.connect(
-        host=settings.DATABASE['default']['HOST'],
-        user=settings.DATABASE['default']['USER'],
-        password=settings.DATABASE['default']['PASSWORD'],
-        database=settings.DATABASE['default']['NAME'],
-        port=settings.DATABASE['default']['PORT'],
+        host = config['HOST'],
+        user = config['USER'],
+        password = config['PASSWORD'],
+        database = config['NAME'],
+        port = config['PORT'],
     )
 
 def create_tables():

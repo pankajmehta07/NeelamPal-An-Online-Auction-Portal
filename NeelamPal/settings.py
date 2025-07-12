@@ -75,11 +75,20 @@ WSGI_APPLICATION = 'NeelamPal.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default': {  # SQLite for auth system
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'mysql': {    # MySQL for app-specific data
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'auction',
+        'USER': 'user',
+        'PASSWORD': 'Admin@12',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
+
 
 
 # Password validation
@@ -124,17 +133,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
-
-# MYSQL Database
-
-DATABASE = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',  # still useful for default behavior
-        'NAME': 'auction',
-        'USER': 'user',
-        'PASSWORD': 'Admin@12',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]

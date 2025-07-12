@@ -1,21 +1,29 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import logout,login
+from types import SimpleNamespace
+from django.contrib.auth.hashers import make_password, check_password
+from django.views.decorators.csrf import csrf_exempt
 from .db_utils import get_connection,create_tables
+from django.db import connection
 
 # Create your views here.
 
 def get_users(request):
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)  # so you get dict results
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, username, password FROM auth_user")
+        row = cursor.fetchall()
+        # cursor = conn.cursor(dictionary=True)  # so you get dict results
 
-    cursor.execute("SELECT id, name FROM users")
-    rows = cursor.fetchall()
+        # cursor.execute("SELECT id, name FROM users")
+        # rows = cursor.fetchall()
 
-    cursor.close()
-    conn.close()
+        # cursor.close()
+        # conn.close()
 
-    return JsonResponse(rows, safe=False)
+        return JsonResponse(row, safe=False)
 
 def home(request):
     return HttpResponse("This is home page.")
@@ -23,9 +31,99 @@ def home(request):
 def search(request):
     return HttpResponse("This is search page.")
 
-def login(request):
-    return HttpResponse("This is login page.")
 
 def signup(request): 
     create_tables()
     return HttpResponse("This is signup page.")
+
+
+@csrf_exempt
+def logout_user(request):
+    # logout(request)
+
+
+    # For 0 ORM
+    try:
+        del request.session['_auth_user_id']
+        del request.session['_auth_user_backend']
+        if '_manual_auth' in request.session:
+            del request.session['_manual_auth']
+    except KeyError:
+        pass
+
+    return JsonResponse({'message': 'Logout successful'}, status=200)
+
+@csrf_exempt
+def register_user(request):
+    username = request.GET.get('username')
+    password = request.GET.get('password')
+
+    if not username or not password:
+        return JsonResponse({'error': 'Username and password are required'}, status=400)
+
+    # Using ORM
+    # if User.objects.filter(username=username).exists():
+    #     return JsonResponse({'error': 'User already exists'}, status=400)
+
+    # User.objects.create(username=username, password=make_password(password))
+    # return JsonResponse({'message': 'User registered successfully'}, status=201)
+
+    # Without Using ORM
+    with connection.cursor() as cursor:
+        # Check if username exists
+        cursor.execute("SELECT 1 FROM auth_user WHERE username = %s", [username])
+        if cursor.fetchone():
+            return JsonResponse({'error': 'User already exists'}, status=400)
+
+        # Create user (default values for required fields)
+        hashed_pw = make_password(password)
+        cursor.execute("""
+            INSERT INTO auth_user 
+            (username, password, is_superuser, is_staff, is_active, date_joined, first_name, last_name, email)
+            VALUES (%s, %s, 0, 0, 1, CURRENT_TIMESTAMP, '', '', '')
+        """, [username, hashed_pw])
+
+    return JsonResponse({'message': 'User registered successfully'}, status=201)
+
+@csrf_exempt
+def login_user(request):
+    username = request.GET.get('username')
+    password = request.GET.get('password')
+
+    if not username or not password:
+        return JsonResponse({'error': 'Username and password are required'}, status=400)
+    
+    # Using ORM
+    # try:
+    #     user = User.objects.get(username=username)
+    # except User.DoesNotExist:
+    #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
+
+    # if check_password(password, user.password):
+    #     login(request, user)
+    #     return JsonResponse({'message': 'Login successful'}, status=200)
+    # else:
+    #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
+    
+    # Without Using ORM
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT id, password FROM auth_user WHERE username = %s", [username])
+        row = cursor.fetchone()
+
+    if not row:
+        return JsonResponse({'error': 'Invalid credentials'}, status=401)
+
+    user_id, hashed_pw = row
+    if check_password(password, hashed_pw):
+        # user = User.objects.get(pk=user_id)
+        # login(request, user)
+
+        # For 0 ORM
+        # ✅ Manually set session values
+        request.session['_auth_user_id'] = user_id
+        request.session['_auth_user_backend'] = 'django.contrib.auth.backends.ModelBackend'
+        request.session['_manual_auth'] = True  # optional, to mark custom login
+
+        return JsonResponse({'message': 'Login successful'}, status=200)
+    else:
+        return JsonResponse({'error': 'Invalid credentials'}, status=401)
