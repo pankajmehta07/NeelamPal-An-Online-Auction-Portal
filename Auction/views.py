@@ -26,7 +26,7 @@ def get_users(request):
         return JsonResponse(row, safe=False)
 
 def home(request):
-    return HttpResponse("This is home page.")
+    return render(request,"Auction/index.html")
 
 def search(request):
     return HttpResponse("This is search page.")
