@@ -26,7 +26,8 @@ def get_users(request):
         return JsonResponse(row, safe=False)
 
 def home(request):
-    return render(request,"Auction/index.html")
+    param = {'names':['PKMMC', 'Gay', 'Aradhya Dhungel']}
+    return render(request,"Auction/index.html", param)
 
 def search(request):
     return HttpResponse("This is search page.")
