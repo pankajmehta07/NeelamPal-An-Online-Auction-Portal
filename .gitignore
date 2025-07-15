@@ -1,6 +1,7 @@
 # Folders
 __pycache__/
 venv/
+.vscode/
 
 # Files
 db.sqlite3

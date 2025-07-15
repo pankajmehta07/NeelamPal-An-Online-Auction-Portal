@@ -1,44 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-        <title>Hello</title>
-    </head>
-    <body>
-        <div id="app"></div>
-        <h1>{{ gay }}</h1>
+{% extends 'Auction/layout.html' %}
 
-        <script type="text/babel">
-            const variab = {{ names|safe }};
-            const Hello = (props) => {
-                console.log(props)
-                return (
-                    <div>
-                    <p>
-                        Hello {props.name}, you are {props.age} years old
-                    </p>
-                    </div>
-                )
-                }
+{% block headjs %}
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+{% endblock headjs %}
 
-                const App = (props) => {
-                console.log(props);
-                const name = 'Peter'
-                const age = 10
 
-                return (
-                    <div>
-                    <h1>Greetings</h1>
-                    <Hello name='Maya' age={26 + 10} />
-                    <Hello name={name} age={age} />
-                    <Hello name={props.names[0]} age={age} />
-                    </div>
-                )
-                }
+{% block title %}  Hello {% endblock title %}    
 
-            ReactDOM.render(<App names={variab} />, document.querySelector("#app"));
-        </script>
-    </body>
-</html>
+{% block body %}
+
+    <div id="app"></div>
+    <h1>{{ gay }}</h1>
+
+
+{% endblock body %}
+
+
+
+
+{% block tailjs %}
+
+    <script type="text/babel">
+    const variab = {{ names|safe }};
+    const Hello = (props) => {
+        console.log(props)
+        return (
+            <div>
+            <p>
+                Hello {props.name}, you are {props.age} years old
+            </p>
+            </div>
+        )
+        }
+
+        const App = (props) => {
+        console.log(props);
+        const name = 'Peter'
+        const age = 10
+
+        return (
+            <div>
+            <h1>Greetings</h1>
+            <Hello name='Maya' age={26 + 10} />
+            <Hello name={name} age={age} />
+            <Hello name={props.names[0]} age={age} />
+            </div>
+        )
+        }
+
+    ReactDOM.render(<App names={variab} />, document.querySelector("#app"));
+    </script>
+
+{% endblock tailjs %}
