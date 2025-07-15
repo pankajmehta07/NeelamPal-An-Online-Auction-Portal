@@ -40,19 +40,20 @@ def signup(request):
 
 @csrf_exempt
 def logout_user(request):
-    # logout(request)
+    logout(request)
 
 
     # For 0 ORM
-    try:
-        del request.session['_auth_user_id']
-        del request.session['_auth_user_backend']
-        if '_manual_auth' in request.session:
-            del request.session['_manual_auth']
-    except KeyError:
-        pass
+    # try:
+    #     del request.session['_auth_user_id']
+    #     del request.session['_auth_user_backend']
+    #     if '_manual_auth' in request.session:
+    #         del request.session['_manual_auth']
+    # except KeyError:
+    #     pass
 
-    return JsonResponse({'message': 'Logout successful'}, status=200)
+    # return JsonResponse({'message': 'Logout successful'}, status=200)
+    return home(request)
 
 @csrf_exempt
 def register_user(request):
@@ -84,7 +85,8 @@ def register_user(request):
             VALUES (%s, %s, 0, 0, 1, CURRENT_TIMESTAMP, '', '', '')
         """, [username, hashed_pw])
 
-    return JsonResponse({'message': 'User registered successfully'}, status=201)
+    # return JsonResponse({'message': 'User registered successfully'}, status=201)
+    return home(request)
 
 @csrf_exempt
 def login_user(request):
@@ -95,36 +97,37 @@ def login_user(request):
         return JsonResponse({'error': 'Username and password are required'}, status=400)
     
     # Using ORM
-    # try:
-    #     user = User.objects.get(username=username)
-    # except User.DoesNotExist:
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Invalid credentials'}, status=401)
+
+    if check_password(password, user.password):
+        login(request, user)
+        # return JsonResponse({'message': 'Login successful'}, status=200)
+        return home(request)
+    else:
+        return JsonResponse({'error': 'Invalid credentials'}, status=401)
+    
+    # Without Using ORM
+    # with connection.cursor() as cursor:
+    #     cursor.execute("SELECT id, password FROM auth_user WHERE username = %s", [username])
+    #     row = cursor.fetchone()
+
+    # if not row:
     #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
-    # if check_password(password, user.password):
-    #     login(request, user)
+    # user_id, hashed_pw = row
+    # if check_password(password, hashed_pw):
+    #     # user = User.objects.get(pk=user_id)
+    #     # login(request, user)
+
+    #     # For 0 ORM
+    #     # ✅ Manually set session values
+    #     request.session['_auth_user_id'] = user_id
+    #     request.session['_auth_user_backend'] = 'django.contrib.auth.backends.ModelBackend'
+    #     request.session['_manual_auth'] = True  # optional, to mark custom login
+
     #     return JsonResponse({'message': 'Login successful'}, status=200)
     # else:
     #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
-    
-    # Without Using ORM
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT id, password FROM auth_user WHERE username = %s", [username])
-        row = cursor.fetchone()
-
-    if not row:
-        return JsonResponse({'error': 'Invalid credentials'}, status=401)
-
-    user_id, hashed_pw = row
-    if check_password(password, hashed_pw):
-        # user = User.objects.get(pk=user_id)
-        # login(request, user)
-
-        # For 0 ORM
-        # ✅ Manually set session values
-        request.session['_auth_user_id'] = user_id
-        request.session['_auth_user_backend'] = 'django.contrib.auth.backends.ModelBackend'
-        request.session['_manual_auth'] = True  # optional, to mark custom login
-
-        return JsonResponse({'message': 'Login successful'}, status=200)
-    else:
-        return JsonResponse({'error': 'Invalid credentials'}, status=401)
