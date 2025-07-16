@@ -162,7 +162,7 @@
 
                 <div class="form-outline form-white mb-3" style="display: flex;">
                   <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="contactInput" style="width: 25%;">Contact Number</label>
-                  <input type="text" name="contact" id="contactInput" placeholder="Enter contact number" class="form-control form-control-lg" style="width: 75%;" required />
+                  <input type="tel" pattern="^[0-9]{7,10}$" maxlength="10" minlength="7" name="contact" id="contactInput" placeholder="Enter contact number" class="form-control form-control-lg" style="width: 75%;" required />
                 </div>
 
                 <div class="form-outline form-white mb-3" style="display: flex;">
@@ -217,6 +217,37 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   <script src="{% static 'Auction/js/app.js' %}"></script>
   {% if not user.is_authenticated %}
+  <script>
+    document.getElementById("contactInput").addEventListener("keypress", function (e) {
+    const charCode = e.charCode || e.keyCode;
+
+      // Allow: only digits (0–9)
+      if (charCode < 48 || charCode > 57) {
+        e.preventDefault(); // Block the key press
+      }
+    });
+    contactInput.addEventListener("paste", function (e) {
+      const paste = (e.clipboardData || window.clipboardData).getData("text");
+      if (!/^\d+$/.test(paste)) {
+        e.preventDefault();
+      }
+      });
+      contactInput.addEventListener("input", function () {
+      const value = contactInput.value;
+
+      if (!/^\d{7,10}$/.test(value)) {
+        if (value.length < 7) {
+          contactInput.setCustomValidity("Contact number must be at least 7 digits.");
+        } else if (value.length > 10) {
+          contactInput.setCustomValidity("Contact number must not exceed 10 digits.");
+        } else {
+          contactInput.setCustomValidity("Only digits are allowed.");
+        }
+      } else {
+        contactInput.setCustomValidity(""); // Clear error
+      }
+    });
+    </script>
   <!-- <script>
     const input = document.getElementById('inputPassword');
     const passDiv = document.getElementById('PasswordDiv');

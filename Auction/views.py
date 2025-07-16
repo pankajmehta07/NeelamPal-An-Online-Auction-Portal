@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.csrf import csrf_exempt
 from .db_utils import get_connection,create_tables
 from django.db import connection
+import re
 
 # Create your views here.
 
@@ -31,7 +32,17 @@ def home(request):
     return render(request,"Auction/index.html", param)
 
 def search(request):
-    return HttpResponse("This is search page.")
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * from organization")
+    row = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return JsonResponse(row, safe=False)
 
 
 def signup(request): 
@@ -64,11 +75,10 @@ def register_user(request):
     if request.method == 'POST':
         # Extract fields from POST
         name = request.POST.get('name')
-        contact = request.POST.get('contact')
+        contact = re.sub(r'\D', '',request.POST.get('contact'))
         address = request.POST.get('address')
         user_type = request.POST.get('userType')  
-        
-        username = request.POST.get('usernameInput') 
+        username = re.sub(r'\D', '', request.POST.get('usernameInput'))
         password = request.POST.get('password')
         print(username, password, name, contact, address, user_type)
 
@@ -83,13 +93,24 @@ def register_user(request):
 
         # Create user
         user = User.objects.create_user(username=username, password=password)
-        user.first_name = name
+        user.first_name = user_type
         user.save()
+
+
+        conn = get_connection()
+        cursor = conn.cursor() 
 
         if user_type=="Organization":
             msg = "Registration successful. Please use registration number as username for log in ."
+            print(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
+            cursor.execute(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
         else:
             msg = "Registration successful. Please use citizenship number as username for log in ."
+            print(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
+            cursor.execute(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
+
+        cursor.close()
+        conn.close()
 
         messages.success(request, msg)
         return redirect('/')
