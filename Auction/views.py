@@ -108,7 +108,8 @@ def register_user(request):
             msg = "Registration successful. Please use citizenship number as username for log in ."
             print(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
             cursor.execute(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
-
+        
+        conn.commit()
         cursor.close()
         conn.close()
 
