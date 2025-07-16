@@ -38,6 +38,9 @@ def signup(request):
     create_tables()
     return HttpResponse("This is signup page.")
 
+def add_item(request): 
+    return render(request,"Auction/add_item.html")
+
 
 @csrf_exempt
 def logout_user(request):
