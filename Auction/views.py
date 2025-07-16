@@ -67,13 +67,7 @@ def register_user(request):
         
         username = request.POST.get('usernameInput') 
         password = request.POST.get('password')
-
-        # Optional: Extract citizenship or registration number if needed
-        citizenship = registration = None
-        if user_type == 'bidder':
-            citizenship = username  # used as username
-        elif user_type == 'organization':
-            registration = username  # used as username
+        print(username, password, name, contact, address, user_type)
 
         if not all([username, password, name, contact, address]):
             messages.error(request, "Please fill all required fields.")
@@ -89,7 +83,12 @@ def register_user(request):
         user.first_name = name
         user.save()
 
-        messages.success(request, "Registration successful. Please log in.")
+        if user_type=="Organization":
+            msg = "Registration successful. Please use registration number as username for log in ."
+        else:
+            msg = "Registration successful. Please use citizenship number as username for log in ."
+
+        messages.success(request, msg)
         return redirect('/')
 
     else:
