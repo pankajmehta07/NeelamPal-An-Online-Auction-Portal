@@ -1,15 +1,13 @@
 {% extends 'Auction/layout.html' %} {% block homeactive %} active{% endblock homeactive %} 
-{% block title %} NeelamPal {% endblock title %} {% block headjs%}
-<script
-  src="https://unpkg.com/react@18/umd/react.production.min.js"
-  crossorigin
-></script>
-<script
-  src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
-  crossorigin
-></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-{% endblock headjs %} {% block body %} {% for i in names %} {{i}} {% endfor %}
+{% block title %} NeelamPal {% endblock title %} 
+{% block headjs%}
+
+{% endblock headjs %} 
+{% block body %} 
+
+{% for i in names %} 
+    {{i}} 
+{% endfor %}
 
 <div id="app"></div>
 <h1>{{ gay }}</h1>
