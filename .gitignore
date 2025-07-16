@@ -2,6 +2,8 @@
 __pycache__/
 venv/
 .vscode/
-
+node_modules/
 # Files
 db.sqlite3
+package-lock.json
+
