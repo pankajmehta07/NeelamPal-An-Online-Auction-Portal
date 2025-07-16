@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.contrib import messages
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -42,7 +43,7 @@ def signup(request):
 def logout_user(request):
     logout(request)
 
-
+    messages.success(request, "Log out successful.")
     # For 0 ORM
     # try:
     #     del request.session['_auth_user_id']
@@ -55,38 +56,63 @@ def logout_user(request):
     # return JsonResponse({'message': 'Logout successful'}, status=200)
     return redirect('home')
 
-@csrf_exempt
+
 def register_user(request):
-    username = request.GET.get('username')
-    password = request.GET.get('password')
+    if request.method == 'POST':
+        # Extract fields from POST
+        name = request.POST.get('name')
+        contact = request.POST.get('contact')
+        address = request.POST.get('address')
+        user_type = request.POST.get('userType')  
+        
+        username = request.POST.get('usernameInput') 
+        password = request.POST.get('password')
 
-    if not username or not password:
-        return JsonResponse({'error': 'Username and password are required'}, status=400)
+        # Optional: Extract citizenship or registration number if needed
+        citizenship = registration = None
+        if user_type == 'bidder':
+            citizenship = username  # used as username
+        elif user_type == 'organization':
+            registration = username  # used as username
 
-    # Using ORM
-    # if User.objects.filter(username=username).exists():
-    #     return JsonResponse({'error': 'User already exists'}, status=400)
+        if not all([username, password, name, contact, address]):
+            messages.error(request, "Please fill all required fields.")
+            return redirect('/')
 
-    # User.objects.create(username=username, password=make_password(password))
-    # return JsonResponse({'message': 'User registered successfully'}, status=201)
 
-    # Without Using ORM
-    with connection.cursor() as cursor:
-        # Check if username exists
-        cursor.execute("SELECT 1 FROM auth_user WHERE username = %s", [username])
-        if cursor.fetchone():
-            return JsonResponse({'error': 'User already exists'}, status=400)
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return redirect('/')
 
-        # Create user (default values for required fields)
-        hashed_pw = make_password(password)
-        cursor.execute("""
-            INSERT INTO auth_user 
-            (username, password, is_superuser, is_staff, is_active, date_joined, first_name, last_name, email)
-            VALUES (%s, %s, 0, 0, 1, CURRENT_TIMESTAMP, '', '', '')
-        """, [username, hashed_pw])
+        # Create user
+        user = User.objects.create_user(username=username, password=password)
+        user.first_name = name
+        user.save()
 
-    # return JsonResponse({'message': 'User registered successfully'}, status=201)
-    return redirect('home')
+        messages.success(request, "Registration successful. Please log in.")
+        return redirect('/')
+
+    else:
+        messages.error(request, "Invalid request")
+        return redirect('/')
+
+    # # Without Using ORM
+    # with connection.cursor() as cursor:
+    #     # Check if username exists
+    #     cursor.execute("SELECT 1 FROM auth_user WHERE username = %s", [username])
+    #     if cursor.fetchone():
+    #         return JsonResponse({'error': 'User already exists'}, status=400)
+
+    #     # Create user (default values for required fields)
+    #     hashed_pw = make_password(password)
+    #     cursor.execute("""
+    #         INSERT INTO auth_user 
+    #         (username, password, is_superuser, is_staff, is_active, date_joined, first_name, last_name, email)
+    #         VALUES (%s, %s, 0, 0, 1, CURRENT_TIMESTAMP, '', '', '')
+    #     """, [username, hashed_pw])
+
+    # # return JsonResponse({'message': 'User registered successfully'}, status=201)
+    # return redirect('home')
 
 def login_user(request):
     if request.method == "POST":
@@ -100,11 +126,13 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
+            messages.success(request, "Log in successful.")
             return redirect('home')
         else:
-            return JsonResponse({'error': 'Invalid credentials'}, status=401)
-    
-    return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
+            messages.error(request, "Invalid credentials.")
+            return redirect('home')
+    messages.error(request, "Only POST requests are allowed.")
+    return redirect('home')
         
         # Without Using ORM
         # with connection.cursor() as cursor:
