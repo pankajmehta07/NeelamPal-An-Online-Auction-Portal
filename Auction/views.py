@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import logout,login
+from django.contrib.auth import logout,login, authenticate
 from types import SimpleNamespace
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.csrf import csrf_exempt
@@ -53,7 +53,7 @@ def logout_user(request):
     #     pass
 
     # return JsonResponse({'message': 'Logout successful'}, status=200)
-    return home(request)
+    return redirect('home')
 
 @csrf_exempt
 def register_user(request):
@@ -86,48 +86,45 @@ def register_user(request):
         """, [username, hashed_pw])
 
     # return JsonResponse({'message': 'User registered successfully'}, status=201)
-    return home(request)
+    return redirect('home')
 
-@csrf_exempt
 def login_user(request):
-    username = request.GET.get('username')
-    password = request.GET.get('password')
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-    if not username or not password:
-        return JsonResponse({'error': 'Username and password are required'}, status=400)
+        if not username or not password:
+            return JsonResponse({'error': 'Username and password are required'}, status=400)
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            return JsonResponse({'error': 'Invalid credentials'}, status=401)
     
-    # Using ORM
-    try:
-        user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'Invalid credentials'}, status=401)
+    return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
+        
+        # Without Using ORM
+        # with connection.cursor() as cursor:
+        #     cursor.execute("SELECT id, password FROM auth_user WHERE username = %s", [username])
+        #     row = cursor.fetchone()
 
-    if check_password(password, user.password):
-        login(request, user)
-        # return JsonResponse({'message': 'Login successful'}, status=200)
-        return home(request)
-    else:
-        return JsonResponse({'error': 'Invalid credentials'}, status=401)
-    
-    # Without Using ORM
-    # with connection.cursor() as cursor:
-    #     cursor.execute("SELECT id, password FROM auth_user WHERE username = %s", [username])
-    #     row = cursor.fetchone()
+        # if not row:
+        #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
-    # if not row:
-    #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
+        # user_id, hashed_pw = row
+        # if check_password(password, hashed_pw):
+        #     # user = User.objects.get(pk=user_id)
+        #     # login(request, user)
 
-    # user_id, hashed_pw = row
-    # if check_password(password, hashed_pw):
-    #     # user = User.objects.get(pk=user_id)
-    #     # login(request, user)
+        #     # For 0 ORM
+        #     # ✅ Manually set session values
+        #     request.session['_auth_user_id'] = user_id
+        #     request.session['_auth_user_backend'] = 'django.contrib.auth.backends.ModelBackend'
+        #     request.session['_manual_auth'] = True  # optional, to mark custom login
 
-    #     # For 0 ORM
-    #     # ✅ Manually set session values
-    #     request.session['_auth_user_id'] = user_id
-    #     request.session['_auth_user_backend'] = 'django.contrib.auth.backends.ModelBackend'
-    #     request.session['_manual_auth'] = True  # optional, to mark custom login
-
-    #     return JsonResponse({'message': 'Login successful'}, status=200)
-    # else:
-    #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
+        #     return JsonResponse({'message': 'Login successful'}, status=200)
+        # else:
+        #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
