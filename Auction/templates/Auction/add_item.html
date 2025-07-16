@@ -16,23 +16,23 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="mt-3 mb-3">
-                        <label for="itemName" class="form-label">Name</label>
+                        <label for="itemName" class="form-label">Name:</label>
                         <input type="text" class="form-control" id="itemName" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="minBid" class="form-label">Min Bid Amount</label>
+                        <label for="minBid" class="form-label">Min Bid Amount:</label>
                         <input type="number" class="form-control" id="minBid" name="min_bid_amount" min="1" step="1" required>
                     </div>
                     <div class="mb-3">
-                        <label for="category" class="form-label">Category</label>
+                        <label for="category" class="form-label">Category:</label>
                         <input type="text" class="form-control" id="category" name="category" required>
                     </div>
                     <div class="mb-3">
-                        <label for="startTime" class="form-label">Start Time</label>
+                        <label for="startTime" class="form-label">Start Time:</label>
                         <input type="datetime-local" class="form-control" id="startTime" name="start_time" required>
                     </div>
                     <div class="mb-3">
-                        <label for="endTime" class="form-label">End Time</label>
+                        <label for="endTime" class="form-label">End Time:</label>
                         <input type="datetime-local" class="form-control" id="endTime" name="end_time" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Add Item</button>
