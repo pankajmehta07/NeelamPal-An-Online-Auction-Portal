@@ -16,6 +16,18 @@
     />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <!-- <link rel="stylesheet" type="text/css" href="{% static 'Auction/style.css' %}"> -->
+     <style>
+      .highlight-on-focus {
+        border: 1px solid #ccc;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+      }
+
+      .highlight-on-focus:focus-within .input-group {
+        border-color: #0d6efd; /* Bootstrap primary color */
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+      }
+     </style>
     
 </head>
 
@@ -81,10 +93,10 @@
 
                   <div class="form-outline form-white mb-4" style="display: flex;">
                     <label class="form-label col-2 pt-2 mt-1 pe-3 text-start" for="typePasswordX" style="width: 20%;">Password</label>
-                    <div class="input-group" style="width: 80%;">
+                    <div class="input-group highlight-on-focus" style="width: 80%;">
                       <input type="password" placeholder="password" name="password" id="typePasswordX" class="form-control form-control-lg" required style="border-right:0px"/>
                       <span class="input-group-text bg-white  p-0 pe-2" onclick="togglePasswordVisibility()" style="cursor: pointer;">
-                        <i class="far fa-eye" id="togglePasswordIcon"></i>
+                        <i class="far fa-eye-slash" id="togglePasswordIcon"></i>
                       </span>
                     </div>
                   </div>
@@ -121,12 +133,12 @@
       
       if (passwordInput.type === "password") {
         passwordInput.type = "text";
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-      } else {
-        passwordInput.type = "password";
         icon.classList.remove("fa-eye-slash");
         icon.classList.add("fa-eye");
+      } else {
+        passwordInput.type = "password";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
       }
     }
   </script>
