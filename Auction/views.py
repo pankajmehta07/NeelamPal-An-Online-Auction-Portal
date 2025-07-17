@@ -78,6 +78,7 @@ def saveItem(request):
         name = request.POST.get('name')
         min_bid_amt = request.POST.get('min_bid_amount')
         category = request.POST.get('category')
+        description = request.POST.get('description')
         start_time = request.POST.get('start_time').replace("T"," ")+":00"  
         end_time = request.POST.get('end_time').replace("T"," ")+":00"  
 
@@ -87,7 +88,7 @@ def saveItem(request):
 
         conn = get_connection()
         cursor = conn.cursor() 
-        cursor.execute(f"INSERT INTO item(name,category,min_bid_amt,organization_id,bid_start_time,bid_end_time) VALUES('{name}','{category}',{min_bid_amt},{request.user.username},'{start_time}','{end_time}')")
+        cursor.execute(f"INSERT INTO item(name,category,description,min_bid_amt,organization_id,bid_start_time,bid_end_time) VALUES('{name}','{category}','{description}',{min_bid_amt},{request.user.username},'{start_time}','{end_time}')")
         
         conn.commit()
         cursor.close()
