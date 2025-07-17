@@ -8,10 +8,10 @@
         <div class="container-fluid">
               <div class="row mb-5">
             <div class="col">
-                <div class="bg mt-4" style="height: 580px">
-                    <div class="d-flex flex-column align-items-center bg-white" style="height:500px;">
+                <div class="bg mt-4">
+                    <div class="d-flex flex-column align-items-center bg-white">
                         <h1 class="mb-3">Add Items</h1>
-                        <div class="border p-4 rounded" style="width: 580px; height:600px">
+                        <div class="border p-4 rounded" style="width: 580px;">
                             <h5>Enter the item details:</h5>
                             <form method="post" action ="/saveItem">
                                 {% csrf_token %}
@@ -26,6 +26,10 @@
                                 <div class="mb-3">
                                     <label for="category" class="form-label">Category:</label>
                                     <input type="text" class="form-control" id="category" name="category" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description:</label>
+                                    <textarea class="form-control" id="description" name="description" rows="6" cols="50" required style="max-height: 200px;"></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label for="startTime" class="form-label">Start Time:</label>
