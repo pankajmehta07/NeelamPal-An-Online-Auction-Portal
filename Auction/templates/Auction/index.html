@@ -6,7 +6,23 @@
 {% block body %} 
 
 {% for i in names %} 
-    {{i}} 
+    {{i}} <br>
+{% endfor %}
+<hr>
+Organization Data:
+<br><br>
+{% for row in organizationData %} 
+  {% for column in row %} 
+    {{column}}
+  {% endfor %}
+  <br>
+{% endfor %}
+<hr>
+Bidder Data:
+<br><br>
+{% for row in bidderData %} 
+  {{ row.1 }} - {{ row.3 }}   <!--  Get only certain column from the row-->
+  <br>
 {% endfor %}
 
 <div id="app"></div>

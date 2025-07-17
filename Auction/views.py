@@ -30,6 +30,17 @@ def get_users(request):
 
 def home(request):
     param = {'names':['PKMMC', 'Gay', 'Aradhya Dhungel']}
+    conn = get_connection()
+    cursor = conn.cursor() 
+
+    cursor.execute("SELECT * from organization") 
+    param['organizationData'] = cursor.fetchall()
+    cursor.execute("SELECT * from bidder") 
+    param['bidderData'] = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
     return render(request,"Auction/index.html", param)
 
 def search(request):
