@@ -54,11 +54,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link{% block homeactive %}{% endblock homeactive %}" aria-current="page" href="#">Home</a>
+          <a class="nav-link{% block homeactive %}{% endblock homeactive %}" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link{% block categoryactive %}{% endblock categoryactive %}" href="#">Category</a>
         </li>
+        {% if user.is_authenticated and user.first_name == "Organization" %}
+          <li class="nav-item">
+            <a class="nav-link{% block addItemactive %}{% endblock addItemactive %}" href="/addItem">Add Item</a>
+          </li>
+        {% endif %}
       </ul>
     </div>
     <form class="d-flex" method="GET" , action="#">
@@ -122,8 +127,7 @@
               </form>
 
               <div>
-                <p class="mb-0">Don't have an account? <a href="#registerModal" class="text-white-50 fw-bold" data-bs-toggle="modal" data-bs-dismiss="modal">Sign Up</a>
-</p>
+                <p class="mb-0">Don't have an account? <a href="#registerModal" class="text-white-50 fw-bold" data-bs-toggle="modal" data-bs-dismiss="modal">Sign Up</a></p>
               </div>
 
             </div>
@@ -136,71 +140,70 @@
 
 
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Wider modal -->
-      <div class="modal-content" style="border-radius: 1.1rem;">
-        <div class="card bg-dark text-white" style="border-radius: 1rem;">
-          <div class="card-body p-4 text-center">
+      <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Wider modal -->
+        <div class="modal-content" style="border-radius: 1.1rem;">
+          <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-4 text-center">
 
-            <form method="POST" action="/register">
-              {% csrf_token %}
-              <div class="pb-3 pt-2">
-                <h2 class="fw-bold mb-4 text-uppercase">Register</h2>
-                <input type="hidden" name="userType" value="Bidder" id="userType">
+              <form method="POST" action="/register">
+                {% csrf_token %}
+                <div class="pb-3 pt-2">
+                  <h2 class="fw-bold mb-4 text-uppercase">Register</h2>
+                  <input type="hidden" name="userType" value="Bidder" id="userType">
 
-                <div class="btn-group mb-4" role="group" aria-label="User Type Switch">
-                  <input type="radio" class="btn-check" name="user_type" id="bidderRadio" autocomplete="off" value="bidder" checked>
-                  <label class="btn btn-outline-light" for="bidderRadio" onclick="switchType('bidder')">Bidder</label>
+                  <div class="btn-group mb-4" role="group" aria-label="User Type Switch">
+                    <input type="radio" class="btn-check" name="user_type" id="bidderRadio" autocomplete="off" value="bidder" checked>
+                    <label class="btn btn-outline-light" for="bidderRadio" onclick="switchType('bidder')">Bidder</label>
 
-                  <input type="radio" class="btn-check" name="user_type" id="orgRadio" autocomplete="off" value="organization">
-                  <label class="btn btn-outline-light" for="orgRadio" onclick="switchType('organization')">Organization</label>
-                </div>
-
-                <div class="form-outline form-white mb-3" style="display: flex;">
-                  <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="nameInput" style="width: 25%;">Name</label>
-                  <input type="text" name="name" id="nameInput" placeholder="Enter full name" class="form-control form-control-lg" style="width: 75%;" required />
-                </div>
-
-                <div class="form-outline form-white mb-3" style="display: flex;">
-                  <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="contactInput" style="width: 25%;">Contact Number</label>
-                  <input type="tel" pattern="^[0-9]{7,10}$" maxlength="10" minlength="7" name="contact" id="contactInput" placeholder="Enter contact number" class="form-control form-control-lg" style="width: 75%;" required />
-                </div>
-
-                <div class="form-outline form-white mb-3" style="display: flex;">
-                  <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="addressInput" style="width: 25%;">Address</label>
-                  <input type="text" name="address" id="addressInput" placeholder="Enter address" class="form-control form-control-lg" style="width: 75%;" required />
-                </div>
-
-                <div id="username" class="form-outline form-white mb-3" style="display: flex;">
-                  <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="usernameInput" style="width: 25%;" id="usernameInputLabel">Citizenship No</label>
-                  <input type="text" name="usernameInput" id="usernameInput" placeholder="Enter citizenship number (username)" class="form-control form-control-lg" style="width: 75%;" required />
-                </div>
-
-                
-                <div class="form-outline form-white mb-4" style="display: flex;">
-                  <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="registerPassword" style="width: 25%;">Password</label>
-                  <div class="input-group" id="registerPassDiv" style="width: 75%;">
-                    <input type="password" placeholder="Create password" name="password" id="registerPassword" class="form-control form-control-lg password" required style="border-right:0px"  onfocus="handleFocus(this, 'registerPassDiv')", onblur="handleBlur(this, 'registerPassDiv')"/>
-                    <span class="input-group-text bg-white p-0 pe-2" onclick="togglePasswordVisibility('registerPassword', 'toggleRegisterPasswordIcon')" style="cursor: pointer;">
-                      <i class="far fa-eye-slash" id="toggleRegisterPasswordIcon"></i>
-                    </span>
+                    <input type="radio" class="btn-check" name="user_type" id="orgRadio" autocomplete="off" value="organization">
+                    <label class="btn btn-outline-light" for="orgRadio" onclick="switchType('organization')">Organization</label>
                   </div>
+
+                  <div class="form-outline form-white mb-3" style="display: flex;">
+                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="nameInput" style="width: 25%;">Name</label>
+                    <input type="text" name="name" id="nameInput" placeholder="Enter full name" class="form-control form-control-lg" style="width: 75%;" required />
+                  </div>
+
+                  <div class="form-outline form-white mb-3" style="display: flex;">
+                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="contactInput" style="width: 25%;">Contact Number</label>
+                    <input type="tel" pattern="^[0-9]{7,10}$" maxlength="10" minlength="7" name="contact" id="contactInput" placeholder="Enter contact number" class="form-control form-control-lg" style="width: 75%;" required />
+                  </div>
+
+                  <div class="form-outline form-white mb-3" style="display: flex;">
+                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="addressInput" style="width: 25%;">Address</label>
+                    <input type="text" name="address" id="addressInput" placeholder="Enter address" class="form-control form-control-lg" style="width: 75%;" required />
+                  </div>
+
+                  <div id="username" class="form-outline form-white mb-3" style="display: flex;">
+                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="usernameInput" style="width: 25%;" id="usernameInputLabel">Citizenship No</label>
+                    <input type="text" name="usernameInput" id="usernameInput" placeholder="Enter citizenship number (username)" class="form-control form-control-lg" style="width: 75%;" required />
+                  </div>
+
+                  
+                  <div class="form-outline form-white mb-4" style="display: flex;">
+                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start" for="registerPassword" style="width: 25%;">Password</label>
+                    <div class="input-group" id="registerPassDiv" style="width: 75%;">
+                      <input type="password" placeholder="Create password" name="password" id="registerPassword" class="form-control form-control-lg password" required style="border-right:0px"  onfocus="handleFocus(this, 'registerPassDiv')", onblur="handleBlur(this, 'registerPassDiv')"/>
+                      <span class="input-group-text bg-white p-0 pe-2" onclick="togglePasswordVisibility('registerPassword', 'toggleRegisterPasswordIcon')" style="cursor: pointer;">
+                        <i class="far fa-eye-slash" id="toggleRegisterPasswordIcon"></i>
+                      </span>
+                    </div>
+                  </div>
+
+                  
+                  <button class="btn btn-outline-light btn-lg px-5" type="submit">Register</button>
                 </div>
+              </form>
 
-                
-                <button class="btn btn-outline-light btn-lg px-5" type="submit">Register</button>
+              <div>
+                <p class="mt-3 mb-0">Already have an account? <a href="#loginModal" data-bs-toggle="modal" data-bs-dismiss="modal" class="text-white-50 fw-bold">Login</a></p>
               </div>
-            </form>
 
-            <div>
-              <p class="mt-3 mb-0">Already have an account? <a href="#loginModal" data-bs-toggle="modal" data-bs-dismiss="modal" class="text-white-50 fw-bold">Login</a>
-</p>
             </div>
-
           </div>
         </div>
       </div>
     </div>
-  </div>
 
 
   {% endif %}

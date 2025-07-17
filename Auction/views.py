@@ -49,7 +49,7 @@ def signup(request):
     create_tables()
     return HttpResponse("This is signup page.")
 
-def add_item(request): 
+def addItem(request): 
     return render(request,"Auction/add_item.html")
 
 
