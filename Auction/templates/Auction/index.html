@@ -1,13 +1,10 @@
-{% extends 'Auction/layout.html' %} {% block homeactive %} active{% endblock homeactive %} 
+{% extends 'Auction/layout.html' %} {% block openactive %} active{% endblock openactive %} 
 {% block title %} NeelamPal {% endblock title %} 
 {% block headjs%}
 
 {% endblock headjs %} 
 {% block body %} 
 
-{% for i in names %} 
-    {{i}} <br>
-{% endfor %}
 <hr>
 Organization Data:
 <br><br>
@@ -26,7 +23,6 @@ Bidder Data:
 {% endfor %}
 
 <div id="app"></div>
-<h1>{{ gay }}</h1>
 
 <div class="container-fluid" style="padding: 20px">
   <div class="row mb-5">
@@ -63,7 +59,7 @@ Bidder Data:
 
   <div class="row">
     <div class="col-md-8">
-      <h5>Open for bidding</h5>
+      <h5 id='open-bids'>Open for bidding</h5>
 
       <div class="d-flex align-items-center mb-5 mt-5">
         <div
@@ -108,37 +104,6 @@ Bidder Data:
   </div>
 </div>
 
-{% endblock body %} {% block tailjs %}
+{% endblock body %}
 
-<script type="text/babel">
-  const variab = {{ names|safe }};
-  const Hello = (props) => {
-      console.log(props)
-      return (
-          <div>
-          <p>
-              Hello {props.name}, you are {props.age} years old
-          </p>
-          </div>
-      )
-      }
-
-      const App = (props) => {
-      console.log(props);
-      const name = 'Peter'
-      const age = 10
-
-      return (
-          <div>
-          <h1>Greetings</h1>
-          <Hello name='Maya' age={26 + 10} />
-          <Hello name={name} age={age} />
-          <Hello name={props.names[0]} age={age} />
-          </div>
-      )
-      }
-
-  ReactDOM.render(<App names={variab} />, document.querySelector("#app"));
-</script>
-
-{% endblock tailjs %}
+{% block tailjs %} {% endblock tailjs %}

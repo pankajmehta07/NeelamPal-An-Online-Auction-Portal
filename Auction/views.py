@@ -29,7 +29,7 @@ def get_users(request):
         return JsonResponse(row, safe=False)
 
 def home(request):
-    param = {'names':['PKMMC', 'Gay', 'Aradhya Dhungel']}
+    param = {}
     conn = get_connection()
     cursor = conn.cursor() 
 
