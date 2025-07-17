@@ -49,3 +49,12 @@ function switchType(type) {
         document.getElementById('nameInput').placeholder = "Enter oraganization name";
     }
   }
+function updateEndTimeMin(startID, endID, minGap) {
+    const value = new Date(document.getElementById(startID).value); 
+    value.setMinutes(value.getMinutes() + minGap);
+    value.setMinutes(value.getMinutes() - value.getTimezoneOffset());
+    document.getElementById(endID).min = value.toISOString().slice(0,16);
+    if (document.getElementById(endID).value && new Date(document.getElementById(endID).value) < new Date(document.getElementById(endID).min)) {
+      document.getElementById(endID).value = '';
+    }
+}
