@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .db_utils import get_connection,create_tables
 from django.db import connection
 import re
+from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -79,23 +80,42 @@ def saveItem(request):
         min_bid_amt = request.POST.get('min_bid_amount')
         category = request.POST.get('category')
         description = request.POST.get('description')
-        start_time = request.POST.get('start_time').replace("T"," ")+":00"  
-        end_time = request.POST.get('end_time').replace("T"," ")+":00"  
+        start_time_str = request.POST.get('start_time')  
+        end_time_str = request.POST.get('end_time') 
 
-        if not all([name, min_bid_amt, category, start_time, end_time]):
+        start_time = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M")
+        end_time = datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M")
+
+        min_end_time = start_time + timedelta(minutes=60)
+
+        if end_time < min_end_time:
+            messages.error(request, "Start and end time must be at least 60 minutes apart")
+            return redirect('addItem')
+
+
+        if not all([name, min_bid_amt, category, start_time_str, end_time_str]):
             messages.error(request, "Please fill all required fields.")
-            return redirect('/')
+            return redirect('addItem')
+        
 
         conn = get_connection()
         cursor = conn.cursor() 
-        cursor.execute(f"INSERT INTO item(name,category,description,min_bid_amt,organization_id,bid_start_time,bid_end_time) VALUES('{name}','{category}','{description}',{min_bid_amt},{request.user.username},'{start_time}','{end_time}')")
+
+        cursor.execute(f"SELECT 1 FROM item WHERE name = '{name}' and organization_id = {request.user.username}", )
+        if cursor.fetchone():
+            messages.error(request, "Item already exists")
+            return redirect('addItem')
+        
+        start_time_str = start_time_str.replace("T"," ")+":00"
+        end_time_str = end_time_str.replace("T"," ")+":00"
+        cursor.execute(f"INSERT INTO item(name,category,description,min_bid_amt,organization_id,bid_start_time,bid_end_time) VALUES('{name}','{category}','{description}',{min_bid_amt},{request.user.username},'{start_time_str}','{end_time_str}')")
         
         conn.commit()
         cursor.close()
         conn.close()
 
         messages.success(request, "Item was added successfully.")
-        return redirect('/')
+        return redirect('addItem')
 
     else:
         messages.error(request, "Invalid request")
