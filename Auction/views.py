@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .db_utils import get_connection,create_tables
 from django.db import connection
 import re
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -45,12 +46,18 @@ def search(request):
     return JsonResponse(row, safe=False)
 
 
-def signup(request): 
+def createTables(request): 
     create_tables()
-    return HttpResponse("This is signup page.")
+    messages.success(request, "Tables created successfully")
+    return redirect('home')
 
+@login_required
 def addItem(request): 
-    return render(request,"Auction/add_item.html")
+    if request.user.is_authenticated and request.user.first_name == "Organization":
+        return render(request,"Auction/add_item.html")
+
+    messages.error(request, "Invalid request")
+    return redirect('home')
 
 
 @csrf_exempt
