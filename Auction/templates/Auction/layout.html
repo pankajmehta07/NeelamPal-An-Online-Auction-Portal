@@ -14,6 +14,7 @@
     integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
     crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'Auction/css/app.css' %}">
     <link rel="icon" href="{% static 'Auction/images/logoNeelamPal.png' %}" type="image/png">
@@ -67,13 +68,13 @@
         {% endif %}
       </ul>
     </div>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Search..." />
-      <i class="fas fa-filter"></i>
-    </div>
+    <form action="/search">
+      <div class="search-bar">
+        <button type="submit" style="border:0px"><i class="fas fa-search"></i></button>
+        <input type="text" placeholder="Search..." />
+        <i class="fas fa-filter"></i>
+      </div>
+    </form>
     
     {% if not user.is_authenticated %}
     <button type="button" class="btn btn-secondary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">
