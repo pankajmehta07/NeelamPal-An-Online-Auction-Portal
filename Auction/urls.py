@@ -10,5 +10,6 @@ urlpatterns = [
     path("register",views.register_user, name="regist"),
     path("createTables",views.createTables, name="createTables"),
     path("users",views.get_users, name="getusers"),
-    path("addItem",views.addItem, name="addItem")
+    path("addItem",views.addItem, name="addItem"),
+    path("saveItem",views.saveItem, name="saveItem")
 ]

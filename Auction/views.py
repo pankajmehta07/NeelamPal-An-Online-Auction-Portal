@@ -72,6 +72,34 @@ def addItem(request):
 
     return redirect('/')
 
+def saveItem(request):
+    if request.method == 'POST' and request.user.is_authenticated and request.user.first_name == "Organization":
+        # Extract fields from POST
+        name = request.POST.get('name')
+        min_bid_amt = request.POST.get('min_bid_amount')
+        category = request.POST.get('category')
+        start_time = request.POST.get('start_time').replace("T"," ")+":00"  
+        end_time = request.POST.get('end_time').replace("T"," ")+":00"  
+
+        if not all([name, min_bid_amt, category, start_time, end_time]):
+            messages.error(request, "Please fill all required fields.")
+            return redirect('/')
+
+        conn = get_connection()
+        cursor = conn.cursor() 
+        cursor.execute(f"INSERT INTO item(name,category,min_bid_amt,organization_id,bid_start_time,bid_end_time) VALUES('{name}','{category}',{min_bid_amt},{request.user.username},'{start_time}','{end_time}')")
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        messages.success(request, "Item was added successfully.")
+        return redirect('/')
+
+    else:
+        messages.error(request, "Invalid request")
+        return redirect('/')   
+
 def logout_user(request):
     if request.method == 'POST':
         logout(request)
@@ -101,7 +129,6 @@ def register_user(request):
         user_type = request.POST.get('userType')  
         username = re.sub(r'\D', '', request.POST.get('usernameInput'))
         password = request.POST.get('password')
-        print(username, password, name, contact, address, user_type)
 
         if not all([username, password, name, contact, address]):
             messages.error(request, "Please fill all required fields.")
@@ -122,19 +149,15 @@ def register_user(request):
         cursor = conn.cursor() 
 
         if user_type=="Organization":
-            msg = "Registration successful. Please use registration number as username for log in ."
-            print(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
+            messages.success(request, "Registration successful. Please use registration number as username for log in .")
             cursor.execute(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
         else:
-            msg = "Registration successful. Please use citizenship number as username for log in ."
-            print(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
+            messages.sucesss(request,"Registration successful. Please use citizenship number as username for log in .")
             cursor.execute(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
         
         conn.commit()
         cursor.close()
         conn.close()
-
-        messages.success(request, msg)
         return redirect('/')
 
     else:
@@ -201,3 +224,4 @@ def login_user(request):
         #     return JsonResponse({'message': 'Login successful'}, status=200)
         # else:
         #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
+

@@ -13,7 +13,7 @@
             <h1 class="mb-3">Add Items</h1>
             <div class="border p-4 rounded" style="width: 580px; height:600px">
                  <h5>Enter the item details:</h5>
-                <form method="post">
+                <form method="post" action ="/saveItem">
                     {% csrf_token %}
                     <div class="mt-3 mb-3">
                         <label for="itemName" class="form-label">Name:</label>
