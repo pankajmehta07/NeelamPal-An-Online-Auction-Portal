@@ -67,12 +67,14 @@
         {% endif %}
       </ul>
     </div>
-    <form class="d-flex" method="GET" , action="#">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search" name="search/"/>
-      <button class="btn btn-outline-success mx-2" type="submit">
-        Search
-      </button>
-    </form>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search..." />
+      <i class="fas fa-filter"></i>
+    </div>
+    
     {% if not user.is_authenticated %}
     <button type="button" class="btn btn-secondary mx-2" data-bs-toggle="modal" data-bs-target="#loginModal">
       Login

@@ -1,3 +1,31 @@
 * {
-    
+
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f1f3f4;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  padding: 8px 15px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar i {
+  color: #555;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: 16px;
+  padding: 6px;
 }
