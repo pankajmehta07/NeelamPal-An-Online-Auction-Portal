@@ -51,20 +51,23 @@ def createTables(request):
     messages.success(request, "Tables created successfully")
     return redirect('home')
 
-@login_required
 def addItem(request): 
     if request.user.is_authenticated and request.user.first_name == "Organization":
         return render(request,"Auction/add_item.html")
-
+    
     messages.error(request, "Invalid request")
-    return redirect('home')
+    if not request.user.is_authenticated:
+        return redirect('/#login')
 
+    return redirect('/')
 
-@csrf_exempt
 def logout_user(request):
-    logout(request)
+    if request.method == 'POST':
+        logout(request)
+        messages.success(request, "Log out successful.")
+    else:
+        messages.error(request, "Invalid Request.")
 
-    messages.success(request, "Log out successful.")
     # For 0 ORM
     # try:
     #     del request.session['_auth_user_id']
