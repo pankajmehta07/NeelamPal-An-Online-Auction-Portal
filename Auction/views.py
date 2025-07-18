@@ -173,7 +173,7 @@ def register_user(request):
             messages.success(request, "Registration successful. Please use registration number as username for log in .")
             cursor.execute(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
         else:
-            messages.sucesss(request,"Registration successful. Please use citizenship number as username for log in .")
+            messages.success(request,"Registration successful. Please use citizenship number as username for log in .")
             cursor.execute(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
         
         conn.commit()
