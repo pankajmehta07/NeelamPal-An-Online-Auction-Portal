@@ -49,22 +49,36 @@
     <div class="col-md-8">
       <h5 id='open-bids'>Open for bidding</h5>
       {% for item in itemData %}   
-        <div class="d-flex align-items-center mb-5 mt-5">
-          <div class="bg-secondary me-3" style="width: 150px; height: 150px" >
+        <div class="d-flex align-items-center mb-5 mt-5 border border-dark border-2 rounded-3">
+          <div class="imageContainer p-2 col-md-2">
             <img class="openBidImages" src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" alt="{{ item.1 }}" >
           </div>
-          <div class="flex-grow-1 bg-secondary" style="height: 150px">  
-              ID = {{ item.0 }}
-              Name = {{ item.1 }}
-              category = {{ item.2 }}
-              Min Bid Amount = {{ item.3 }}
-              Organization name = {{ item.4 }}
-              Start Time = {{ item.5 }}
-              End Time = {{ item.6 }}
-              Description = {{ item.7 }}
-              BID Amount = {% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}
-              Time Left {{ item.9 }}
-          </div>        
+          <div class="mx-1 col-md-8 p-2 pt-3" style="height: 150px">
+            <div class="d-flex justify-content-between px-3">
+              <div class="fw-bold mb-2 fs-3">
+                {{ item.1 }}
+              </div>
+              <div class="fw-light fs-4">
+                {{ item.2 }}                
+              </div>
+
+            </div>
+            <div class="row px-2">
+              <div class="fs-5">
+                By : Organization name = {{ item.4 }} <br>
+              </div>
+              <div class="fs-6">
+                Description = {{ item.7 | truncatechars:100 }}               
+                </div>
+
+            </div>
+              
+              
+          </div>    
+          <div class="d-flex flex-column mx-1 justify-content-center border-start border-dark border-1 col-md-2 pe-4" style="height: 150px">
+            <div class="row justify-content-center mt-3 mb-3 px-2 fs-5">${% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}</div>
+            <div class="row justify-content-center mt-2 mb-1 px-2 fs-6">{{ item.9 }}</div>
+          </div>    
         </div>        
       {% endfor %}
     </div>
