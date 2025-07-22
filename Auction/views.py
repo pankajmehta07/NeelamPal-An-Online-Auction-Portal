@@ -75,6 +75,9 @@ def addItem(request):
 
     return redirect('/')
 
+def category(request):
+    return render(request, "Auction/category.html")
+
 def saveItem(request):
     if request.method == 'POST' and request.user.is_authenticated and request.user.first_name == "Organization":
         # Extract fields from POST

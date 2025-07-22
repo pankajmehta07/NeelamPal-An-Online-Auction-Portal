@@ -11,5 +11,6 @@ urlpatterns = [
     path("createTables",views.createTables, name="createTables"),
     path("users",views.get_users, name="getusers"),
     path("addItem",views.addItem, name="addItem"),
-    path("saveItem",views.saveItem, name="saveItem")
+    path("saveItem",views.saveItem, name="saveItem"),
+    path("category",views.category, name="category")
 ]
