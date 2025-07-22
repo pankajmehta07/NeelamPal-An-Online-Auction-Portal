@@ -37,14 +37,14 @@
     padding: 6px;
 }
 
-.search-container {
-    /* background-color: burlywood; */
-}
-
-
 .navbar-nav {
     /* background-color: red; */
     width: 22vw;
     display: flex;
     justify-content: space-evenly;
+}
+
+.openBidImages{
+    width: 100px;
+    height: 100px;
 }

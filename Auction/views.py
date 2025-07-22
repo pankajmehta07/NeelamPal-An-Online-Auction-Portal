@@ -40,7 +40,7 @@ def home(request):
 
     cursor.execute(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining 
+                   TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
