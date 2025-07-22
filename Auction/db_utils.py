@@ -1,5 +1,7 @@
 import mysql.connector
 from django.conf import settings
+import platform
+from datetime import datetime, timedelta
 
 def get_connection():
     config = settings.DATABASES['mysql']
@@ -24,4 +26,24 @@ def create_tables():
   
     cursor.close()
     conn.close()
+
+
+def getTimestamp():
+    if platform.system()=="Linux":
+        return datetime.now() + timedelta(hours=5, minutes=45)
+    else:
+        return datetime.now()
+
+def runQuery(query):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(query)
+    data = cursor.fetchall()
+
+    if query[:6].upper() != "SELECT":
+        conn.commit()
+    cursor.close()
+    conn.close()
+    return data
 

@@ -1,18 +1,13 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import logout,login, authenticate
-from types import SimpleNamespace
-from django.contrib.auth.hashers import make_password, check_password
-from django.views.decorators.csrf import csrf_exempt
-from .db_utils import get_connection,create_tables
+from .db_utils import *
 from django.db import connection
 import re
 import os
 from datetime import datetime, timedelta
-from django.contrib.auth.decorators import login_required
 from django.conf import settings
 # Create your views here.
 
@@ -20,25 +15,14 @@ def get_users(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT id, username, password FROM auth_user")
         row = cursor.fetchall()
-        # cursor = conn.cursor(dictionary=True)  # so you get dict results
-
-        # cursor.execute("SELECT id, name FROM users")
-        # rows = cursor.fetchall()
-
-        # cursor.close()
-        # conn.close()
 
         return JsonResponse(row, safe=False)
 
 def home(request):
     param = {}
-    conn = get_connection()
-    cursor = conn.cursor()
-    timestamp = datetime.now() + timedelta(hours=5, minutes=45)
-    param['currentTime'] = timestamp
-    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    timestamp = getTimestamp().strftime('%Y-%m-%d %H:%M:%S')
 
-    cursor.execute(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
+    param['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
                    TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
                    FROM item 
@@ -49,26 +33,15 @@ def home(request):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.bid_start_time <= \'{timestamp}\' and item.bid_end_time > \'{timestamp}\'''')
-    param['itemData'] = cursor.fetchall()
-    
 
-    cursor.close()
-    conn.close()
 
     return render(request,"Auction/index.html", param)
 
 def search(request):
     
-    conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    data = runQuery("SELECT * from organization")
 
-    cursor.execute("SELECT * from organization")
-    row = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return JsonResponse(row, safe=False)
+    return JsonResponse(data, safe=False)
 
 
 def createTables(request): 
@@ -88,17 +61,10 @@ def addItem(request):
 
 def category(request):
     param = {}
-    conn = get_connection()
-    cursor = conn.cursor()
-    #for linux
-    # timestamp = datetime.now() + timedelta(hours=5, minutes=45)
-
-    #for windows
-    timestamp = datetime.now()
-    param['currentTime'] = timestamp
+    timestamp = getTimestamp()
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    cursor.execute(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
+    param['activeItemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
                    TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
                    FROM item 
@@ -109,9 +75,7 @@ def category(request):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.bid_start_time <= \'{timestamp}\' and item.bid_end_time > \'{timestamp}\'''')
-    param['activeItemData'] = cursor.fetchall()
-    print(param['activeItemData'])
-    print(datetime.now())
+
     return render(request, "Auction/category.html", param)
 
 def saveItem(request):
@@ -155,24 +119,19 @@ def saveItem(request):
             return redirect('addItem')
         
 
-        conn = get_connection()
-        cursor = conn.cursor() 
 
-        cursor.execute(f"SELECT 1 FROM item WHERE name = '{name}' and organization_id = {request.user.username}", )
-        if cursor.fetchone():
+        data = runQuery(f"SELECT 1 FROM item WHERE name = '{name}' and organization_id = {request.user.username}", )
+        if data:
             messages.error(request, "Item already exists")
             return redirect('addItem')
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
-        cursor.execute(f'''INSERT INTO item(name, category, description, min_bid_amt,
+        runQuery(f'''INSERT INTO item(name, category, description, min_bid_amt,
                        organization_id, bid_start_time, bid_end_time, filename) 
                        VALUES('{name}','{category}','{description}',{min_bid_amt},
                        {request.user.username},'{start_time_str}','{end_time_str}', '{filename}')''')
         
-        conn.commit()
-        cursor.close()
-        conn.close()
 
         messages.success(request, "Item was added successfully.")
         return redirect('addItem')
@@ -225,20 +184,13 @@ def register_user(request):
         user.first_name = user_type
         user.save()
 
-
-        conn = get_connection()
-        cursor = conn.cursor() 
-
         if user_type=="Organization":
             messages.success(request, "Registration successful. Please use registration number as username for log in .")
-            cursor.execute(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
+            runQuery(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
         else:
             messages.success(request,"Registration successful. Please use citizenship number as username for log in .")
-            cursor.execute(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
+            runQuery(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
         
-        conn.commit()
-        cursor.close()
-        conn.close()
         return redirect('/')
 
     else:
