@@ -6,29 +6,6 @@
 {% endblock headjs %} 
 {% block body %} 
 
-<hr>
-Organization Data:
-<br><br>
-{% for item in itemData %} 
-  ID = {{ item.0 }}<br>
-  Name = {{ item.1 }}<br>
-  category = {{ item.2 }}<br>
-  Min Bid Amount = {{ item.3 }}<br>
-  Organization name = {{ item.4 }}<br>
-  Start Time = {{ item.5 }}<br>
-  End Time = {{ item.6 }}<br>
-  Description = {{ item.7 }}<br>
-  BID Amount = {% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}
-  <br>
-  Time Left {{ item.9 }}  
-  Filename 
-    <img class="openBidImages" src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" alt="{{ item.1 }}" >
-  <hr>
- 
-  
-  
-{% endfor %}
-
 <div id="app"></div>
 
 <div class="container-fluid" style="padding: 20px">
@@ -64,43 +41,35 @@ Organization Data:
     </div>
   </div>
 
+
+
+
+
   <div class="row">
     <div class="col-md-8">
       <h5 id='open-bids'>Open for bidding</h5>
-
-      <div class="d-flex align-items-center mb-5 mt-5">
-        <div
-          class="bg-secondary me-3"
-          style="width: 150px; height: 150px"
-        ></div>
-        <div class="flex-grow-1 bg-secondary" style="height: 150px"></div>
-      </div>
-
-      <div class="d-flex align-items-center mb-5">
-        <div
-          class="bg-secondary me-3"
-          style="width: 150px; height: 150px"
-        ></div>
-        <div class="flex-grow-1 bg-secondary" style="height: 150px"></div>
-      </div>
-
-      <div class="d-flex align-items-center mb-5">
-        <div
-          class="bg-secondary me-3"
-          style="width: 150px; height: 150px"
-        ></div>
-        <div class="flex-grow-1 bg-secondary" style="height: 150px"></div>
-      </div>
-
-      <div class="d-flex align-items-center mb-5">
-        <div
-          class="bg-secondary me-3"
-          style="width: 150px; height: 150px"
-        ></div>
-        <div class="flex-grow-1 bg-secondary" style="height: 150px"></div>
-      </div>
+      {% for item in itemData %}   
+        <div class="d-flex align-items-center mb-5 mt-5">
+          <div class="bg-secondary me-3" style="width: 150px; height: 150px" >
+            <img class="openBidImages" src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" alt="{{ item.1 }}" >
+          </div>
+          <div class="flex-grow-1 bg-secondary" style="height: 150px">  
+              ID = {{ item.0 }}
+              Name = {{ item.1 }}
+              category = {{ item.2 }}
+              Min Bid Amount = {{ item.3 }}
+              Organization name = {{ item.4 }}
+              Start Time = {{ item.5 }}
+              End Time = {{ item.6 }}
+              Description = {{ item.7 }}
+              BID Amount = {% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}
+              Time Left {{ item.9 }}
+          </div>        
+        </div>        
+      {% endfor %}
     </div>
 
+      
     <div class="col-md-4">
       <h5>Notices</h5>
       <div
