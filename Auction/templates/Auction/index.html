@@ -8,18 +8,20 @@
 <hr>
 Organization Data:
 <br><br>
-{% for row in organizationData %} 
-  {% for column in row %} 
-    {{column}}
-  {% endfor %}
-  <br>
-{% endfor %}
-<hr>
-Bidder Data:
-<br><br>
-{% for row in bidderData %} 
-  {{ row.1 }} - {{ row.3 }}   <!--  Get only certain column from the row-->
-  <br>
+
+{% for item in itemData %} 
+  ID = {{ item.0 }}<br>
+  Name = {{ item.1 }}<br>
+  category = {{ item.2 }}<br>
+  Min Bid Amount = {{ item.3 }}<br>
+  Organization name = {{ item.4 }}<br>
+  Start Time = {{ item.5 }}<br>
+  End Time = {{ item.6 }}<br>
+  Description = {{ item.7 }}<br>
+  BID Amount = {% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}<br>
+ 
+  
+  
 {% endfor %}
 
 <div id="app"></div>

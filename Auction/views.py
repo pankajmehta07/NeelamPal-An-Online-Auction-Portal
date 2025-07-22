@@ -12,7 +12,6 @@ from django.db import connection
 import re
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
-
 # Create your views here.
 
 def get_users(request):
@@ -33,11 +32,20 @@ def home(request):
     param = {}
     conn = get_connection()
     cursor = conn.cursor() 
+    
+    timestamp = datetime.now() + timedelta(hours=5, minutes=45)
+    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    cursor.execute("SELECT * from organization") 
-    param['organizationData'] = cursor.fetchall()
-    cursor.execute("SELECT * from bidder") 
-    param['bidderData'] = cursor.fetchall()
+    cursor.execute(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, item.bid_start_time, item.bid_end_time, item.description 
+                   FROM item 
+                   JOIN organization 
+                   ON item.organization_id = organization.reg_no 
+                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                   FROM highest_bid join bid ON 
+                   highest_bid.bid_id = bid.id) AS bidInfo 
+                   ON item.id = bidInfo.item_id 
+                   WHERE item.bid_start_time <= \'{timestamp}\' and item.bid_end_time > \'{timestamp}\'''')
+    param['itemData'] = cursor.fetchall()
 
     cursor.close()
     conn.close()
