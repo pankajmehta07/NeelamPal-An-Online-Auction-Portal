@@ -90,7 +90,11 @@ def category(request):
     param = {}
     conn = get_connection()
     cursor = conn.cursor()
-    timestamp = datetime.now() + timedelta(hours=5, minutes=45)
+    #for linux
+    # timestamp = datetime.now() + timedelta(hours=5, minutes=45)
+
+    #for windows
+    timestamp = datetime.now()
     param['currentTime'] = timestamp
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -106,7 +110,8 @@ def category(request):
                    ON item.id = bidInfo.item_id 
                    WHERE item.bid_start_time <= \'{timestamp}\' and item.bid_end_time > \'{timestamp}\'''')
     param['activeItemData'] = cursor.fetchall()
-
+    print(param['activeItemData'])
+    print(datetime.now())
     return render(request, "Auction/category.html", param)
 
 def saveItem(request):
@@ -123,9 +128,12 @@ def saveItem(request):
         save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
         os.makedirs(save_dir, exist_ok=True)
         filename = image.name
+
         filename = filename.split(".")
         filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
-
+        filename = filename.replace("-",'')
+        filename = filename.replace(":",'')
+        filename = filename.replace(" ",'')
         file_path = os.path.join(save_dir, filename)
         with open(file_path, 'wb+') as destination:
                 for chunk in image.chunks():
