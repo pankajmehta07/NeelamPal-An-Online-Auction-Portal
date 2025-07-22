@@ -60,7 +60,7 @@
           <a class="nav-link{% block openactive %}{% endblock openactive %}" aria-current="page" href="/#open-bids">Open Bids</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link{% block categoryactive %}{% endblock categoryactive %}" href="#">Category</a>
+          <a class="nav-link{% block categoryactive %}{% endblock categoryactive %}" href="/category">Category</a>
         </li>
         {% if user.is_authenticated and user.first_name == "Organization" %}
           <li class="nav-item">
