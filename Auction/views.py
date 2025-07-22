@@ -14,7 +14,6 @@ import os
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-
 # Create your views here.
 
 def get_users(request):
@@ -34,12 +33,24 @@ def get_users(request):
 def home(request):
     param = {}
     conn = get_connection()
-    cursor = conn.cursor() 
+    cursor = conn.cursor()
+    timestamp = datetime.now() + timedelta(hours=5, minutes=45)
+    param['currentTime'] = timestamp
+    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    cursor.execute("SELECT * from organization") 
-    param['organizationData'] = cursor.fetchall()
-    cursor.execute("SELECT * from bidder") 
-    param['bidderData'] = cursor.fetchall()
+    cursor.execute(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
+                   item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
+                   TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
+                   FROM item 
+                   JOIN organization 
+                   ON item.organization_id = organization.reg_no 
+                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                   FROM highest_bid join bid ON 
+                   highest_bid.bid_id = bid.id) AS bidInfo 
+                   ON item.id = bidInfo.item_id 
+                   WHERE item.bid_start_time <= \'{timestamp}\' and item.bid_end_time > \'{timestamp}\'''')
+    param['itemData'] = cursor.fetchall()
+    
 
     cursor.close()
     conn.close()
@@ -91,7 +102,11 @@ def saveItem(request):
 
         save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
         os.makedirs(save_dir, exist_ok=True)
-        file_path = os.path.join(save_dir, image.name)
+        filename = image.name
+        filename = filename.split(".")
+        filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
+
+        file_path = os.path.join(save_dir, filename)
         with open(file_path, 'wb+') as destination:
                 for chunk in image.chunks():
                     destination.write(chunk)
@@ -122,7 +137,10 @@ def saveItem(request):
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
-        cursor.execute(f"INSERT INTO item(name,category,description,min_bid_amt,organization_id,bid_start_time,bid_end_time) VALUES('{name}','{category}','{description}',{min_bid_amt},{request.user.username},'{start_time_str}','{end_time_str}')")
+        cursor.execute(f'''INSERT INTO item(name, category, description, min_bid_amt,
+                       organization_id, bid_start_time, bid_end_time, filename) 
+                       VALUES('{name}','{category}','{description}',{min_bid_amt},
+                       {request.user.username},'{start_time_str}','{end_time_str}', '{filename}')''')
         
         conn.commit()
         cursor.close()
