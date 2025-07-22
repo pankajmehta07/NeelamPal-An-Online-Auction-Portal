@@ -10,8 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .db_utils import get_connection,create_tables
 from django.db import connection
 import re
+import os
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 # Create your views here.
 
@@ -81,7 +83,16 @@ def saveItem(request):
         category = request.POST.get('category')
         description = request.POST.get('description')
         start_time_str = request.POST.get('start_time')  
-        end_time_str = request.POST.get('end_time') 
+        end_time_str = request.POST.get('end_time')
+        image = request.FILES.get('item_image')
+
+        save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
+        os.makedirs(save_dir, exist_ok=True)
+        file_path = os.path.join(save_dir, image.name)
+        with open(file_path, 'wb+') as destination:
+                for chunk in image.chunks():
+                    destination.write(chunk)
+
 
         start_time = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M")
         end_time = datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M")
