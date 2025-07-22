@@ -8,7 +8,6 @@
 <hr>
 Organization Data:
 <br><br>
-
 {% for item in itemData %} 
   ID = {{ item.0 }}<br>
   Name = {{ item.1 }}<br>
@@ -18,7 +17,10 @@ Organization Data:
   Start Time = {{ item.5 }}<br>
   End Time = {{ item.6 }}<br>
   Description = {{ item.7 }}<br>
-  BID Amount = {% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}<br>
+  BID Amount = {% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}
+  <br>
+  {{ item.9 }}
+  
  
   
   
