@@ -1,6 +1,7 @@
 
 {% extends 'Auction/layout.html' %} 
 {% load custom_filters %}
+{% load static %}
 {% block openactive %} active{% endblock openactive %} 
 {% block title %} NeelamPal {% endblock title %} 
 {% block headjs%}
@@ -8,74 +9,123 @@
 {% endblock headjs %} 
 {% block body %} 
 
+<h3 class="mt-4 mb-3 ms-3 fs-1 fw-bold">Ongoing Bids</h3>
+{% if not activeItemData %}
+  <div class="contianer-fluid p-4">
+    <p class="fs-3">
+      No Ongoing Auctions
+    </p>
+  </div>
+{% else %}
 
-<h3 class="mt-4 mb-3 ms-3">Ongoing Bids</h3>
-<div class="container-fluid d-flex flex-col pe-3 " >
+  <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3" >
  {% for item in activeItemData %}
- <div class="card col-md-3" style="padding:10px; border: 2px solid #333;">
-   <div class="d-flex flex-row" style="height:180px">
-     {% load static %}
-     <img src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" class="card-img-top" alt="..." style="height: 150px; width:150px">
-      <div class="card-body">
-        <h4 class="card-title" style="height:100px">{{ item.1 }}</h4>
-        <h5 class="list-group-item">${% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}</h5>
-      </div>  
-    </div>
-    <div class="card-body">
-      <p class="card-text">{{ item.7 }}</p>
-      <div class="d-flex flex-row align-items-center justify-content-center">
-        <h5 class="mb-0 ms-3">remaining time : {{ item.9 | getTimeDiff }}</h5>
+    <div class="col-md-4 cards">
+      <div class="card card-custom">
+        <div class="image-wrapper">
+          <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.5 }}" alt="...">
+        </div>
+        <div class="content-box">
+          <div class="card-title fs-4 fw-bold">
+            {{ item.1|truncatechars:30 }}
+          </div>
+          <div class="card-bid-amount fw-bold">
+            ${% if item.3 %}{{ item.3 }}  {% else %} {{ item.2 }} {% endif %}
+          </div>
+          <div class="card-time">
+            <b>Remaining time : </b>{{ item.4 | getTimeDiff }}
+          </div>
+          <div class="read-more">
+            Show Full Info
+          </div>
+        </div>
       </div>
     </div>
+    {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
+      </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
+    {% endif %}
+  {% endfor %}
   </div>
-  {% if forloop.counter|divisibleby:4 and forloop.counter > 0 and not forloop.last %}
-  </div> <div class="container-fluid d-flex flex-col gap-3">
+{% endif %}
+  
+<h3 class="mt-5 mb-3 ms-3 fs-1 fw-bold">Upcoming Bids</h3>
+{% if not upcomingItemData %}
+  <div class="contianer-fluid p-4">
+    <p class="fs-3">
+      No upcoming Auctions
+    </p>
+  </div>
+{% else %}
+
+  <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
+  {% for item in upcomingItemData %}
+    <div class="col-md-4 cards">
+      <div class="card card-custom">
+        <div class="image-wrapper">
+          <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
+        </div>
+        <div class="content-box">
+          <div class="card-title fs-4 fw-bold">
+            {{ item.1|truncatechars:30 }}
+          </div>
+          <div class="card-bid-amount fw-bold">
+            $ {{ item.2 }}
+          </div>
+          <div class="card-time">
+            <b>Start Time :</b> {{ item.3 }}
+          </div>
+          <div class="read-more">
+            Show Full Info
+          </div>
+        </div>
+      </div>
+    </div>
+  {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
+    </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
   {% endif %}
   {% endfor %}
-</div>
-
-<h3 class="mt-5 mb-3 ms-3">Upcoming Bids</h3>
-<div class="container-fluid d-flex flex-col gap-3">
- {% for item in upcomingItemData %}
- <div class="card" style="width: 20rem; padding:10px; border: 2px solid #333;">
-  <div class="d-flex flex-row" style="height:180px">
-     {% load static %}
-     <img src="{% static 'Auction/images/item_images/' %}{{ item.9 }}" class="card-img-top" alt="..." style="height: 150px; width:150px">
-      <div class="card-body">
-        <h4 class="card-title" style="height:100px">{{ item.1 }}</h4>
-        <h5 class="list-group-item">${% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}</h5>
-      </div>
   </div>
-      <div class="card-body">
-        <p class="card-text">{{ item.7 }}</p>
-        <div class="d-flex flex-row align-items-center justify-content-center">
-          <h5 class="mb-0 ms-3">remaining time</h5>
-        </div>
-      </div>
-  </div>
-  {% endfor %}
-</div>
+{% endif %}
+ 
 
-<h3 class="mt-5 mb-3 ms-3">Closed Bids</h3>
-<div class="container-fluid d-flex flex-col gap-3 mb-4">
+<h3 class="mt-5 mb-3 ms-3 fs-1 fw-bold">Closed Bids</h3>
+{% if not endedItemData %}
+  <div class="contianer-fluid p-4">
+    <p class="fs-3">
+      No Past Auctions
+    </p>
+  </div>
+{% else %}
+
+  <div class="container-fluid d-flex flex-col gap-3  mt-3 mb-3">
  {% for item in endedItemData %}
- <div class="card" style="width: 20rem; padding:10px; border: 2px solid #333;">
-  <div class="d-flex flex-row" style="height:180px">
-     {% load static %}
-     <img src="{% static 'Auction/images/item_images/' %}{{ item.9 }}" class="card-img-top" alt="..." style="height: 150px; width:150px">
-      <div class="card-body">
-        <h4 class="card-title" style="height:100px">{{ item.1 }}</h4>
-        <h5 class="list-group-item">${% if item.8 %}{{ item.8 }}  {% else %} {{ item.3 }} {% endif %}</h5>
-      </div>
-  </div>
-      <div class="card-body">
-        <p class="card-text">{{ item.7 }}</p>
-        <div class="d-flex flex-row align-items-center justify-content-center">
-          <h5 class="mb-0 ms-3">remaining time</h5>
+  
+    <div class="col-md-4 cards">
+      <div class="card card-custom">
+        <div class="image-wrapper">
+          <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
+        </div>
+        <div class="content-box">
+          <div class="card-title fs-4 fw-bold">
+            {{ item.1|truncatechars:30 }}
+          </div>
+          <div class="card-bid-amount fw-bold">
+            $ {% if item.3 %}{{ item.3 }}  {% else %} {{ item.5 }} {% endif %}
+          </div>
+          <div class="card-time">
+            <b>End Time :</b> {{ item.2 }}
+          </div>
+          <div class="read-more">
+            Show Full Info
+          </div>
         </div>
       </div>
-  </div>
+    </div>
+    {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
+      </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
+    {% endif %}
   {% endfor %}
-</div>
-
+  </div>
+{% endif %}
 {% endblock body %}
+p

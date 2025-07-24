@@ -33,7 +33,7 @@ def home(request):
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' ''')
+                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' limit 5''')
 
     
 
@@ -66,40 +66,28 @@ def category(request):
     timestamp = getTimestamp()
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    param['activeItemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
-                   item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
+    param['activeItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, bidInfo.amount,
                    TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
                    FROM item 
-                   JOIN organization 
-                   ON item.organization_id = organization.reg_no 
                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_start_time <= \'{timestamp}\' and item.bid_end_time > \'{timestamp}\'''')
+                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' order by time_remaining limit 18''')
     # Upcoming items
-    param['upcomingItemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
-                   item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount, item.filename
-                   FROM item 
-                   JOIN organization 
-                   ON item.organization_id = organization.reg_no 
-                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
-                   FROM highest_bid join bid ON 
-                   highest_bid.bid_id = bid.id) AS bidInfo 
-                   ON item.id = bidInfo.item_id 
-                   WHERE item.bid_start_time > '{timestamp}' ''')
-
+    param['upcomingItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
+                   item.bid_start_time, item.filename
+                   FROM item
+                   WHERE item.bid_start_time > '{timestamp}'  order by item.bid_start_time limit 6''')
     # Closed items
-    param['endedItemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
-                   item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount, item.filename
+    param['endedItemData'] = runQuery(f'''SELECT item.id, item.name, 
+                   item.bid_end_time, bidInfo.amount, item.filename, item.min_bid_amt
                    FROM item 
-                   JOIN organization 
-                   ON item.organization_id = organization.reg_no 
                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_end_time <= '{timestamp}' ''')
+                   WHERE item.bid_end_time <= '{timestamp}' order by item.bid_end_time desc limit 6''')
 
     return render(request, "Auction/category.html", param)
 
