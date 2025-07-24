@@ -1,5 +1,7 @@
 
-{% extends 'Auction/layout.html' %} {% block openactive %} active{% endblock openactive %} 
+{% extends 'Auction/layout.html' %} 
+{% load custom_filters %}
+{% block openactive %} active{% endblock openactive %} 
 {% block title %} NeelamPal {% endblock title %} 
 {% block headjs%}
 
@@ -22,7 +24,7 @@
       <div class="card-body">
         <p class="card-text">{{ item.7 }}</p>
         <div class="d-flex flex-row align-items-center justify-content-center">
-          <h5 class="mb-0 ms-3">remaining time</h5>
+          <h5 class="mb-0 ms-3">remaining time : {{ item.9 | getTimeDiff }}</h5>
         </div>
       </div>
   </div>
