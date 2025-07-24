@@ -12,5 +12,6 @@ urlpatterns = [
     path("users",views.get_users, name="getusers"),
     path("addItem",views.addItem, name="addItem"),
     path("saveItem",views.saveItem, name="saveItem"),
-    path("category",views.category, name="category")
+    path("category",views.category, name="category"),
+    path("item/<int:itemID>",views.item, name="item")
 ]

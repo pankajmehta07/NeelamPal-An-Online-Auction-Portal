@@ -153,6 +153,25 @@ def saveItem(request):
         messages.error(request, "Invalid request")
         return redirect('/')   
 
+def item(request, itemID):
+    param = {}
+    timestamp = getTimestamp()    
+    timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    param['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
+                   item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
+                   TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
+                   FROM item 
+                   JOIN organization 
+                   ON item.organization_id = organization.reg_no 
+                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                   FROM highest_bid join bid ON 
+                   highest_bid.bid_id = bid.id) AS bidInfo 
+                   ON item.id = bidInfo.item_id 
+                   WHERE item.id = {itemID}''')[0]
+    
+    return render(request, "Auction/itemDetails.html", param) 
+
+
 def logout_user(request):
     if request.method == 'POST':
         logout(request)

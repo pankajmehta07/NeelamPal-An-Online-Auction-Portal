@@ -1,0 +1,26 @@
+{% extends 'Auction/layout.html' %} 
+{% load custom_filters %}
+{% load static %}
+{% block openactive %} active{% endblock openactive %} 
+{% block title %} NeelamPal {% endblock title %} 
+{% block headjs%}
+
+{% endblock headjs %} 
+{% block body %} 
+
+ITEM DETAILS
+
+{{ item }}
+<br> ID  :  {{ item.0 }}
+<br> Name  :  {{ item.1 }}
+<br> Category  :  {{ item.2 }}
+<br> Min Bid Amount  :  {{ item.3 }}
+<br> organization name  :  {{ item.4 }}
+<br> bid start time  :  {{ item.5 }}
+<br> bid end time  :  {{ item.6 }}
+<br> Description :  {{ item.7 }}
+<br> Amount  :  {{ item.8 }}
+<br> timediff  :  {{ item.9|getTimeDiff }}
+<br> <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" alt="...">
+
+{% endblock body %}

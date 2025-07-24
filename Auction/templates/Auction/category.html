@@ -35,9 +35,7 @@
           <div class="card-time">
             <b>Remaining time : </b>{{ item.4 | getTimeDiff }}
           </div>
-          <div class="read-more">
-            Show Full Info
-          </div>
+          <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
         </div>
       </div>
     </div>
@@ -74,9 +72,7 @@
           <div class="card-time">
             <b>Start Time :</b> {{ item.3 }}
           </div>
-          <div class="read-more">
-            Show Full Info
-          </div>
+          <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
         </div>
       </div>
     </div>
@@ -115,9 +111,7 @@
           <div class="card-time">
             <b>End Time :</b> {{ item.2 }}
           </div>
-          <div class="read-more">
-            Show Full Info
-          </div>
+          <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
         </div>
       </div>
     </div>
@@ -128,4 +122,3 @@
   </div>
 {% endif %}
 {% endblock body %}
-p
