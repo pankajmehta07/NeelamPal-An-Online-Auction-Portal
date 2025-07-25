@@ -62,7 +62,7 @@
         <li class="nav-item">
           <a class="nav-link{% block categoryactive %}{% endblock categoryactive %}" href="/category">Category</a>
         </li>
-        {% if user.is_authenticated and user.first_name == "Organization" %}
+        {% if user.is_authenticated and user.user_type == "Organization" %}
           <li class="nav-item">
             <a class="nav-link{% block addItemactive %}{% endblock addItemactive %}" href="/addItem">Add Item</a>
           </li>
@@ -88,7 +88,7 @@
     {% endif %}
     {% if user.is_authenticated %}    
       <form class="d-flex" method="POST" , action="/logout">
-        {% csrf_token %}
+        {% csrf_token %}  
         <button class="btn btn-secondary mx-2" type="submit">Logout</button>
       </form>
     {% endif %}
@@ -115,16 +115,22 @@
               <form method="POST" action="/login"> 
                 {% csrf_token %}
                 <div class="pb-5 pt-3">
-                  <h2 class="fw-bold mb-2 pb-5 text-uppercase">Login</h2>
-                  
+                  <h2 class="fw-bold mb-4 pb-4 text-uppercase">Login</h2>
+                  <input type="hidden" name="userType" value="Bidder" id="LoginUserType">
+
+                  <div class="btn-group mb-4" role="group" aria-label="User Type Switch">
+                    <input type="radio" class="btn-check" name="user_type" id="LoginbidderRadio" autocomplete="off" value="bidder" checked>
+                    <label class="btn btn-outline-light" for="LoginbidderRadio" onclick="switchLoginType('bidder')">Bidder</label>
+
+                    <input type="radio" class="btn-check" name="user_type" id="LoginorgRadio" autocomplete="off" value="organization">
+                    <label class="btn btn-outline-light" for="LoginorgRadio" onclick="switchLoginType('organization')">Organization</label>
+                  </div>
                   <div class="form-outline form-white mb-4" style="display: flex;">
-                    <label class="form-label col-2 pt-2 mt-1 pe-3 text-start" for="typeusernameX" style="width: 20%;">Username</label>
-                    <input type="text" name="username" id="typeusernameX" placeholder="username" class="form-control form-control-lg col-9" style="width: 80%;" required />
+                    <input type="text" name="username" id="LoginUsername" placeholder="Citizenship Number" class="form-control form-control-lg col-9" required />
                   </div>
 
                   <div class="form-outline form-white mb-4" style="display: flex;">
-                    <label class="form-label col-2 pt-2 mt-1 pe-3 text-start" for="password" style="width: 20%;">Password</label>
-                    <div class="input-group" id="LoginPasswordDiv" style="width: 80%;">
+                    <div class="input-group" id="LoginPasswordDiv">
                       <input type="password" placeholder="password" name="password" id="LoginPassword" class="form-control form-control-lg password" required style="border-right:0px" onfocus="handleFocus(this, 'LoginPasswordDiv')", onblur="handleBlur(this, 'LoginPasswordDiv')"/>
                       <span class="input-group-text bg-white  p-0 pe-2" onclick="togglePasswordVisibility('LoginPassword', 'toggleLoginPasswordIcon')" style="cursor: pointer;">
                         <i class="far fa-eye-slash" id="toggleLoginPasswordIcon"></i>
@@ -164,11 +170,11 @@
                   <input type="hidden" name="userType" value="Bidder" id="userType">
 
                   <div class="btn-group mb-4" role="group" aria-label="User Type Switch">
-                    <input type="radio" class="btn-check" name="user_type" id="bidderRadio" autocomplete="off" value="bidder" checked>
-                    <label class="btn btn-outline-light" for="bidderRadio" onclick="switchType('bidder')">Bidder</label>
+                    <input type="radio" class="btn-check" name="user_type" id="RegisterBidderRadio" autocomplete="off" value="bidder" checked>
+                    <label class="btn btn-outline-light" for="RegisterBidderRadio" onclick="switchRegisterType('bidder')">Bidder</label>
 
-                    <input type="radio" class="btn-check" name="user_type" id="orgRadio" autocomplete="off" value="organization">
-                    <label class="btn btn-outline-light" for="orgRadio" onclick="switchType('organization')">Organization</label>
+                    <input type="radio" class="btn-check" name="user_type" id="RegisterOrgRadio" autocomplete="off" value="organization">
+                    <label class="btn btn-outline-light" for="RegisterOrgRadio" onclick="switchRegisterType('organization')">Organization</label>
                   </div>
 
                   <div class="form-outline form-white mb-3" style="display: flex;">
@@ -269,17 +275,6 @@
       }
     });
     </script>
-  <!-- <script>
-    const input = document.getElementById('inputPassword');
-    const passDiv = document.getElementById('PasswordDiv');
-
-    input.addEventListener('focus', () => {
-      passDiv.classList.add('highlight-border');
-    });
-    input.addEventListener('blur', () => {
-      passDiv.classList.remove('highlight-border');
-    });
-  </script> -->
 {% endif %}
   
 </body>

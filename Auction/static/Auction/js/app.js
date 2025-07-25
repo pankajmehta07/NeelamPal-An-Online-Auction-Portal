@@ -26,29 +26,40 @@ function handleBlur(element,divID){
 }
 
 
-function switchType(type) {
-    if (type === 'bidder') {        
-      document.getElementById('usernameInputLabel').innerText = "Citizenship No";
-      document.getElementById('userType').value = "Bidder";
-      document.getElementById('usernameInput').placeholder = "Enter citizenship number (username)";
-      document.getElementById('nameInput').placeholder = "Enter full name";
-      document.getElementById('usernameInput').value = "";
-      document.getElementById('nameInput').value = "";
-      document.getElementById('contactInput').value = "";
-      document.getElementById('addressInput').value = "";
-      document.getElementById('registerPassword').value = "";
-    } else {
-        document.getElementById('usernameInputLabel').innerText = "Registration No";
-      document.getElementById('userType').value = "Organization";
-      document.getElementById('usernameInput').value = "";
-      document.getElementById('nameInput').value = "";
-      document.getElementById('contactInput').value = "";
-      document.getElementById('addressInput').value = "";
-      document.getElementById('registerPassword').value = "";
-        document.getElementById('usernameInput').placeholder = "Enter registration number (username)";
-        document.getElementById('nameInput').placeholder = "Enter oraganization name";
-    }
+function switchRegisterType(type) {
+  if (type === 'bidder') {        
+    document.getElementById('usernameInputLabel').innerText = "Citizenship No";
+    document.getElementById('userType').value = "Bidder";
+    document.getElementById('usernameInput').placeholder = "Enter citizenship number (username)";
+    document.getElementById('nameInput').placeholder = "Enter full name";
+    document.getElementById('usernameInput').value = "";
+    document.getElementById('nameInput').value = "";
+    document.getElementById('contactInput').value = "";
+    document.getElementById('addressInput').value = "";
+    document.getElementById('registerPassword').value = "";
+  } else {
+      document.getElementById('usernameInputLabel').innerText = "Registration No";
+    document.getElementById('userType').value = "Organization";
+    document.getElementById('usernameInput').value = "";
+    document.getElementById('nameInput').value = "";
+    document.getElementById('contactInput').value = "";
+    document.getElementById('addressInput').value = "";
+    document.getElementById('registerPassword').value = "";
+      document.getElementById('usernameInput').placeholder = "Enter registration number (username)";
+      document.getElementById('nameInput').placeholder = "Enter oraganization name";
   }
+}
+function switchLoginType(type) {
+  if (type === 'bidder') {        
+    document.getElementById('LoginUserType').value = "Bidder";
+    document.getElementById('LoginUsername').placeholder = "Citizenship Number";
+  } else {
+    document.getElementById('LoginUserType').value = "Organization";
+    document.getElementById('LoginUsername').placeholder = "Registration Number";
+  }
+  document.getElementById('LoginPassword').value = "";
+  document.getElementById('LoginUsername').value = "";
+}
 function updateEndTimeMin(startID, endID, minGap) {
     const value = new Date(document.getElementById(startID).value); 
     value.setMinutes(value.getMinutes() + minGap);

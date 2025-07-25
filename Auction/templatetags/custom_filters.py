@@ -3,12 +3,16 @@ from django import template
 register = template.Library()
 
 @register.filter(name='getTimeDiff')  # You can also just use @register.filter
-def getTimeDiff(value):
+def getTimeDiff(seconds):
 
-    days = value.days
+    days = seconds // 86400
+    hours = (seconds % 86400) // 3600
+    minutes = (seconds % 3600) // 60
+    secs = seconds % 60
+
+    # days = value.days
 
     if days > 0:
         return f"{days} days"
     else:
-        values = str(value).split()
-        return f"{values[-1]}"
+        return f"{hours:02}:{minutes:02}:{secs:02}"

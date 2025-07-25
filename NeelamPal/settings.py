@@ -31,7 +31,6 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.81','192.168.1.67']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -45,7 +44,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'Auction.middleware.session_user.RawSQLUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -75,11 +74,11 @@ WSGI_APPLICATION = 'NeelamPal.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {  # SQLite for auth system
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'mysql': {    # MySQL for app-specific data
+    # 'default': {  # SQLite for auth system
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
+    'default': {    # MySQL for app-specific data
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'auction',
         'USER': 'user',
@@ -134,5 +133,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    'Auction.auth_backend.RawSQLAuthBackend',
+    # 'django.contrib.auth.backends.ModelBackend',
 ]

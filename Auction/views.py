@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import JsonResponse
-from django.contrib.auth.models import User
 from django.contrib.auth import logout,login, authenticate
+from django.contrib.auth.hashers import make_password
 from .db_utils import *
 from django.db import connection
 import re
@@ -25,7 +25,7 @@ def home(request):
     # Active items
     param['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -52,7 +52,7 @@ def createTables(request):
     return redirect('home')
 
 def addItem(request): 
-    if request.user.is_authenticated and request.user.first_name == "Organization":
+    if request.user.is_authenticated and request.user.user_type == "Organization":
         return render(request,"Auction/add_item.html")
     
     messages.error(request, "Invalid request")
@@ -67,7 +67,7 @@ def category(request):
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
     param['activeItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, bidInfo.amount,
-                   TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename
                    FROM item 
                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
                    FROM highest_bid join bid ON 
@@ -92,7 +92,7 @@ def category(request):
     return render(request, "Auction/category.html", param)
 
 def saveItem(request):
-    if request.method == 'POST' and request.user.is_authenticated and request.user.first_name == "Organization":
+    if request.method == 'POST' and request.user.is_authenticated and request.user.user_type == "Organization":
         # Extract fields from POST
         name = request.POST.get('name')
         min_bid_amt = request.POST.get('min_bid_amount')
@@ -133,7 +133,7 @@ def saveItem(request):
         
 
 
-        data = runQuery(f"SELECT 1 FROM item WHERE name = '{name}' and organization_id = {request.user.username}", )
+        data = runQuery(f"SELECT 1 FROM item WHERE name = '{name}' and organization_id = {request.user.id}", )
         if data:
             messages.error(request, "Item already exists")
             return redirect('addItem')
@@ -143,7 +143,7 @@ def saveItem(request):
         runQuery(f'''INSERT INTO item(name, category, description, min_bid_amt,
                        organization_id, bid_start_time, bid_end_time, filename) 
                        VALUES('{name}','{category}','{description}',{min_bid_amt},
-                       {request.user.username},'{start_time_str}','{end_time_str}', '{filename}')''')
+                       {request.user.id},'{start_time_str}','{end_time_str}', '{filename}')''')
         
 
         messages.success(request, "Item was added successfully.")
@@ -159,7 +159,7 @@ def item(request, itemID):
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
     param['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMEDIFF(item.bid_end_time, '{timestamp}') AS time_remaining, item.filename
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -175,26 +175,16 @@ def item(request, itemID):
 def logout_user(request):
     if request.method == 'POST':
         logout(request)
+        request.session.pop('user_id', None)
+        request.session.pop('user_type', None)
         messages.success(request, "Log out successful.")
     else:
         messages.error(request, "Invalid Request.")
-
-    # For 0 ORM
-    # try:
-    #     del request.session['_auth_user_id']
-    #     del request.session['_auth_user_backend']
-    #     if '_manual_auth' in request.session:
-    #         del request.session['_manual_auth']
-    # except KeyError:
-    #     pass
-
-    # return JsonResponse({'message': 'Logout successful'}, status=200)
     return redirect('home')
 
 
 def register_user(request):
     if request.method == 'POST':
-        # Extract fields from POST
         name = request.POST.get('name')
         contact = re.sub(r'\D', '',request.POST.get('contact'))
         address = request.POST.get('address')
@@ -206,22 +196,24 @@ def register_user(request):
             messages.error(request, "Please fill all required fields.")
             return redirect('/')
 
+        with connection.cursor() as cursor:
+            if user_type=="Organization":
+                cursor.execute("SELECT reg_no FROM organization WHERE reg_no = %s", [username])
+            else:
+                cursor.execute("SELECT citizenship_no FROM bidder WHERE citizenship_no = %s", [username])
+            
+            if cursor.fetchone():
+                messages.error(request, "Username already exists.")
+                return redirect('/')
 
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists.")
-            return redirect('/')
+            hashed_password = make_password(password)
 
-        # Create user
-        user = User.objects.create_user(username=username, password=password)
-        user.first_name = user_type
-        user.save()
-
-        if user_type=="Organization":
-            messages.success(request, "Registration successful. Please use registration number as username for log in .")
-            runQuery(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact})")
-        else:
-            messages.success(request,"Registration successful. Please use citizenship number as username for log in .")
-            runQuery(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact})")
+            if user_type=="Organization":
+                messages.success(request, "Registration successful. Please use registration number as username for log in .")
+                runQuery(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact}, '{hashed_password}')")
+            else:
+                messages.success(request,"Registration successful. Please use citizenship number as username for log in .")
+                runQuery(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact}, '{hashed_password}')")
         
         return redirect('/')
 
@@ -229,36 +221,23 @@ def register_user(request):
         messages.error(request, "Invalid request")
         return redirect('/')
 
-    # # Without Using ORM
-    # with connection.cursor() as cursor:
-    #     # Check if username exists
-    #     cursor.execute("SELECT 1 FROM auth_user WHERE username = %s", [username])
-    #     if cursor.fetchone():
-    #         return JsonResponse({'error': 'User already exists'}, status=400)
-
-    #     # Create user (default values for required fields)
-    #     hashed_pw = make_password(password)
-    #     cursor.execute("""
-    #         INSERT INTO auth_user 
-    #         (username, password, is_superuser, is_staff, is_active, date_joined, first_name, last_name, email)
-    #         VALUES (%s, %s, 0, 0, 1, CURRENT_TIMESTAMP, '', '', '')
-    #     """, [username, hashed_pw])
-
-    # # return JsonResponse({'message': 'User registered successfully'}, status=201)
-    # return redirect('home')
-
 def login_user(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
+        user_type = request.POST.get('userType')
 
-        if not username or not password:
-            return JsonResponse({'error': 'Username and password are required'}, status=400)
+        if not username or not password or not user_type or (user_type!="Organization" and user_type != "Bidder"):
+            messages.error(request, "Invalid credentials.")
+            return redirect('/#login')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=username, password=password, user_type=user_type)
 
-        if user is not None:
-            login(request, user)
+        if user:
+            login(request, user, backend='your_app.auth_backend.RawSQLAuthBackend')
+            request.session['user_id'] = user.id
+            request.session['user_type'] = user_type
+            request.session.modified = True
             messages.success(request, "Log in successful.")
             return redirect('home')
         else:
@@ -266,27 +245,4 @@ def login_user(request):
             return redirect('home')
     messages.error(request, "Only POST requests are allowed.")
     return redirect('home')
-        
-        # Without Using ORM
-        # with connection.cursor() as cursor:
-        #     cursor.execute("SELECT id, password FROM auth_user WHERE username = %s", [username])
-        #     row = cursor.fetchone()
-
-        # if not row:
-        #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
-
-        # user_id, hashed_pw = row
-        # if check_password(password, hashed_pw):
-        #     # user = User.objects.get(pk=user_id)
-        #     # login(request, user)
-
-        #     # For 0 ORM
-        #     # ✅ Manually set session values
-        #     request.session['_auth_user_id'] = user_id
-        #     request.session['_auth_user_backend'] = 'django.contrib.auth.backends.ModelBackend'
-        #     request.session['_manual_auth'] = True  # optional, to mark custom login
-
-        #     return JsonResponse({'message': 'Login successful'}, status=200)
-        # else:
-        #     return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
