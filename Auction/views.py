@@ -40,10 +40,16 @@ def home(request):
     return render(request,"Auction/index.html", param)
 
 def search(request):
-    
-    data = runQuery("SELECT * from organization")
+    searchTerm = request.GET.get('search')
+    param = {}
+    param['allItems'] = runQuery("SELECT * from item")
+    param['searchResults'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
+                   item.bid_start_time, item.filename
+                   FROM item
+                   where item.name like '%{searchTerm}%' or item.category like '%{searchTerm}%' limit 20 ''')
+    print(f"{searchTerm}\n{param['searchResults']}")
 
-    return JsonResponse(data, safe=False)
+    return render(request,"Auction/search.html", param)
 
 
 def createTables(request): 
