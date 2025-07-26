@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth import logout,login, authenticate
 from django.contrib.auth.hashers import make_password
-from .db_utils import *
+from .utils import *
 from django.db import connection
 import re
 import os
@@ -48,7 +48,7 @@ def home(request):
     return render(request,"Auction/index.html", param)
 
 def search(request):
-    searchTerm = request.GET.get('search')
+    searchTerm = filter(request.GET.get('search'))
     params = {}
     params['searchResults'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
                    item.bid_start_time, item.filename
@@ -164,10 +164,10 @@ def category(request):
 def saveItem(request):
     if request.method == 'POST' and request.user.is_authenticated and request.user.user_type == "Organization":
         # Extract fields from POST
-        name = request.POST.get('name')
+        name = filter(request.POST.get('name'))
         min_bid_amt = request.POST.get('min_bid_amount')
-        category = request.POST.get('category')
-        description = request.POST.get('description')
+        category = filter(request.POST.get('category'))
+        description = filter(request.POST.get('description'))
         start_time_str = request.POST.get('start_time')  
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
@@ -255,10 +255,10 @@ def logout_user(request):
 
 def register_user(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
+        name = filter(request.POST.get('name'))
         contact = re.sub(r'\D', '',request.POST.get('contact'))
-        address = request.POST.get('address')
-        user_type = request.POST.get('userType')  
+        address = filter(request.POST.get('address'))
+        user_type = filter(request.POST.get('userType')  )
         username = re.sub(r'\D', '', request.POST.get('usernameInput'))
         password = request.POST.get('password')
 
@@ -293,7 +293,7 @@ def register_user(request):
 
 def login_user(request):
     if request.method == "POST":
-        username = request.POST.get('username')
+        username = re.sub(r'\D', '', request.POST.get('username'))
         password = request.POST.get('password')
         user_type = request.POST.get('userType')
 

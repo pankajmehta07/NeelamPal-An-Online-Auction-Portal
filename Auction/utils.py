@@ -24,3 +24,8 @@ def runQuery(query):
         data = cursor.fetchall()
         return data
 
+def filter(words):
+    words = words.replace("\\", "\\\\")
+    words = words.replace("'", "\'")
+    words = words.replace('"', '\"')
+    return words
