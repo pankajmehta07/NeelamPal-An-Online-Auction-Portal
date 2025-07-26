@@ -8,32 +8,40 @@
 {% endblock headjs %} 
 {% block body %} 
 
-<div class="container mt-4">
+<div class="info-box container mt-4">
   <div class="row">
-    <div class="col-md-6">
-      <img src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" class="img-fluid" alt="Item image">
+    <div class="info col-md-6">
+        <div class="left">
+            <div class="col-md-6">
+              <div style="min-width:480px; min-height:270px; aspect-ratio:16/9; overflow:hidden;">
+                <img src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" class="img-fluid " alt="Item image" style="object-fit:cover;">
+              </div>
+            </div>
+               <form method="POST" action="/bid">
+                 {% csrf_token %}
+                   <div class="form-group mt-3">
+                    <input type="hidden" name="item_id" value="{{ item.0 }} ">
+                    <div class="text-center">
+                        <label for="bid_amount" style="font-size:18px">Your Bid Amount:</label>
+                    </div>
+                    <input type="number" name="bid_amount" step="1" min="{{ item.3 }}" class="form-control" required>
+                    <button type="submit" class="btn btn-primary mt-2">Place Bid</button>
+                   </div>
+                </form>
+            </div>
+      <div class="details ms-5">
+        <h2>{{ item.1 }}</h2>
+        <br>
+        <p><strong>Category:</strong> {{ item.2 }}</p>
+        <p><strong>Organization:</strong> {{ item.4 }}</p>
+        <p><strong>Min Bid:</strong> ${{ item.3 }}</p>
+        <p><strong>Highest Bid:</strong> ${{ item.8|default:"No bids yet" }}</p>
+        <p><strong>Start:</strong> {{ item.5 }}</p>
+        <p><strong>End:</strong> {{ item.6 }}</p>
+        <p><strong>Time Remaining:</strong> {{ item.9 }} seconds</p>
+        <p style="min-height:40px; height:auto; overflow:auto; word-break:break-word;"><strong>Description:</strong> {{ item.7 }}</p>
+      </div>
     </div>
-    <div class="col-md-6">
-      <h2>{{ item.1 }}</h2>
-      <p><strong>Category:</strong> {{ item.2 }}</p>
-      <p><strong>Organization:</strong> {{ item.4 }}</p>
-      <p><strong>Min Bid:</strong> ${{ item.3 }}</p>
-      <p><strong>Highest Bid:</strong> ${{ item.8|default:"No bids yet" }}</p>
-      <p><strong>Start:</strong> {{ item.5 }}</p>
-      <p><strong>End:</strong> {{ item.6 }}</p>
-      <p><strong>Time Remaining:</strong> {{ item.9 }} seconds</p>
-      <p><strong>Description:</strong> {{ item.7 }}</p>
-
-      <form method="POST" action="/bid">
-        {% csrf_token %}
-        <div class="form-group mt-3">
-        <input type="hidden" name="item_id" value="{{ item.0 }} ">
-          <label for="bid_amount">Your Bid Amount</label>
-          <input type="number" name="bid_amount" step="0.01" min="{{ item.3 }}" class="form-control" required style="width: 70%;">
-          <button type="submit" class="btn btn-primary mt-2">Place Bid</button>
-        </div>
-      </form>
-    </div>
-  </div>
+   <div>
 </div>
 {% endblock body %}
