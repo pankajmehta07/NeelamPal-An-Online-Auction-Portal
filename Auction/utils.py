@@ -26,6 +26,6 @@ def runQuery(query):
 
 def filter(words):
     words = words.replace("\\", "\\\\")
-    words = words.replace("'", "\'")
-    words = words.replace('"', '\"')
+    words = words.replace("'", "\\'")
+    words = words.replace('"', '\\"')
     return words

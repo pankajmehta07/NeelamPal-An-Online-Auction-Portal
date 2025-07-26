@@ -29,7 +29,6 @@ def profile(request):
 def home(request):
     param = {}
     timestamp = getTimestamp().strftime('%Y-%m-%d %H:%M:%S')
-
     # Active items
     param['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
@@ -61,9 +60,10 @@ def search(request):
 def showItems(request):    
     if request.user.is_authenticated and request.user.user_type == "Organization":
         params = {}
-        params['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, 
-                    organization.name, item.bid_start_time, item.bid_end_time, item.description, 
-                    bidInfo.amount, item.filename
+        timestamp = getTimestamp()
+        params['itemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
+                    item.bid_start_time, item.filename, item.bid_end_time, bidInfo.amount,
+                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -73,10 +73,10 @@ def showItems(request):
                    ON item.id = bidInfo.item_id 
                    WHERE item.organization_id = {request.user.id}''')
 
-        return render(request,"Auction/showItems.html", params)
-    
+        return render(request,"Auction/showItems.html", params)    
     messages.error(request, "Invalid request")
     return redirect("/")
+
 def bid(request):
     if request.method == 'POST':
         try:
@@ -229,7 +229,7 @@ def item(request, itemID):
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
     params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename, organization.reg_no
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -238,9 +238,32 @@ def item(request, itemID):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.id = {itemID}''')[0]
-    
     return render(request, "Auction/itemDetails.html", params) 
 
+def editItem(request):
+    if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
+        itemID = request.POST.get('item_id')
+        params = {}
+        timestamp = getTimestamp()    
+        timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, 
+                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
+                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename, organization.reg_no
+                    FROM item 
+                    JOIN organization 
+                    ON item.organization_id = organization.reg_no 
+                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                    FROM highest_bid join bid ON 
+                    highest_bid.bid_id = bid.id) AS bidInfo 
+                    ON item.id = bidInfo.item_id 
+                    WHERE item.id = {itemID}''')[0]
+        if request.user.id == params['item'][10]:
+            return render(request, "Auction/editItem.html", params) 
+        else:
+            messages.error(request, "Invalid Request!!!")
+            return redirect('/')
+    messages.error(request, "Invalid Request!!!")
+    return redirect('/')
 
 def logout_user(request):
     if request.method == 'POST':
