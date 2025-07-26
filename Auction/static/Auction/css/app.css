@@ -47,6 +47,7 @@
 .openBidImages{
     width: 100%;
     height: 100%;
+    border-radius: 8px;
 }
 
 .imageContainer{
@@ -60,11 +61,12 @@
   border-radius: 10px;
   width: 100%;
   height: 200px;
+  box-shadow: 4px 4px 20px  #858886;
 }
 
 .image-wrapper img {
   width: 100%;
-  height: 100%;
+  height: 31vh;
   border-radius: 10px;
 }
 
@@ -80,11 +82,11 @@
   position: relative;
   top: -40px;  
   margin: 0 auto;
-  background: white;
+  background: #f3e7e7;
   border-radius: 10px;
   padding: 20px;
   width: 90%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 3px 3px 2 10px #f3e7e7;
   text-align: center;
 }
 
@@ -96,4 +98,27 @@
   color: #28a745;
   text-decoration: none;
   font-weight: 500;
+}
+
+.dropdown-toggle::after {
+  display: none !important;
+}
+.dropdown-toggle::before {
+  display: none !important;
+}
+
+img.rounded-circle:hover {
+  border: 2px solid #0d6efd; /* Bootstrap primary color */
+} 
+.dropdown .dropdown-menu[data-bs-popper]{
+  position: absolute;
+  top: 120%;
+  /* right: 0px; */
+  left: -80px;
+}
+ 
+.navButton:hover{
+  background-color: rgba(255, 255, 255, 0.15) !important; /* Darker hover background */
+  color: #ffffff !important;
+  transition: 0.05s !important;
 }

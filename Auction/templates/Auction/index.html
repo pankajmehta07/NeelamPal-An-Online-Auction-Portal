@@ -67,11 +67,12 @@
             </div>
             <div class="row px-2">
               <div class="fs-5">
-                By : Organization name = {{ item.4 }} <br>
+                By : {{ item.4 }} <br>
               </div>
-              <div class="fs-6">
-                Description = {{ item.7 | truncatechars:100 }}               
-                </div>
+              <div class="fs-6 mt-1 mb-1">
+                {{ item.7 | truncatechars:100 }}
+                <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>               
+              </div>
 
             </div>
               

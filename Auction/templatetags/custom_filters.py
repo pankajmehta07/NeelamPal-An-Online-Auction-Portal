@@ -2,15 +2,13 @@ from django import template
 
 register = template.Library()
 
-@register.filter(name='getTimeDiff')  # You can also just use @register.filter
+@register.filter(name='getTimeDiff')
 def getTimeDiff(seconds):
 
     days = seconds // 86400
     hours = (seconds % 86400) // 3600
     minutes = (seconds % 3600) // 60
     secs = seconds % 60
-
-    # days = value.days
 
     if days > 0:
         return f"{days} days"

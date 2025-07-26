@@ -11,12 +11,20 @@ from datetime import datetime, timedelta
 from django.conf import settings
 # Create your views here.
 
-def get_users(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT id, username, password FROM auth_user")
-        row = cursor.fetchall()
+def profile(request):
+    if request.user.is_authenticated:
+        params = {}
+        if request.user.user_type == "Organization":
+            params['profile'] = runQuery(f'''SELECT * from organization
+                    WHERE reg_no = {request.user.id}''')
+        else:
+            params['profile'] = runQuery(f'''SELECT * from bidder
+                    WHERE citizenship_no = {request.user.id}''')
 
-        return JsonResponse(row, safe=False)
+        return render(request,"Auction/profile.html", params)
+    
+    messages.error(request, "Invalid request")
+    return redirect("/")
 
 def home(request):
     param = {}
@@ -41,16 +49,34 @@ def home(request):
 
 def search(request):
     searchTerm = request.GET.get('search')
-    param = {}
-    param['allItems'] = runQuery("SELECT * from item")
-    param['searchResults'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
+    params = {}
+    params['searchResults'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
                    item.bid_start_time, item.filename
                    FROM item
                    where item.name like '%{searchTerm}%' or item.category like '%{searchTerm}%' limit 20 ''')
-    print(f"{searchTerm}\n{param['searchResults']}")
 
-    return render(request,"Auction/search.html", param)
 
+    return render(request,"Auction/search.html", params)
+
+def showItems(request):    
+    if request.user.is_authenticated and request.user.user_type == "Organization":
+        params = {}
+        params['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, 
+                    organization.name, item.bid_start_time, item.bid_end_time, item.description, 
+                    bidInfo.amount, item.filename
+                   FROM item 
+                   JOIN organization 
+                   ON item.organization_id = organization.reg_no 
+                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                   FROM highest_bid join bid ON 
+                   highest_bid.bid_id = bid.id) AS bidInfo 
+                   ON item.id = bidInfo.item_id 
+                   WHERE item.organization_id = {request.user.id}''')
+
+        return render(request,"Auction/showItems.html", params)
+    
+    messages.error(request, "Invalid request")
+    return redirect("/")
 
 def createTables(request): 
     create_tables()
@@ -160,10 +186,10 @@ def saveItem(request):
         return redirect('/')   
 
 def item(request, itemID):
-    param = {}
+    params = {}
     timestamp = getTimestamp()    
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-    param['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
+    params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename
                    FROM item 
@@ -175,7 +201,7 @@ def item(request, itemID):
                    ON item.id = bidInfo.item_id 
                    WHERE item.id = {itemID}''')[0]
     
-    return render(request, "Auction/itemDetails.html", param) 
+    return render(request, "Auction/itemDetails.html", params) 
 
 
 def logout_user(request):
