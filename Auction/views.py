@@ -51,6 +51,44 @@ def search(request):
 
     return render(request,"Auction/search.html", param)
 
+def bid(request):
+    if request.method == 'POST':
+        try:
+            bid_amount = int(request.POST.get('bid_amount'))
+            item_id = int(request.POST.get('item_id'))
+        except:
+            messages.error(request, "Invalid bid amount.")
+            return redirect('item',itemID = item_id)
+        highest = runQuery(f"SELECT * FROM highest_bid WHERE item_id = {item_id} ")
+        if highest:
+            bid_id = highest[0][1]
+            current_bid = runQuery(f"SELECT amount FROM bid WHERE id = {bid_id}")[0][0]
+
+        else:
+             current_bid = runQuery(f"SELECT min_bid_amt FROM item WHERE id = {item_id}")[0][0]
+        
+        print(current_bid)
+        if bid_amount <= current_bid:
+            messages.error(request, "Bid amount must be higher than current bid amount.")
+            return redirect('item',itemID = item_id)
+        
+        timestamp = getTimestamp().strftime('%Y-%m-%d %H:%M:%S')
+        runQuery(f''' INSERT INTO bid (created_at, item_id, bidder_id, amount)
+            VALUES ('{timestamp}', {item_id}, {request.user.id}, {bid_amount})''')
+        
+        bid_id = runQuery(f"SELECT id FROM bid WHERE item_id = {item_id} ORDER BY amount DESC LIMIT 1")[0][0]
+        print("Highest Bid:",bid_id)
+        
+        if highest:
+            runQuery(f"UPDATE highest_bid SET bid_id ={bid_id} WHERE item_id ={item_id}" )
+
+        else:
+            runQuery(f"INSERT INTO highest_bid VALUES({item_id},{bid_id})" )
+        
+        messages.success(request, "Bid placed successfully.")
+        return redirect('item',itemID = item_id)
+
+    return render(request, "Auction/bid.html", {'item': item})
 
 def createTables(request): 
     create_tables()
