@@ -38,12 +38,21 @@
 }
 
 nav {
+  font-family: 'Rubik';
   background: #0077b6;
 }
 
 nav:hover {
   background: radial-gradient(circle, #ade8f4, #0077b6);
   transition: background 5s ease-in;
+}
+
+.nav-item > a {
+  transition: transform 0.5s ease;
+}
+
+.nav-item > a:hover {
+  transform: scale(1.2);
 }
 
 .navbar-nav {
