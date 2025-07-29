@@ -151,6 +151,13 @@ img.rounded-circle:hover {
 .info-box {
   background-color: #cfd2cf;
 }
+
 .bidInput{
   border: 1px solid black;
 } 
+
+.profile .details{
+    background-color: #959596; /* Light grey background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    transition: all 0.3s ease;
+  }

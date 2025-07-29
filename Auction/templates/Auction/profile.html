@@ -6,6 +6,19 @@
 
 {% endblock headjs %} 
 {% block body %} 
- {{ profile }}
+
+<div class="profile-card container p-4 text-center" style="width: 60%">
+  <div class="profile container p-5 ms-5 md-2 text-center">
+      <h1 class="header mb-3">Profile</h1>
+      <br>
+      <div class="details border p-4 rounded">
+        <h5 class="mb-5"><span class="fw-bold">Citizenship Number : </span>{{ profile.0.0 }}</h5>
+        <h5 class="mb-5"><span class="fw-bold">Name : </span>{{ profile.0.1 }}</h5>
+        <h5 class="mb-5"><span class="fw-bold">Address : </span>{{ profile.0.2 }}</h5>
+        <h5 class="mb-5"><span class="fw-bold">Contact : </span>{{ profile.0.3 }}</h5>
+        <a href="/editProfile" class="btn btn-primary">Edit Info</a>
+      </div>
+    </div>
+  </div>
 
 {% endblock body %}

@@ -16,5 +16,7 @@ urlpatterns = [
     path("item/<int:itemID>",views.item, name="item"),
     path("items",views.showItems, name="showItems"),
     path("edit",views.editItem, name="edit"),
-    path("profile",views.profile, name="profile")
+    path("profile",views.profile, name="profile"),
+    path("editProfile",views.editProfile, name="editProfile")
+
 ]
