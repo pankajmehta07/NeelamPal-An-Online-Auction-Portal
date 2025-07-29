@@ -26,6 +26,9 @@ def profile(request):
     messages.error(request, "Invalid request")
     return redirect("/")
 
+def editProfile(request):
+    return render(request, "Auction/editProfile.html")
+
 def home(request):
     param = {}
     timestamp = getTimestamp().strftime('%Y-%m-%d %H:%M:%S')
@@ -257,11 +260,6 @@ def editItem(request):
                     highest_bid.bid_id = bid.id) AS bidInfo 
                     ON item.id = bidInfo.item_id 
                     WHERE item.id = {itemID}''')[0]
-        
-        # Since datetime-local takes yyyy-mm-ddThh:mm format as default
-        # value we must format the string in the given format preemptively.
-        # Done in editItem.html with jinja filter using django date function.
-
         if request.user.id == params['item'][10]:
             return render(request, "Auction/editItem.html", params) 
         else:
