@@ -257,6 +257,11 @@ def editItem(request):
                     highest_bid.bid_id = bid.id) AS bidInfo 
                     ON item.id = bidInfo.item_id 
                     WHERE item.id = {itemID}''')[0]
+        print(params['item'][4])
+        print(str(params['item'][5])[:-3].replace(' ','T'))
+        # Since datetime-local takes yyyy-mm-ddThh:mm format as default value we
+        # must format the string in the given format preemptively.
+        
         if request.user.id == params['item'][10]:
             return render(request, "Auction/editItem.html", params) 
         else:

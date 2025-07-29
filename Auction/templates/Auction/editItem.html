@@ -30,15 +30,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description:</label>
-                            <textarea class="form-control" placeholder="{{ item.6 }}" id="description" name="description" rows="6" cols="50" required style="max-height: 200px;"></textarea>
+                            <textarea class="form-control" id="description" name="description" rows="6" cols="50" required style="max-height: 200px;">{{ item.6 }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label for="startTime" class="form-label">Start Time:</label>
-                            <input type="datetime-local" value="{{ item.4 }}" class="form-control" id="startTime" name="start_time" required  onchange="updateEndTimeMin('startTime','endTime',60)">
+                            <input type="datetime-local" value="{{ item.4 | date:"Y-m-d\TH:i" }}" class="form-control" id="startTime" name="start_time" required  onchange="updateEndTimeMin('startTime','endTime',60)">
                         </div>
                         <div class="mb-3">
                             <label for="endTime" class="form-label">End Time:</label>
-                            <input type="datetime-local"  value="{{ item.5 }}"class="form-control" id="endTime" name="end_time" required>
+                            <input type="datetime-local"  value="{{ item.5 | date:"Y-m-d\TH:i" }}"class="form-control" id="endTime" name="end_time" required>
                         </div>
                         <div class="mb-3">
                             <label for="itemImage" class="form-label">Image of the item (JPG only):</label>
