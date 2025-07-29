@@ -225,6 +225,91 @@ def saveItem(request):
     else:
         messages.error(request, "Invalid request")
         return redirect('/')   
+    
+def updateItem(request):
+    if request.method == 'POST' and request.user.is_authenticated and request.user.user_type == "Organization":
+        # Extract fields from POST
+        name = filter(request.POST.get('name'))
+        item_id = filter(request.POST.get('item_id'))
+        min_bid_amt = request.POST.get('min_bid_amount')
+        category = filter(request.POST.get('category'))
+        description = filter(request.POST.get('description'))
+        start_time_str = request.POST.get('start_time')  
+        end_time_str = request.POST.get('end_time')
+        image = request.FILES.get('item_image')
+        
+        
+
+
+        start_time = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M")
+        end_time = datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M")
+
+        min_end_time = start_time + timedelta(minutes=60)
+
+        if not item_id:
+            messages.error(request, "Invalid Request.")
+            return redirect('home')
+
+        if end_time < min_end_time:
+            messages.error(request, "Start and end time must be at least 60 minutes apart")
+            return redirect('item',itemID = item_id)
+
+
+        data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}", )
+        print(data)
+        print(data[0])
+        if not data:
+            messages.error(request, "Item doesn't exist")
+            return redirect('item',itemID = str(item_id).strip())
+        
+        if not name:
+            name = data[1]
+        
+        if not min_bid_amt:
+            min_bid_amt = data[3]
+        
+        if not category:
+            category = data[2]
+        
+        if not description:
+            description = data[7]
+        
+        if not start_time:
+            start_time = data[5]
+
+        if not end_time:
+            end_time = data[6]
+
+        if image:
+            save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
+            os.makedirs(save_dir, exist_ok=True)
+            filename = image.name
+
+            filename = filename.split(".")
+            filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
+            filename = filename.replace("-",'')
+            filename = filename.replace(":",'')
+            filename = filename.replace(" ",'')
+            file_path = os.path.join(save_dir, filename)
+            with open(file_path, 'wb+') as destination:
+                    for chunk in image.chunks():
+                        destination.write(chunk)
+        else:
+            filename = data[0][8]
+        
+        start_time_str = start_time_str.replace("T"," ")+":00"
+        end_time_str = end_time_str.replace("T"," ")+":00"
+        runQuery(f'''UPDATE item set name='{name}', category='{category}', description='{description}', 
+                 min_bid_amt={min_bid_amt},organization_id={request.user.id}, bid_start_time='{start_time_str}', 
+                 bid_end_time='{end_time_str}', filename='{filename}' WHERE id={item_id}''')
+        
+
+        messages.success(request, "Item was updated successfully.")
+        return redirect('item',itemID = str(item_id).strip())
+
+    else:
+        messages.error(request, "Invalid request")
+        return redirect('/')   
 
 def item(request, itemID):
     params = {}
@@ -243,7 +328,7 @@ def item(request, itemID):
                    WHERE item.id = {itemID}''')[0]
     return render(request, "Auction/itemDetails.html", params) 
 
-def editItem(request):
+def edit(request):
     if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
         itemID = request.POST.get('item_id')
         params = {}
