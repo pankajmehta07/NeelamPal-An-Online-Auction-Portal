@@ -96,7 +96,6 @@ def bid(request):
         else:
              current_bid = runQuery(f"SELECT min_bid_amt FROM item WHERE id = {item_id}")[0][0]
         
-        print(current_bid)
         if bid_amount <= current_bid:
             messages.error(request, "Bid amount must be higher than current bid amount.")
             return redirect('item',itemID = item_id)
@@ -106,7 +105,6 @@ def bid(request):
             VALUES ('{timestamp}', {item_id}, {request.user.id}, {bid_amount})''')
         
         bid_id = runQuery(f"SELECT id FROM bid WHERE item_id = {item_id} ORDER BY amount DESC LIMIT 1")[0][0]
-        print("Highest Bid:",bid_id)
         
         if highest:
             runQuery(f"UPDATE highest_bid SET bid_id ={bid_id} WHERE item_id ={item_id}" )
@@ -256,8 +254,6 @@ def updateItem(request):
 
 
         data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}", )
-        print(data)
-        print(data[0])
         if not data:
             messages.error(request, "Item doesn't exist")
             return redirect('item',itemID = str(item_id).strip())
@@ -326,6 +322,14 @@ def item(request, itemID):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.id = {itemID}''')[0]
+    currTime = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
+    if params['item'][5] > currTime:
+        params['status'] = "upcoming"
+    elif params['item'][6] < currTime:
+        params['status'] = "closed"
+    else:
+        params['status'] = "ongoing"
+
     return render(request, "Auction/itemDetails.html", params) 
 
 def edit(request):

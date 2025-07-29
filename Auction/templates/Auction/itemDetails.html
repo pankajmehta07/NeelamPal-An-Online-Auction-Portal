@@ -47,7 +47,7 @@
       <p><span class="fw-bold">Highest Bid : </span>${{ item.8|default:"No bids yet" }}</p>
       <p><span class="fw-bold">Start : </span>{{ item.5 }}</p>
       <p><span class="fw-bold">End : </span>{{ item.6 }}</p>
-      <p><span class="fw-bold"> Remaining : </span> {{ item.9 }} seconds</p>
+      <p><span class="fw-bold"> Remaining : </span> {{ item.9|getTimeDiff }}</p>
       <p><span class="fw-bold">Description:</span><br> 
           {{ item.7 }}
       </p>
