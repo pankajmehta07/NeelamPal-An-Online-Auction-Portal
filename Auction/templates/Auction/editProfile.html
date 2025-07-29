@@ -18,9 +18,16 @@
                         {% csrf_token %}
                         <input type="hidden" name="item_id" value="{{ item.0 }} ">
                          <div class="mt-4 mb-3">
+                            {% if user.user_type == "Bidder" %}
                             <label for="itemName" class="form-label">Citizenship Number:</label>
                             <input type="text" value="{{ profile.0.0 }}" class="form-control" id="itemName" name="name" readonly>
                         </div>
+                        {% endif %}
+                        {% if user.user_type == "Organization" %}
+                            <label for="itemName" class="form-label">Registration Number:</label>
+                            <input type="text" value="{{ profile.0.0 }}" class="form-control" id="itemName" name="name" readonly>
+                        </div>
+                        {% endif %}
                         <div class="mt-3 mb-3">
                             <label for="itemName" class="form-label">Name:</label>
                             <input type="text" value="{{ profile.0.0 }}" class="form-control" id="itemName" name="name" required>
