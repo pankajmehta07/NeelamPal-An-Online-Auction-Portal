@@ -107,6 +107,11 @@
               <a class="dropdown-item text-white p-2 border-bottom border-2 border-white" href="/items">Items</a>
             </li>
           {% endif %}
+          {% if user.user_type == "Bidder" %}
+            <li>
+              <a class="dropdown-item text-white p-2 border-bottom border-2 border-white" href="/myBids">My Bids</a>
+            </li>
+          {% endif %}
           <li>
             <form class="d-flex" method="POST" , action="/logout">
               {% csrf_token %}  

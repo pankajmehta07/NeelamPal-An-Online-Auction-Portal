@@ -76,7 +76,31 @@ def search(request):
 
     return render(request,"Auction/search.html", params)
 
-def showItems(request):    
+def showBids(request):    
+    if request.user.is_authenticated and request.user.user_type == "Bidder":
+        params = {}
+        timestamp = getTimestamp()
+        params['itemData'] = runQuery(f'''SELECT DISTINCT item.id, item.name, item.min_bid_amt, 
+                    item.bid_start_time, item.filename, item.bid_end_time, bidInfo.amount,
+                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining
+                   FROM item 
+                   JOIN bid
+                   ON item.id = bid.item_id
+                   JOIN bidder
+                   ON bid.bidder_id = bidder.citizenship_no
+                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                   FROM highest_bid join bid ON 
+                   highest_bid.bid_id = bid.id) AS bidInfo 
+                   ON item.id = bidInfo.item_id 
+                   WHERE bid.bidder_id= {request.user.id}
+                   ''')
+        print(request.user.user_type)
+        return render(request,"Auction/myBids.html", params)    
+        
+    messages.error(request, "Invalid request")
+    return redirect("/")
+
+def showItems(request):
     if request.user.is_authenticated and request.user.user_type == "Organization":
         params = {}
         timestamp = getTimestamp()
@@ -91,7 +115,7 @@ def showItems(request):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.organization_id = {request.user.id}''')
-
+        
         return render(request,"Auction/showItems.html", params)    
     messages.error(request, "Invalid request")
     return redirect("/")
