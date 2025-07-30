@@ -27,7 +27,23 @@ def profile(request):
     return redirect("/")
 
 def editProfile(request):
-    return render(request, "Auction/editProfile.html")
+    if request.user.is_authenticated and request.method == 'GET':
+        user = request.user
+        params = {}
+
+        if user.user_type == "Organization":
+            profile = runQuery(f"SELECT reg_no, name, address, contact FROM organization WHERE reg_no = '{user.id}'")
+        else:
+            profile = runQuery(f"SELECT citizenship_no, name, address, contact FROM bidder WHERE citizenship_no = '{user.id}'")
+
+        if not profile:
+            messages.error(request, "Profile not found.")
+            return redirect('/')
+
+        params['profile'] = profile
+        return render(request, 'Auction/editProfile.html', params)
+    messages.success(request, "Profile updated successfully.")
+    return redirect('/')   
 
 def home(request):
     param = {}
@@ -431,3 +447,53 @@ def login_user(request):
     messages.error(request, "Only POST requests are allowed.")
     return redirect('home')
 
+def updateProfile(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        user = request.user
+        username = re.sub(r'\D', '', request.POST.get('username'))
+        name = filter(request.POST.get('name'))
+        contact = re.sub(r'\D', '', request.POST.get('contact'))
+        address = filter(request.POST.get('address'))
+        password = request.POST.get('password')
+        update_password = bool(password.strip())
+
+        if user.user_type == "Organization":
+            data = runQuery(f"SELECT * FROM organization WHERE reg_no = {username}")
+        else:
+            data = runQuery(f"SELECT * FROM bidder WHERE citizenship_no = {username}")
+
+        if not data:
+            messages.error(request, "User profile not found.")
+            return redirect('editProfile')
+
+        data = data[0] 
+
+        name = name or data[1]
+        address = address or data[2]
+        contact = contact or data[3]
+        if password:
+            hashed_pw = make_password(password)
+        else:
+            hashed_pw = data[4]
+        
+
+        if user.user_type == 'Bidder':
+            runQuery(f"""
+                UPDATE bidder 
+                SET name = '{name}', address = '{address}', contact = {contact}, password = '{hashed_pw}'
+                WHERE citizenship_no = {username}
+            """)
+        elif user.user_type == 'Organization':
+            query = f"""
+            UPDATE organization 
+            SET name = '{name}', address = '{address}', contact = '{contact}'
+        """
+            if update_password:
+                query += f", password = '{hashed_pw}'"
+                query += f" WHERE reg_no = '{username}'"
+            runQuery(query) 
+
+    messages.success(request, "Profile updated successfully.")
+    return redirect('editProfile')
+    messages.error(request, "Unauthorized request.")
+    return redirect('/')

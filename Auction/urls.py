@@ -18,6 +18,6 @@ urlpatterns = [
     path("edit",views.edit, name="edit"),
     path("updateItem",views.updateItem, name="updateItem"),
     path("profile",views.profile, name="profile"),
-    path("editProfile",views.editProfile, name="editProfile")
-
+    path("editProfile",views.editProfile, name="editProfile"),
+    path('updateProfile', views.updateProfile, name='updateProfile')
 ]
