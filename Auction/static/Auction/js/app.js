@@ -1,26 +1,24 @@
 
 function togglePasswordVisibility(inputId, iconId) {
-    const passwordInput = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
-    
-    if (passwordInput.type === "password") {
-    passwordInput.type = "text";
-    icon.classList.remove("fa-eye-slash");
-    icon.classList.add("fa-eye");
-    } else {
-    passwordInput.type = "password";
-    icon.classList.remove("fa-eye");
-    icon.classList.add("fa-eye-slash");
-    }
+  const passwordInput = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  
+  if (passwordInput.type === "password") {
+  passwordInput.type = "text";
+  icon.classList.remove("fa-eye-slash");
+  icon.classList.add("fa-eye");
+  } else {
+  passwordInput.type = "password";
+  icon.classList.remove("fa-eye");
+  icon.classList.add("fa-eye-slash");
+  }
 }
 
 function handleFocus(element,divID){
-    console.log(divID);
     const passDiv = document.getElementById(divID);
     passDiv.classList.add('highlight-border');
 }
 function handleBlur(element,divID){
-    console.log(divID);
     const passDiv = document.getElementById(divID);
     passDiv.classList.remove('highlight-border');
 }

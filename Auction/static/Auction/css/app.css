@@ -165,3 +165,8 @@ img.rounded-circle:hover {
 .formContainer{
   box-shadow: 5px 5px 21px #000000ab;
 }
+
+.password {
+  transition: none !important;
+  box-shadow: none !important;
+}

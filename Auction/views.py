@@ -274,23 +274,12 @@ def updateItem(request):
             messages.error(request, "Item doesn't exist")
             return redirect('item',itemID = str(item_id).strip())
         
-        if not name:
-            name = data[1]
-        
-        if not min_bid_amt:
-            min_bid_amt = data[3]
-        
-        if not category:
-            category = data[2]
-        
-        if not description:
-            description = data[7]
-        
-        if not start_time:
-            start_time = data[5]
-
-        if not end_time:
-            end_time = data[6]
+        name = name or data[1]
+        min_bid_amt = min_bid_amt or data[3]
+        category = category or data[2]
+        description = description or data[7]
+        start_time = start_time or data[5]
+        end_time = end_time or data[6]
 
         if image:
             save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
@@ -449,22 +438,19 @@ def login_user(request):
 
 def updateProfile(request):
     if request.method == 'POST' and request.user.is_authenticated:
-        user = request.user
-        username = re.sub(r'\D', '', request.POST.get('username'))
         name = filter(request.POST.get('name'))
         contact = re.sub(r'\D', '', request.POST.get('contact'))
         address = filter(request.POST.get('address'))
         password = request.POST.get('password')
-        update_password = bool(password.strip())
 
-        if user.user_type == "Organization":
-            data = runQuery(f"SELECT * FROM organization WHERE reg_no = {username}")
+        if request.user.user_type == "Organization":
+            data = runQuery(f"SELECT * FROM organization WHERE reg_no = {request.user.user_id}")
         else:
-            data = runQuery(f"SELECT * FROM bidder WHERE citizenship_no = {username}")
+            data = runQuery(f"SELECT * FROM bidder WHERE citizenship_no = {request.user.user_id}")
 
         if not data:
-            messages.error(request, "User profile not found.")
-            return redirect('editProfile')
+            messages.error(request, "Unauthorized Request.")
+            return redirect('home')
 
         data = data[0] 
 
@@ -477,23 +463,16 @@ def updateProfile(request):
             hashed_pw = data[4]
         
 
-        if user.user_type == 'Bidder':
-            runQuery(f"""
-                UPDATE bidder 
-                SET name = '{name}', address = '{address}', contact = {contact}, password = '{hashed_pw}'
-                WHERE citizenship_no = {username}
-            """)
-        elif user.user_type == 'Organization':
-            query = f"""
-            UPDATE organization 
-            SET name = '{name}', address = '{address}', contact = '{contact}'
-        """
-            if update_password:
-                query += f", password = '{hashed_pw}'"
-                query += f" WHERE reg_no = '{username}'"
-            runQuery(query) 
+        if request.user.user_type == 'Bidder':
+            runQuery(f"""UPDATE bidder SET name = '{name}', address = '{address}', 
+                     contact = {contact}, password = '{hashed_pw}' WHERE 
+                     citizenship_no = {request.user.user_id}""")
+        elif request.user.user_type == 'Organization':
+            runQuery(f"""UPDATE organization SET name = '{name}', address = '{address}', 
+                     contact = {contact}, password = '{hashed_pw}' WHERE 
+                     reg_no = {request.user.user_id}""")
 
-    messages.success(request, "Profile updated successfully.")
-    return redirect('editProfile')
-    messages.error(request, "Unauthorized request.")
+        messages.success(request, "Profile updated successfully.")
+        return redirect('editProfile')
+    messages.error(request, "Unauthorized Request.")
     return redirect('/')

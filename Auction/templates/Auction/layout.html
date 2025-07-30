@@ -21,20 +21,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik" rel="stylesheet">
     <link rel="icon" href="{% static 'Auction/images/logoNeelamPal.png' %}" type="image/png">
-    {% if not user.is_authenticated %}
+    {% if user.is_authenticated %}
     <style>
-      .password {
-        transition: none !important;
-        box-shadow: none !important;
-      }
       .highlight-border {
-        border-radius: 0.5rem;
-        box-shadow: 0px 0px 4px 3px #113770ff;
-      }          
+          border-radius: 0.5rem;
+          border:1px solid rgb(109, 177, 226);
+          box-shadow: 0 0 0 4px rgb(182, 209, 250);
+      }
     </style>
+
+    {% else %}
+      <style>
+        .highlight-border{
+          border-radius: 0.5rem;
+          box-shadow: 0px 0px 4px 3px #113770ff;
+        }
+      </style>
+        
     {% endif %}
-    
-    
 </head>
 
 <body>
@@ -152,7 +156,7 @@
 
                   <div class="form-outline form-white mb-4 row">
                     <div class="input-group col p-0" id="LoginPasswordDiv">
-                      <input type="password" placeholder="password" name="password" id="LoginPassword" class="form-control form-control-lg password border-0" required onfocus="handleFocus(this, 'LoginPasswordDiv')", onblur="handleBlur(this, 'LoginPasswordDiv')"/>
+                      <input type="password" placeholder="password" name="password" id="LoginPassword" class="form-control form-control-lg password border border-end-0" required onfocus="handleFocus(this, 'LoginPasswordDiv')", onblur="handleBlur(this, 'LoginPasswordDiv')"/>
                       <span class="input-group-text bg-white  p-0 pe-2" onclick="togglePasswordVisibility('LoginPassword', 'toggleLoginPasswordIcon')" style="cursor: pointer;">
                         <i class="far fa-eye-slash" id="toggleLoginPasswordIcon"></i>
                       </span>
@@ -222,7 +226,7 @@
                   <div class="form-outline form-white mb-4 row p-2" >
                     <label class="form-label col-3 pt-2 mt-1 pe-3 text-start col-3" for="registerPassword"  >Password</label>
                     <div class="input-group col p-0" id="registerPassDiv"    >
-                      <input type="password" placeholder="Create password" name="password" id="registerPassword" class="form-control form-control-lg password border-0" required onfocus="handleFocus(this, 'registerPassDiv')", onblur="handleBlur(this, 'registerPassDiv')"/>
+                      <input type="password" placeholder="Create password" name="password" id="registerPassword" class="form-control form-control-lg password border border-end-0" required onfocus="handleFocus(this, 'registerPassDiv')", onblur="handleBlur(this, 'registerPassDiv')"/>
                       <span class="input-group-text bg-white p-0 pe-2" onclick="togglePasswordVisibility('registerPassword', 'toggleRegisterPasswordIcon')" style="cursor: pointer;">
                         <i class="far fa-eye-slash" id="toggleRegisterPasswordIcon"></i>
                       </span>
