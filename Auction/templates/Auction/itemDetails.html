@@ -22,7 +22,7 @@
             <div class="text-center">
               <label class="fs-5" for="bid_amount">Your Bid Amount:</label>
             </div>
-            <input type="number" name="bid_amount" step="1" min="{{ item.3 }}" class="form-control bidInput" placeholder="$ {{ item.3 }}" required>
+            <input type="number" name="bid_amount" step="1" min="{% if item.8 %}{{ item.8|add:1 }}{% else %}{{ item.3|add:1 }}{% endif %}" class="form-control bidInput" placeholder="$ {% if item.8 %}{{ item.8|add:1 }}{% else %}{{ item.3|add:1 }}{% endif %}" required>
             <button type="submit" class="btn btn-primary p-2">Place Bid</button>
           </div>
         </form>

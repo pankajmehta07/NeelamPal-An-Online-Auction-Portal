@@ -14,3 +14,8 @@ def getTimeDiff(seconds):
         return f"{days} days"
     else:
         return f"{hours:02}:{minutes:02}:{secs:02}"
+    
+@register.filter(name='add')
+def add(value, num):
+
+    return f"{value + num}"
