@@ -18,16 +18,21 @@
                 <div class="card-title fs-4 fw-bold">
                     {{ item.1|truncatechars:30 }}
                 </div>
-                <div class="card-bid-amount fw-bold">
-                    $ {{ item.6 }}
+                <div class="card-bid-amount">
+                    <b>Your Bid Amount :</b> $ {{ item.9 }}
                 </div>
-                <div class="card-time">
-                    <b>Start Time :</b> {{ item.3 }}
+                <div class="card-Bid-Status">
+                    <b>Bid Status :</b> {% if item.8 == user.id %}Winning{%else%}Losing{% endif %}
+                </div>
+                <div class="card-Auction-Status">
+                    <b>Auction Status :</b> {{ item.3 | auctionStatus:item.5 }}
                 </div>
                 <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
                 </div>
             </div>
             </div>
+            
+            
             {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
                 </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
             {% endif %}

@@ -1,4 +1,6 @@
 from django import template
+from datetime import datetime
+from ..utils import getTimestamp
 
 register = template.Library()
 
@@ -19,3 +21,14 @@ def getTimeDiff(seconds):
 def add(value, num):
 
     return f"{value + num}"
+
+
+@register.filter(name='auctionStatus')
+def auctionStatus(startTimestamp, endTimestamp):
+    currTime = datetime.strptime(getTimestamp().strftime('%Y-%m-%d %H:%M:%S'), "%Y-%m-%d %H:%M:%S")
+    if startTimestamp > currTime:
+        return "Upcoming"
+    elif endTimestamp < currTime:
+        return "Closed"
+    else:
+        return "Ongoing"
