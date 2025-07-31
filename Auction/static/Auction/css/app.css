@@ -42,12 +42,12 @@
 }
 
 nav {
-  background: #5390d9;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #56cfe1, #5390d9);
+  transition: background 0.3s ease-in;
 }
 
-nav:hover {
-  background: radial-gradient(circle,#56cfe1,#5390d9);
-  transition: background 5s ease-in;
+.login-container {
+  background-color: transparent;
 }
 
 .nav-item > a {
@@ -63,10 +63,6 @@ nav:hover {
   width: 22vw;
   display: flex;
   justify-content: space-evenly;
-}
-
-.dropdown {
-  background-color: #5390d9;
 }
 
 .openBidImages {
