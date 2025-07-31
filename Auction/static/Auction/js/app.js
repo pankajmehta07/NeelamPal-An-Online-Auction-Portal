@@ -77,6 +77,8 @@ document.addEventListener('DOMContentLoaded', function () {
       alertInstance.close();
     }, 1500);
   });
+});
+
 const card = document.querySelector('nav');
 
 card.addEventListener('mousemove', (event) => {
