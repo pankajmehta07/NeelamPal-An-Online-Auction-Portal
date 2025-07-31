@@ -14,7 +14,7 @@
       <div class="image-container mb-5">
         <img src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" class="img-fluid rounded-4" alt="Item image">
       </div>
-      {% if user.is_authenticated and user.user_type == "Bidder" %}
+      {% if user.is_authenticated and user.user_type == "Bidder" and item.5|auctionStatus:item.6 == "Ongoing" %}
         <form method="POST" action="/bid">
           {% csrf_token %}
           <div class="row ps-5 pe-5 gap-3">
@@ -45,12 +45,14 @@
       <p><span class="fw-bold">Organization : </span>{{ item.4 }}</p>
       <p><span class="fw-bold">Min Bid : </span>$ {{ item.3 }}</p>
       <p><span class="fw-bold">Highest Bid : </span>${{ item.8|default:"No bids yet" }}</p>
+      <p><span class="fw-bold">Auction Status : </span>{{ item.5|auctionStatus:item.6 }}</p>
       <p><span class="fw-bold">Start : </span>{{ item.5 }}</p>
       <p><span class="fw-bold">End : </span>{{ item.6 }}</p>
       <p><span class="fw-bold"> Remaining : </span> {{ item.9|getTimeDiff }}</p>
       <p><span class="fw-bold">Description:</span><br> 
           {{ item.7 }}
       </p>
+      
     </div>
   </div>
 </div>

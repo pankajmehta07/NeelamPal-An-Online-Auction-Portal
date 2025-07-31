@@ -82,19 +82,18 @@ def showBids(request):
         timestamp = getTimestamp()
         params['itemData'] = runQuery(f'''SELECT DISTINCT item.id, item.name, item.min_bid_amt, 
                     item.bid_start_time, item.filename, item.bid_end_time, bidInfo.amount,
-                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining
+                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, bidInfo.bidder_id, bid.amount
                    FROM item 
                    JOIN bid
                    ON item.id = bid.item_id
                    JOIN bidder
                    ON bid.bidder_id = bidder.citizenship_no
-                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                   LEFT JOIN (SELECT highest_bid.item_id, bid.bidder_id, bid.amount 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE bid.bidder_id= {request.user.id}
                    ''')
-        print(request.user.user_type)
         return render(request,"Auction/myBids.html", params)    
         
     messages.error(request, "Invalid request")
@@ -351,14 +350,6 @@ def item(request, itemID):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.id = {itemID}''')[0]
-    currTime = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S")
-    if params['item'][5] > currTime:
-        params['status'] = "upcoming"
-    elif params['item'][6] < currTime:
-        params['status'] = "closed"
-    else:
-        params['status'] = "ongoing"
-
     return render(request, "Auction/itemDetails.html", params) 
 
 def edit(request):
