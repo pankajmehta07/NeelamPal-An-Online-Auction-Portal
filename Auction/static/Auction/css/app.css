@@ -42,12 +42,12 @@
 }
 
 nav {
-  background: #0077b6;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #56cfe1, #5390d9);
+  transition: background 0.3s ease-in;
 }
 
-nav:hover {
-  background: radial-gradient(circle, #ade8f4, #0077b6);
-  transition: background 5s ease-in;
+.login-container {
+  background-color: transparent;
 }
 
 .nav-item > a {
@@ -177,7 +177,7 @@ img.rounded-circle:hover {
   border-radius: 10px;
 }
 
-#username, #itemName {
+#editDisabled {
   background-color: inherit;
   cursor: not-allowed;
 }
