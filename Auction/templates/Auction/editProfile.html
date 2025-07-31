@@ -16,7 +16,7 @@
                     <h5>Enter the profile details:</h5>
                     <form method="post" action="/updateProfile" enctype="multipart/form-data" autocomplete="off"> 
                         {% csrf_token %}
-                         <div class="mt-4 mb-3">
+                         <div class="editDisabled mt-4 mb-3">
                             {% if user.user_type == "Bidder" %}
                             <label for="username" class="form-label">Citizenship Number:</label>
                             <input type="text" value="{{ profile.0.0 }}" class="form-control" id="username" name="username" readonly>

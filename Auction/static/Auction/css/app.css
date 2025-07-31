@@ -170,3 +170,14 @@ img.rounded-circle:hover {
   transition: none !important;
   box-shadow: none !important;
 }
+
+.editDisabled {
+  padding: 1.2vh;
+  background-color: rgb(193, 193, 193);
+  border-radius: 10px;
+}
+
+#username, #itemName {
+  background-color: inherit;
+  cursor: not-allowed;
+}
