@@ -67,3 +67,25 @@ function updateEndTimeMin(startID, endID, minGap) {
       document.getElementById(endID).value = '';
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+  const alerts = document.querySelectorAll('.alert-dismissible');
+
+  alerts.forEach(function(alert) {
+    setTimeout(function () {
+      const alertInstance = bootstrap.Alert.getOrCreateInstance(alert);
+      alertInstance.close();
+    }, 1500);
+  });
+const card = document.querySelector('nav');
+
+card.addEventListener('mousemove', (event) => {
+  windowWidth = screen.width;
+  windowHeight = screen.height;
+  
+  mouseXpercentage = Math.round(event.pageX / windowWidth * 100);
+  mouseYpercentage = Math.round(event.pageY / windowHeight * 100);
+
+  card.style.setProperty('--x', `${mouseXpercentage}%`);
+  card.style.setProperty('--y', `${mouseYpercentage}%`);
+});

@@ -42,12 +42,16 @@
 }
 
 nav {
-  background: #5390d9;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #53d2d9, #538fd9);
+  transition: background 0.3s ease-in;
 }
 
-nav:hover {
-  background: radial-gradient(circle,#56cfe1,#5390d9);
-  transition: background 5s ease-in;
+.dropdown > ul {
+  background-color: #d99d53;
+}
+
+.login-container {
+  background-color: transparent;
 }
 
 .nav-item > a {
@@ -63,10 +67,6 @@ nav:hover {
   width: 22vw;
   display: flex;
   justify-content: space-evenly;
-}
-
-.dropdown {
-  background-color: #5390d9;
 }
 
 .openBidImages {
@@ -184,4 +184,10 @@ img.rounded-circle:hover {
 #editDisabled {
   background-color: inherit;
   cursor: not-allowed;
+}
+.alert-error{
+  background-color: #d99d53a6;
+}
+.alert{
+  border-radius: 0px;
 }
