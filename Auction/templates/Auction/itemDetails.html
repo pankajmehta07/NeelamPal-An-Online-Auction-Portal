@@ -43,12 +43,16 @@
       <br>
       <p><span class="fw-bold">Category : </span>{{ item.2 }}</p>
       <p><span class="fw-bold">Organization : </span>{{ item.4 }}</p>
-      <p><span class="fw-bold">Min Bid : </span>$ {{ item.3 }}</p>
-      <p><span class="fw-bold">Highest Bid : </span>${{ item.8|default:"No bids yet" }}</p>
+      <p><span class="fw-bold">Min Bid Amount: </span>$ {{ item.3 }}</p>
+      <p><span class="fw-bold">Highest Bid Amount: </span>${{ item.8|default:"No bids yet" }}</p>
       <p><span class="fw-bold">Auction Status : </span>{{ item.5|auctionStatus:item.6 }}</p>
-      <p><span class="fw-bold">Start : </span>{{ item.5 }}</p>
-      <p><span class="fw-bold">End : </span>{{ item.6 }}</p>
-      <p><span class="fw-bold">Remaining : </span> {{ item.9|getTimeDiff }}</p>
+      {% if item.5|auctionStatus:item.6 == "Ongoing" %}
+        <p><span class="fw-bold">Remaining Time: </span> {{ item.9|getTimeDiff }}</p>
+      {% elif item.5|auctionStatus:item.6 == "Upcoming" %}
+        <p><span class="fw-bold">Start Date: </span>{{ item.5 }}</p>
+      {% else %}
+      <p><span class="fw-bold">End Date: </span>{{ item.6 }}</p>
+      {% endif %}
       <p><span class="fw-bold">Description:</span><br> 
           {{ item.7 }}
       </p>

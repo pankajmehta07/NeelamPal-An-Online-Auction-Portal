@@ -61,8 +61,6 @@ def home(request):
                    ON item.id = bidInfo.item_id 
                    WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' limit 5''')
 
-    
-
     return render(request,"Auction/index.html", param)
 
 def search(request):
@@ -459,9 +457,9 @@ def updateProfile(request):
         password = request.POST.get('password')
 
         if request.user.user_type == "Organization":
-            data = runQuery(f"SELECT * FROM organization WHERE reg_no = {request.user.user_id}")
+            data = runQuery(f"SELECT * FROM organization WHERE reg_no = {request.user.id}")
         else:
-            data = runQuery(f"SELECT * FROM bidder WHERE citizenship_no = {request.user.user_id}")
+            data = runQuery(f"SELECT * FROM bidder WHERE citizenship_no = {request.user.id}")
 
         if not data:
             messages.error(request, "Unauthorized Request.")
@@ -481,11 +479,11 @@ def updateProfile(request):
         if request.user.user_type == 'Bidder':
             runQuery(f"""UPDATE bidder SET name = '{name}', address = '{address}', 
                      contact = {contact}, password = '{hashed_pw}' WHERE 
-                     citizenship_no = {request.user.user_id}""")
+                     citizenship_no = {request.user.id}""")
         elif request.user.user_type == 'Organization':
             runQuery(f"""UPDATE organization SET name = '{name}', address = '{address}', 
                      contact = {contact}, password = '{hashed_pw}' WHERE 
-                     reg_no = {request.user.user_id}""")
+                     reg_no = {request.user.id}""")
 
         messages.success(request, "Profile updated successfully.")
         return redirect('editProfile')

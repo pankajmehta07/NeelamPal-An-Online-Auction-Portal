@@ -181,3 +181,9 @@ img.rounded-circle:hover {
   background-color: inherit;
   cursor: not-allowed;
 }
+.alert-error{
+  background-color: #d99d53a6;
+}
+.alert{
+  border-radius: 0px;
+}

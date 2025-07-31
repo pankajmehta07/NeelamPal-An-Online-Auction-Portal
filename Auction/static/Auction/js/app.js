@@ -67,3 +67,14 @@ function updateEndTimeMin(startID, endID, minGap) {
       document.getElementById(endID).value = '';
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+  const alerts = document.querySelectorAll('.alert-dismissible');
+
+  alerts.forEach(function(alert) {
+    setTimeout(function () {
+      const alertInstance = bootstrap.Alert.getOrCreateInstance(alert);
+      alertInstance.close();
+    }, 1500);
+  });
+});
