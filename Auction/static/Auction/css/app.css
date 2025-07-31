@@ -42,8 +42,12 @@
 }
 
 nav {
-  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #56cfe1, #5390d9);
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #53d2d9, #538fd9);
   transition: background 0.3s ease-in;
+}
+
+.dropdown > ul {
+  background-color: #d99d53;
 }
 
 .login-container {
