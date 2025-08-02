@@ -43,16 +43,27 @@
       <br>
       <p><span class="fw-bold">Category : </span>{{ item.2 }}</p>
       <p><span class="fw-bold">Organization : </span>{{ item.4 }}</p>
-      <p><span class="fw-bold">Min Bid Amount: </span>$ {{ item.3 }}</p>
-      <p><span class="fw-bold">Highest Bid Amount: </span>${{ item.8|default:"No bids yet" }}</p>
       <p><span class="fw-bold">Auction Status : </span>{{ item.5|auctionStatus:item.6 }}</p>
       {% if item.5|auctionStatus:item.6 == "Ongoing" %}
+      <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
         <p><span class="fw-bold">Remaining Time: </span> {{ item.9|getTimeDiff }}</p>
+        <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Winning{%else%}Losing{% endif %}</p>
+      
+        {% if bid.0.1 == user.id %}
+          <p><span class="fw-bold">Your Bid Amount : </span>$ {{bid.0.0}}</p>
+        {% endif %}
+
       {% elif item.5|auctionStatus:item.6 == "Upcoming" %}
+        <p><span class="fw-bold">Min Bid Amount: </span>$ {{ item.3 }}</p>
         <p><span class="fw-bold">Start Date: </span>{{ item.5 }}</p>
+
       {% else %}
-      <p><span class="fw-bold">End Date: </span>{{ item.6 }}</p>
+        <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
+        <p><span class="fw-bold">End Date: </span>{{ item.6 }}</p>
+        <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Won{%else%}Lost{% endif %}</p>
       {% endif %}
+      
+      
       <p><span class="fw-bold">Description:</span><br> 
           {{ item.7 }}
       </p>

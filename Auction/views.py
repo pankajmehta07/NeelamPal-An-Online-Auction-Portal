@@ -80,17 +80,15 @@ def showBids(request):
         timestamp = getTimestamp()
         params['itemData'] = runQuery(f'''SELECT DISTINCT item.id, item.name, item.min_bid_amt, 
                     item.bid_start_time, item.filename, item.bid_end_time, bidInfo.amount,
-                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, bidInfo.bidder_id, bid.amount
+                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, bidInfo.bidder_id, bids.amount
                    FROM item 
-                   JOIN bid
-                   ON item.id = bid.item_id
-                   JOIN bidder
-                   ON bid.bidder_id = bidder.citizenship_no
+                   JOIN (SELECT bid.item_id, Max(bid.amount) as amount, bid.bidder_id
+                    from bid where bidder_id = {request.user.id} group by item_id) as bids
+                   ON item.id = bids.item_id
                    LEFT JOIN (SELECT highest_bid.item_id, bid.bidder_id, bid.amount 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
-                   ON item.id = bidInfo.item_id 
-                   WHERE bid.bidder_id= {request.user.id}
+                   ON item.id = bidInfo.item_id ORDER BY item.bid_end_time DESC
                    ''')
         return render(request,"Auction/myBids.html", params)    
         
@@ -339,7 +337,7 @@ def item(request, itemID):
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
     params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename, organization.reg_no
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename, organization.reg_no 
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -348,6 +346,7 @@ def item(request, itemID):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.id = {itemID}''')[0]
+    params['bid'] = runQuery(f"SELECT bid.amount, bid.bidder_id FROM bid where item_id = {itemID} ORDER BY created_at DESC LIMIT 1")
     return render(request, "Auction/itemDetails.html", params) 
 
 def edit(request):
