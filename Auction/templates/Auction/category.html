@@ -17,32 +17,31 @@
   </div>
 {% else %}
 
-  <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3" >
- {% for item in activeItemData %}
-    <div class="col-md-4 cards">
-      <div class="card card-custom">
-        <div class="image-wrapper">
-          <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.5 }}" alt="...">
-        </div>
-        <div class="content-box">
-          <div class="card-title fs-4 fw-bold">
-            {{ item.1|truncatechars:30 }}
+<div class="container-fluid col-md mt-3 mb-3" >
+  <div class="row ms-auto me-auto"> 
+      {% for item in activeItemData %}
+          <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+            <div class="card card-custom">
+              <div class="image-wrapper">
+                <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.5 }}" alt="...">
+              </div>
+              <div class="content-box">
+                <div class="card-title fs-4 fw-bold">
+                  {{ item.1|truncatechars:30 }}
+                </div>
+                <div class="card-bid-amount fw-bold">
+                  ${% if item.3 %}{{ item.3 }}  {% else %} {{ item.2 }} {% endif %}
+                </div>
+                <div class="card-time">
+                  <b>Remaining time : </b>{{ item.4 | getTimeDiff }}
+                </div>
+                <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+              </div>
+            </div>
           </div>
-          <div class="card-bid-amount fw-bold">
-            ${% if item.3 %}{{ item.3 }}  {% else %} {{ item.2 }} {% endif %}
-          </div>
-          <div class="card-time">
-            <b>Remaining time : </b>{{ item.4 | getTimeDiff }}
-          </div>
-          <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
-        </div>
-      </div>
-    </div>
-    {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
-      </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
-    {% endif %}
-  {% endfor %}
+       {% endfor %}
   </div>
+</div>
 {% endif %}
   
 <h3 class="mt-5 mb-3 ms-3 fs-1 fw-bold">Upcoming Bids</h3>
@@ -54,31 +53,30 @@
   </div>
 {% else %}
 
-  <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
-  {% for item in upcomingItemData %}
-    <div class="col-md-4 cards">
-      <div class="card card-custom">
-        <div class="image-wrapper">
-          <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
+  <div class="container-fluid row mt-3 mb-3">
+  <div class="row ms-auto me-auto">
+      {% for item in upcomingItemData %}
+        <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+          <div class="card card-custom">
+            <div class="image-wrapper">
+              <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
+            </div>
+            <div class="content-box">
+              <div class="card-title fs-4 fw-bold">
+                {{ item.1|truncatechars:30 }}
+              </div>
+              <div class="card-bid-amount fw-bold">
+                $ {{ item.2 }}
+              </div>
+              <div class="card-time">
+                <b>Start Time :</b> {{ item.3 }}
+              </div>
+              <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+            </div>
+          </div>
         </div>
-        <div class="content-box">
-          <div class="card-title fs-4 fw-bold">
-            {{ item.1|truncatechars:30 }}
-          </div>
-          <div class="card-bid-amount fw-bold">
-            $ {{ item.2 }}
-          </div>
-          <div class="card-time">
-            <b>Start Time :</b> {{ item.3 }}
-          </div>
-          <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
-        </div>
-      </div>
-    </div>
-  {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
-    </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
-  {% endif %}
-  {% endfor %}
+      {% endfor %}
+  </div>
   </div>
 {% endif %}
  
@@ -92,32 +90,30 @@
   </div>
 {% else %}
 
-  <div class="container-fluid d-flex flex-col gap-3  mt-3 mb-3">
- {% for item in endedItemData %}
-  
-    <div class="col-md-4 cards">
-      <div class="card card-custom">
-        <div class="image-wrapper">
-          <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
-        </div>
-        <div class="content-box">
-          <div class="card-title fs-4 fw-bold">
-            {{ item.1|truncatechars:30 }}
-          </div>
-          <div class="card-bid-amount fw-bold">
-            $ {% if item.3 %}{{ item.3 }}  {% else %} {{ item.5 }} {% endif %}
-          </div>
-          <div class="card-time">
-            <b>End Time :</b> {{ item.2 }}
-          </div>
-          <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
-        </div>
+    <div class="container-fluid mt-3 mb-3">
+      <div class="row ms-auto me-auto">
+        {% for item in endedItemData %}
+            <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+              <div class="card card-custom">
+                <div class="image-wrapper">
+                  <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
+                </div>
+                <div class="content-box">
+                  <div class="card-title fs-4 fw-bold">
+                    {{ item.1|truncatechars:30 }}
+                  </div>
+                  <div class="card-bid-amount fw-bold">
+                    $ {% if item.3 %}{{ item.3 }}  {% else %} {{ item.5 }} {% endif %}
+                  </div>
+                  <div class="card-time">
+                    <b>End Time :</b> {{ item.2 }}
+                  </div>
+                  <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
       </div>
     </div>
-    {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
-      </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
-    {% endif %}
-  {% endfor %}
-  </div>
 {% endif %}
 {% endblock body %}
