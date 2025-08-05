@@ -39,6 +39,18 @@
       </style>
         
     {% endif %}
+
+    <style>
+  @media (max-width: 650px) {
+    .search {
+      width: 330px !important;
+    }
+
+    .right-nav{
+      margin-top: 10px;
+    }
+  }
+</style>
 </head>
 
 <body>
@@ -65,10 +77,13 @@
           {% endif %}
         </ul>
       </div>
+     </div>
     </div>
+   </div>
+
     <div class="right-nav flex-grow-1">
       <div class = "search-container">
-      <form action="/search" style="width: 500px;">
+      <form action="/search" class="search" style="width: 500px; ">
         <div class="search-bar">
           <button type="submit" style="border:0px"><i class="fas fa-search"></i></button>
           <input name='search' type="text" placeholder="Search..." />
@@ -76,7 +91,7 @@
       </form>
     </div>
     <button
-        class="navbar-toggler me-5 ms-5"
+        class="navbar-toggler ms-2 me-2"
         type="button"
         data-bs-toggle="collapse"
         data-bs-target="#navbarSupportedContent"

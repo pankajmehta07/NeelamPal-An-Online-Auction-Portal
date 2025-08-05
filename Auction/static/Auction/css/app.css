@@ -22,7 +22,7 @@
   border: 1px solid #ccc;
   border-radius: 25px;
   padding: 8px 15px;
-  width: 100%;
+  width: 500px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -46,7 +46,7 @@ nav {
   transition: background 0.3s ease-in;
 }
 
-.dropdown > ul {
+.dropdown>ul {
   background-color: #69abeb;
 }
 
@@ -54,11 +54,11 @@ nav {
   background-color: transparent;
 }
 
-.nav-item > a {
+.nav-item>a {
   transition: transform 0.5s ease;
 }
 
-.nav-item > a:hover {
+.nav-item>a:hover {
   transform: scale(1.2);
 }
 
@@ -156,17 +156,19 @@ img.rounded-circle:hover {
   background-color: #cfd2cf;
 }
 
-.bidInput{
+.bidInput {
   border: 1px solid black;
-} 
+}
 
-.profile .details{
-  background-color: #959596; /* Light grey background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+.profile .details {
+  background-color: #959596;
+  /* Light grey background */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* Soft shadow */
   transition: all 0.3s ease;
 }
 
-.formContainer{
+.formContainer {
   box-shadow: 5px 5px 21px #000000ab;
 }
 
@@ -185,9 +187,11 @@ img.rounded-circle:hover {
   background-color: inherit;
   cursor: not-allowed;
 }
-.alert-error{
+
+.alert-error {
   background-color: #d99d53a6;
 }
-.alert{
+
+.alert {
   border-radius: 0px;
 }
