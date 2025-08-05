@@ -35,6 +35,15 @@
             <button type="submit" class="btn btn-primary p-2">Edit</button>
           </div>
         </form>
+        {% if status == "Upcoming" %}
+          <form method="POST" action="/deleteItem">
+            {% csrf_token %}
+            <div class="row gap-3 ps-5 pe-5 mt-5">
+              <input type="hidden" name="item_id" value="{{ item.0 }} ">
+              <button type="submit" class="btn btn-danger p-2">Delete Item</button>
+            </div>
+          </form>
+        {% endif %}
       {% endif %}
       
     </div>
@@ -43,8 +52,8 @@
       <br>
       <p><span class="fw-bold">Category : </span>{{ item.2 }}</p>
       <p><span class="fw-bold">Organization : </span>{{ item.4 }}</p>
-      <p><span class="fw-bold">Auction Status : </span>{{ item.5|auctionStatus:item.6 }}</p>
-      {% if item.5|auctionStatus:item.6 == "Ongoing" %}
+      <p><span class="fw-bold">Auction Status : </span>{{ status }}</p>
+      {% if status == "Ongoing" %}
       <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
         <p><span class="fw-bold">Remaining Time: </span> {{ item.9|getTimeDiff }}</p>
         <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Winning{%else%}Losing{% endif %}</p>
@@ -53,7 +62,7 @@
           <p><span class="fw-bold">Your Bid Amount : </span>$ {{bid.0.0}}</p>
         {% endif %}
 
-      {% elif item.5|auctionStatus:item.6 == "Upcoming" %}
+      {% elif status == "Upcoming" %}
         <p><span class="fw-bold">Min Bid Amount: </span>$ {{ item.3 }}</p>
         <p><span class="fw-bold">Start Date: </span>{{ item.5 }}</p>
 

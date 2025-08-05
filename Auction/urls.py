@@ -17,6 +17,7 @@ urlpatterns = [
     path("items",views.showItems, name="showItems"),
     path("edit",views.edit, name="edit"),
     path("updateItem",views.updateItem, name="updateItem"),
+    path("deleteItem",views.deleteItem, name="deleteItem"),
     path("profile",views.profile, name="profile"),
     path("editProfile",views.editProfile, name="editProfile"),
     path("updateProfile", views.updateProfile, name="updateProfile"),

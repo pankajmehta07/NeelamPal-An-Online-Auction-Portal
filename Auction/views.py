@@ -9,6 +9,7 @@ import re
 import os
 from datetime import datetime, timedelta
 from django.conf import settings
+from .templatetags.custom_filters import auctionStatus
 # Create your views here.
 
 def profile(request):
@@ -347,7 +348,29 @@ def item(request, itemID):
                    ON item.id = bidInfo.item_id 
                    WHERE item.id = {itemID}''')[0]
     params['bid'] = runQuery(f"SELECT bid.amount, bid.bidder_id FROM bid where item_id = {itemID} ORDER BY created_at DESC LIMIT 1")
+    params['status'] = auctionStatus(params['item'][5],params['item'][6])
     return render(request, "Auction/itemDetails.html", params) 
+
+def deleteItem(request):
+    if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
+        itemID = request.POST.get('item_id')
+        data = runQuery(f'''SELECT id, bid_start_time, bid_end_time, organization_id, filename
+                    FROM item
+                    WHERE id = {itemID}''')[0]
+        file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[4])           
+        if request.user.id == data[3]:
+            if auctionStatus(data[1], data[2]) == "Upcoming":
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                runQuery(f'''DELETE FROM item where id={itemID}''')
+                messages.success(request, "Deletion Successfull")
+            else:
+                messages.error(request, "Only items with auction status 'upcoming' can be deleted")
+        else:
+            messages.error(request, "Invalid Request!!!")
+        return redirect('home')
+    messages.error(request, "Invalid Request!!!")
+    return redirect('home')
 
 def edit(request):
     if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
