@@ -41,7 +41,7 @@
                             <input type="datetime-local"  value="{{ item.5 | date:"Y-m-d\TH:i" }}"class="form-control" id="endTime" name="end_time" required>
                         </div>
                         <div class="mb-3">
-                            <label for="itemImage" class="form-label">Image of the item (JPG only):</label>
+                            <label for="itemImage" class="form-label">Image of the item (JPG/JPEG/PNG only):</label>
                             <input type="file" class="form-control" id="itemImage" name="item_image" accept=".png,.jpg,image/jpeg" value="{{ item.9 }}">
                         </div>
                         <button type="submit" class="btn btn-primary">Save Item</button>

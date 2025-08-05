@@ -214,6 +214,9 @@ def saveItem(request):
         filename = image.name
 
         filename = filename.split(".")
+        if(filename[-1] not in ['jpg','jpeg', 'png']):
+            messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
+            return redirect('addItem')
         filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
         filename = filename.replace("-",'')
         filename = filename.replace(":",'')
@@ -289,7 +292,7 @@ def updateItem(request):
             return redirect('item',itemID = item_id)
 
 
-        data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}", )
+        data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}")[0]
         if not data:
             messages.error(request, "Item doesn't exist")
             return redirect('item',itemID = str(item_id).strip())
@@ -307,6 +310,9 @@ def updateItem(request):
             filename = image.name
 
             filename = filename.split(".")
+            if(filename[-1] not in ['jpg','jpeg', 'png']):
+                messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
+                return redirect('item',itemID = str(item_id).strip())
             filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
             filename = filename.replace("-",'')
             filename = filename.replace(":",'')
@@ -315,8 +321,12 @@ def updateItem(request):
             with open(file_path, 'wb+') as destination:
                     for chunk in image.chunks():
                         destination.write(chunk)
+            delete_file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[8])
+            if os.path.exists(delete_file_path):
+                    os.remove(delete_file_path)          
+        
         else:
-            filename = data[0][8]
+            filename = data[8]
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
