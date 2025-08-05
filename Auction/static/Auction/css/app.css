@@ -136,12 +136,9 @@ nav {
 
 .image-wrapper img {
   width: 100%;
-  height: 31vh;
+  height: 100%;
   border-radius: 10px;
-}
-
-.cards {
-  width: 32.333%;
+  object-fit: cover;
 }
 
 .card-custom {

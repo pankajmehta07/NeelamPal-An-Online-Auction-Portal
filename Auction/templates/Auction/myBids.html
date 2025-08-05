@@ -7,37 +7,34 @@
 {% endblock headjs %} 
 {% block body %} 
 
-    <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
+<div class="container-fluid row mt-3 mb-3">
+    <div class="row ms-auto me-auto">
         {% for item in itemData %}
-            <div class="col-md-4 cards">
-            <div class="card card-custom">
-                <div class="image-wrapper">
-                <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
-                </div>
-                <div class="content-box">
-                <div class="card-title fs-4 fw-bold">
-                    {{ item.1|truncatechars:30 }}
-                </div>
-                <div class="card-bid-amount">
-                    <b>Your Bid Amount :</b> $ {{ item.9 }}
-                </div>
-                <div class="card-Bid-Status">
-                    <b>Bid Status :</b> {% if item.8 == user.id %}Winning{%else%}Losing{% endif %}
-                </div>
-                <div class="card-Auction-Status">
-                    <b>Auction Status :</b> {{ item.3 | auctionStatus:item.5 }}
-                </div>
-                <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+            <div class="col-11   col-sm-6 col-md-4 col-lg-3">
+                <div class="card card-custom">
+                    <div class="image-wrapper">
+                        <img class="img-fluid" src="{% static 'Auction/images/item_images/' %}{{ item.4 }}" alt="...">
+                    </div>
+                    <div class="content-box">
+                        <div class="card-title fs-4 fw-bold">
+                            {{ item.1|truncatechars:30 }}
+                        </div>
+                        <div class="card-bid-amount">
+                            <b>Your Bid Amount :</b> $ {{ item.9 }}
+                        </div>
+                        <div class="card-Bid-Status">
+                            <b>Bid Status :</b> {% if item.8 == user.id %}Winning{%else%}Losing{% endif %}
+                        </div>
+                        <div class="card-Auction-Status">
+                            <b>Auction Status :</b> {{ item.3 | auctionStatus:item.5 }}
+                        </div>
+                            <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+                    </div>
                 </div>
             </div>
-            </div>
-            
-            
-            {% if forloop.counter|divisibleby:3 and forloop.counter > 0 and not forloop.last %}
-                </div> <div class="container-fluid d-flex flex-col gap-3 mt-3 mb-3">
-            {% endif %}
-        {% endfor %}
-  </div>
+         {% endfor %}
+    </div>
+</div>
 
 
 {% endblock body %}
