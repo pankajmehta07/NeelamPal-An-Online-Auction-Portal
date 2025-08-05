@@ -41,6 +41,33 @@
   padding: 6px;
 }
 
+@media (max-width: 450px) {
+  .search .search-bar {
+    width: 250px !important;
+  }
+
+  .right-nav{
+    margin-top: 10px;
+    width: 310px !important;
+  }
+  .navbar-toggler{
+    padding: 3px;
+  }
+  .lead{
+    font-size: 1rem;
+  }
+}
+@media (min-width: 450px) and (max-width: 650px) {
+  .search .search-bar {
+    width: 450px !important;
+  }
+
+  .right-nav{
+    margin-top: 10px;
+    width: 450px !important;
+  }
+}
+
 nav {
   background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #53d2d9, #538fd9);
   transition: background 0.3s ease-in;
@@ -194,4 +221,8 @@ img.rounded-circle:hover {
 
 .alert {
   border-radius: 0px;
+}
+
+.card-wrapper{
+  min-height: 150px;
 }

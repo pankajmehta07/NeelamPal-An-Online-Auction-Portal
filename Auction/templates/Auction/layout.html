@@ -39,21 +39,11 @@
       </style>
         
     {% endif %}
-
-    <style>
-  @media (max-width: 650px) {
-    .search {
-      width: 330px !important;
-    }
-
-    .right-nav{
-      margin-top: 10px;
-    }
-  }
-</style>
 </head>
 
 <body>
+  <div class="container-fluid p-0 m-0">
+    
   <nav class="navbar navbar-expand-xl">
     <div class="left-nav">
       <a class="navbar-brand" href="/"><img
@@ -77,19 +67,15 @@
           {% endif %}
         </ul>
       </div>
-     </div>
     </div>
-   </div>
 
     <div class="right-nav flex-grow-1">
-      <div class = "search-container">
-      <form action="/search" class="search" style="width: 500px; ">
-        <div class="search-bar">
+      <div class="search-bar">
+        <form action="/search" class="search">
           <button type="submit" style="border:0px"><i class="fas fa-search"></i></button>
-          <input name='search' type="text" placeholder="Search..." />
-        </div>
-      </form>
-    </div>
+          <input name='search' class='search' type="text" placeholder="Search..." />
+        </form>
+      </div>
     <button
         class="navbar-toggler ms-2 me-2"
         type="button"
@@ -135,12 +121,16 @@
           </li>
         </ul>
       </div>
+
+    </div>
       
       
     {% endif %}
     </div>
     
   </nav>
+
+  </div>
   {% if messages %}
   {% for message in messages %}
     <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
