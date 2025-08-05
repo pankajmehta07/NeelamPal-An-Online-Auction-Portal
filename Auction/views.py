@@ -9,6 +9,7 @@ import re
 import os
 from datetime import datetime, timedelta
 from django.conf import settings
+from .templatetags.custom_filters import auctionStatus
 # Create your views here.
 
 def profile(request):
@@ -213,6 +214,9 @@ def saveItem(request):
         filename = image.name
 
         filename = filename.split(".")
+        if(filename[-1] not in ['jpg','jpeg', 'png']):
+            messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
+            return redirect('addItem')
         filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
         filename = filename.replace("-",'')
         filename = filename.replace(":",'')
@@ -288,7 +292,7 @@ def updateItem(request):
             return redirect('item',itemID = item_id)
 
 
-        data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}", )
+        data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}")[0]
         if not data:
             messages.error(request, "Item doesn't exist")
             return redirect('item',itemID = str(item_id).strip())
@@ -306,6 +310,9 @@ def updateItem(request):
             filename = image.name
 
             filename = filename.split(".")
+            if(filename[-1] not in ['jpg','jpeg', 'png']):
+                messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
+                return redirect('item',itemID = str(item_id).strip())
             filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
             filename = filename.replace("-",'')
             filename = filename.replace(":",'')
@@ -314,8 +321,12 @@ def updateItem(request):
             with open(file_path, 'wb+') as destination:
                     for chunk in image.chunks():
                         destination.write(chunk)
+            delete_file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[8])
+            if os.path.exists(delete_file_path):
+                    os.remove(delete_file_path)          
+        
         else:
-            filename = data[0][8]
+            filename = data[8]
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
@@ -347,7 +358,29 @@ def item(request, itemID):
                    ON item.id = bidInfo.item_id 
                    WHERE item.id = {itemID}''')[0]
     params['bid'] = runQuery(f"SELECT bid.amount, bid.bidder_id FROM bid where item_id = {itemID} ORDER BY created_at DESC LIMIT 1")
+    params['status'] = auctionStatus(params['item'][5],params['item'][6])
     return render(request, "Auction/itemDetails.html", params) 
+
+def deleteItem(request):
+    if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
+        itemID = request.POST.get('item_id')
+        data = runQuery(f'''SELECT id, bid_start_time, bid_end_time, organization_id, filename
+                    FROM item
+                    WHERE id = {itemID}''')[0]
+        file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[4])           
+        if request.user.id == data[3]:
+            if auctionStatus(data[1], data[2]) == "Upcoming":
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                runQuery(f'''DELETE FROM item where id={itemID}''')
+                messages.success(request, "Deletion Successfull")
+            else:
+                messages.error(request, "Only items with auction status 'upcoming' can be deleted")
+        else:
+            messages.error(request, "Invalid Request!!!")
+        return redirect('home')
+    messages.error(request, "Invalid Request!!!")
+    return redirect('home')
 
 def edit(request):
     if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
