@@ -41,37 +41,34 @@
       </div>
     </div>
   </div>
-
-
-
-
-
-
-  <div class="row">
-    <div class="col-lg-7">
+</div>
+<div class="container-fluid p-2 m-0">
+  <div class="row m-0">
+    <div class="col-lg-7 p-0">
       <h3 class="fw-bold text-decoration-underline" id='open-bids'>Open for bidding</h3>
       {% for item in itemData %}   
         <div class="d-flex align-items-center mb-5 mt-5 border border-dark border-2 rounded-3 card-wrapper">
-          <div class="imageContainer p-2 col-md-2">
+          <div class="imageContainer p-2 col-md-2 col-sm-3 col-lg-2">
             <img class="openBidImages" src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" alt="{{ item.1 }}" >
           </div>
-          <div class="col-md-10">
-            <div class="mx-1 col-md-6 p-2 pt-3  border-end border-dark border-1">
-              <div class="d-flex justify-content-between px-2">
-                <div class="fw-bold mb-2 fs-4 text-decoration-underline">{{ item.1 }}</div>
-                <div class="fw-light fs-5 opacity-75">{{ item.2 }}</div>
-              </div>
+          <div class="col-md-10 col-sm-10 col-12 col-lg-10 row justify-content-evenly">
+            <div class="mx-1 col-8 p-1 pt-3 pb-2">
+                <div class="fw-bold mb-2 fs-4 text-decoration-underline col-md-7">
+                  {{ item.1 }}
+                </div>
+              
 
-              <div class="row px-2">
+              <div class="row px-1">
                 <div class="fs-5">By: {{ item.4 }}<br></div>
                 <div class="fs-6 mt-1 mb-1">{{ item.7 | truncatechars:70 }}
                   <a class="read-more" href="/item/{{ item.0 }}">Show Full Info</a>               
                 </div>
               </div>              
             </div>    
-            <div class="d-flex flex-column justify-content-center col-md-4 p-lg-4" style=" overflow: hidden; ">
-              <div class="row justify-content-center mt-3 pe-lg-5 ps-lg-3 fs-5">${% if item.8 %}{{ item.8 }}{% else %}{{ item.3 }}{% endif %}</div>
-              <div class="row justify-content-center mt-3 pe-lg-5 ps-lg-3 mb-1 fs-6" id="timediff{{ item.0 }}">{{ item.9 | getTimeDiff }}</div>
+            <div class="d-flex flex-column justify-content-center col-3 p-0 p-lg-1" style=" overflow: hidden; ">
+              <div class="fw-light fs-5 opacity-75 text-center pe-lg-1 ps-lg-1">{{ item.2 }}</div>
+              <div class="row justify-content-center mt-3 pe-lg-1 ps-lg-1 fs-5">${% if item.8 %}{{ item.8 }}{% else %}{{ item.3 }}{% endif %}</div>
+              <div class="row justify-content-center mt-3 pe-lg-1 ps-lg-1 fs-6" id="timediff{{ item.0 }}">{{ item.9 | getTimeDiff }}</div>
             </div>    
           </div>
         </div>        
