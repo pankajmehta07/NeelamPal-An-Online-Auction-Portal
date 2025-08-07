@@ -278,9 +278,6 @@ def updateItem(request):
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
         
-        
-
-
         start_time = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M")
         end_time = datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M")
 
@@ -308,6 +305,7 @@ def updateItem(request):
         end_time = end_time or data[8]
 
         if image:
+            filename = image.name
             filename = filename.split(".")
             if(filename[-1] not in ['jpg','jpeg', 'png']):
                 messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
@@ -327,18 +325,19 @@ def updateItem(request):
             image_url = result['secure_url']
             public_id = result['public_id']
             try:
-                cloudinary.uploader.destroy(data[9])
+                result = cloudinary.uploader.destroy(data[9], invalidate=True)
+                print(result)
             except Exception as e:
                 pass      
         
         else:
-            filename = data[8]
+            filename = data[6]
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
         runQuery(f'''UPDATE item set name='{name}', category='{category}', description='{description}', 
                  min_bid_amt={min_bid_amt},organization_id={request.user.id}, bid_start_time='{start_time_str}', 
-                 bid_end_time='{end_time_str}', filename='{image_url}', fileid='{public_id}' WHERE id={item_id}''')
+                 bid_end_time='{end_time_str}', fileurl='{image_url}', fileid='{public_id}' WHERE id={item_id}''')
         
 
         messages.success(request, "Item was updated successfully.")
@@ -370,14 +369,16 @@ def item(request, itemID):
 def deleteItem(request):
     if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
         itemID = request.POST.get('item_id')
-        data = runQuery(f'''SELECT id, bid_start_time, bid_end_time, organization_id, filename
+        data = runQuery(f'''SELECT id, bid_start_time, bid_end_time, organization_id, fileid
                     FROM item
                     WHERE id = {itemID}''')[0]
         file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[4])           
         if request.user.id == data[3]:
             if auctionStatus(data[1], data[2]) == "Upcoming":
-                if os.path.exists(file_path):
-                    os.remove(file_path)
+                try:
+                    cloudinary.uploader.destroy(data[4])
+                except Exception as e:
+                    pass
                 runQuery(f'''DELETE FROM item where id={itemID}''')
                 messages.success(request, "Deletion Successfull")
             else:
