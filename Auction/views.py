@@ -298,11 +298,11 @@ def updateItem(request):
             return redirect('item',itemID = str(item_id).strip())
         
         name = name or data[1]
-        min_bid_amt = min_bid_amt or data[3]
+        min_bid_amt = min_bid_amt or data[4]
         category = category or data[2]
-        description = description or data[7]
-        start_time = start_time or data[5]
-        end_time = end_time or data[6]
+        description = description or data[3]
+        start_time = start_time or data[7]
+        end_time = end_time or data[8]
 
         if image:
             save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
@@ -321,7 +321,7 @@ def updateItem(request):
             with open(file_path, 'wb+') as destination:
                     for chunk in image.chunks():
                         destination.write(chunk)
-            delete_file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[8])
+            delete_file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[6])
             if os.path.exists(delete_file_path):
                     os.remove(delete_file_path)          
         

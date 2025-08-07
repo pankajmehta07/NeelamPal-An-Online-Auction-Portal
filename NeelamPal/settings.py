@@ -80,15 +80,13 @@ DATABASES = {
     # },
     'default': {    # MySQL for app-specific data
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'auction',
-        'USER': 'user',
-        'PASSWORD': 'Admin@12',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': 'mobTOnDGIiInAlleigggkcSQgYBxwSEn',
+        'HOST': 'hopper.proxy.rlwy.net',
+        'PORT': '54889',
     }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
