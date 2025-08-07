@@ -331,7 +331,8 @@ def updateItem(request):
                 pass      
         
         else:
-            filename = data[6]
+            image_url = data[6]
+            public_id = data[9]
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
