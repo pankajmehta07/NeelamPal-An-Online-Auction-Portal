@@ -10,6 +10,7 @@ import os
 from datetime import datetime, timedelta
 from django.conf import settings
 from .templatetags.custom_filters import auctionStatus
+import cloudinary.uploader
 # Create your views here.
 
 def profile(request):
@@ -52,7 +53,7 @@ def home(request):
     # Active items
     param['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -68,7 +69,7 @@ def search(request):
     searchTerm = filter(request.GET.get('search'))
     params = {}
     params['searchResults'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
-                   item.bid_start_time, item.filename
+                   item.bid_start_time, item.fileurl
                    FROM item
                    where item.name like '%{searchTerm}%' or item.category like '%{searchTerm}%' limit 20 ''')
 
@@ -80,7 +81,7 @@ def showBids(request):
         params = {}
         timestamp = getTimestamp()
         params['itemData'] = runQuery(f'''SELECT DISTINCT item.id, item.name, item.min_bid_amt, 
-                    item.bid_start_time, item.filename, item.bid_end_time, bidInfo.amount,
+                    item.bid_start_time, item.fileurl, item.bid_end_time, bidInfo.amount,
                     TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, bidInfo.bidder_id, bids.amount
                    FROM item 
                    JOIN (SELECT bid.item_id, Max(bid.amount) as amount, bid.bidder_id
@@ -101,7 +102,7 @@ def showItems(request):
         params = {}
         timestamp = getTimestamp()
         params['itemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
-                    item.bid_start_time, item.filename, item.bid_end_time, bidInfo.amount,
+                    item.bid_start_time, item.fileurl, item.bid_end_time, bidInfo.amount,
                     TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining
                    FROM item 
                    JOIN organization 
@@ -174,7 +175,7 @@ def category(request):
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
     param['activeItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl
                    FROM item 
                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
                    FROM highest_bid join bid ON 
@@ -183,12 +184,12 @@ def category(request):
                    WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' order by time_remaining limit 18''')
     # Upcoming items
     param['upcomingItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
-                   item.bid_start_time, item.filename
+                   item.bid_start_time, item.fileurl
                    FROM item
                    WHERE item.bid_start_time > '{timestamp}'  order by item.bid_start_time limit 6''')
     # Closed items
     param['endedItemData'] = runQuery(f'''SELECT item.id, item.name, 
-                   item.bid_end_time, bidInfo.amount, item.filename, item.min_bid_amt
+                   item.bid_end_time, bidInfo.amount, item.fileurl, item.min_bid_amt
                    FROM item 
                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
                    FROM highest_bid join bid ON 
@@ -209,23 +210,32 @@ def saveItem(request):
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
 
-        save_dir = os.path.join(settings.MEDIA_ROOT, 'item_images')
-        os.makedirs(save_dir, exist_ok=True)
+        # save_dir = os.path.join(settings.MEDIA_ROOT, 'item_images')
+        # os.makedirs(save_dir, exist_ok=True)
         filename = image.name
 
         filename = filename.split(".")
         if(filename[-1] not in ['jpg','jpeg', 'png']):
             messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
             return redirect('addItem')
-        filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
+        filename = filename[0][:19] + str(datetime.now())
         filename = filename.replace("-",'')
         filename = filename.replace(":",'')
         filename = filename.replace(" ",'')
-        file_path = os.path.join(save_dir, filename)
-        with open(file_path, 'wb+') as destination:
-                for chunk in image.chunks():
-                    destination.write(chunk)
-
+        filename = filename.replace(".",'')
+        # file_path = os.path.join(save_dir, filename)
+        # with open(file_path, 'wb+') as destination:
+        #         for chunk in image.chunks():
+        #             destination.write(chunk)
+        result = cloudinary.uploader.upload(
+            image,
+            folder='item_images/',
+            public_id = filename,
+            overwrite=True,
+            resource_type="image"
+        )
+        image_url = result['secure_url']
+        public_id = result['public_id']
 
         start_time = datetime.strptime(start_time_str, "%Y-%m-%dT%H:%M")
         end_time = datetime.strptime(end_time_str, "%Y-%m-%dT%H:%M")
@@ -251,9 +261,9 @@ def saveItem(request):
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
         runQuery(f'''INSERT INTO item(name, category, description, min_bid_amt,
-                       organization_id, bid_start_time, bid_end_time, filename) 
+                       organization_id, bid_start_time, bid_end_time, fileurl, fileid) 
                        VALUES('{name}','{category}','{description}',{min_bid_amt},
-                       {request.user.id},'{start_time_str}','{end_time_str}', '{filename}')''')
+                       {request.user.id},'{start_time_str}','{end_time_str}', '{image_url}','{public_id}')''')
         
 
         messages.success(request, "Item was added successfully.")
@@ -305,25 +315,28 @@ def updateItem(request):
         end_time = end_time or data[8]
 
         if image:
-            save_dir = os.path.join(settings.MEDIA_ROOT, 'item_images')   
-            os.makedirs(save_dir, exist_ok=True)
-            filename = image.name
-
             filename = filename.split(".")
             if(filename[-1] not in ['jpg','jpeg', 'png']):
                 messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
                 return redirect('item',itemID = str(item_id).strip())
-            filename = filename[0][:19] + str(datetime.now())+"." + filename[-1]
+            filename = filename[0][:19] + str(datetime.now())
             filename = filename.replace("-",'')
             filename = filename.replace(":",'')
             filename = filename.replace(" ",'')
-            file_path = os.path.join(save_dir, filename)
-            with open(file_path, 'wb+') as destination:
-                    for chunk in image.chunks():
-                        destination.write(chunk)
-            delete_file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[6])
-            if os.path.exists(delete_file_path):
-                    os.remove(delete_file_path)          
+            filename = filename.replace(".",'')
+            result = cloudinary.uploader.upload(
+                image,
+                folder='item_images/',
+                public_id = filename,
+                overwrite=True,
+                resource_type="image"
+            )
+            image_url = result['secure_url']
+            public_id = result['public_id']
+            try:
+                cloudinary.uploader.destroy(data[9])
+            except Exception as e:
+                pass      
         
         else:
             filename = data[8]
@@ -332,7 +345,7 @@ def updateItem(request):
         end_time_str = end_time_str.replace("T"," ")+":00"
         runQuery(f'''UPDATE item set name='{name}', category='{category}', description='{description}', 
                  min_bid_amt={min_bid_amt},organization_id={request.user.id}, bid_start_time='{start_time_str}', 
-                 bid_end_time='{end_time_str}', filename='{filename}' WHERE id={item_id}''')
+                 bid_end_time='{end_time_str}', filename='{image_url}', fileid='{public_id}' WHERE id={item_id}''')
         
 
         messages.success(request, "Item was updated successfully.")
@@ -348,7 +361,7 @@ def item(request, itemID):
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
     params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename, organization.reg_no 
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl, organization.reg_no 
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -390,7 +403,7 @@ def edit(request):
         timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
         params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, 
                     item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.filename, organization.reg_no
+                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl, organization.reg_no
                     FROM item 
                     JOIN organization 
                     ON item.organization_id = organization.reg_no 

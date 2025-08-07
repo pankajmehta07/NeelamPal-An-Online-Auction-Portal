@@ -8,4 +8,4 @@ item_images/
 # Files
 db.sqlite3
 package-lock.json
-
+.env

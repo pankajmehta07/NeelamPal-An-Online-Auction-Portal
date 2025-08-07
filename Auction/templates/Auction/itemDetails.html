@@ -12,7 +12,7 @@
   <div class="container info-box row m-5 p-5">
     <div class="col-md-5">
       <div class="image-container mb-5">
-        <img src="{{ MEDIA_URL }}item_images/{{ item.10 }}" class="img-fluid rounded-4" alt="Item image">
+        <img src="{{ item.10 }}" class="img-fluid rounded-4" alt="Item image">
       </div>
       {% if user.is_authenticated and user.user_type == "Bidder" and item.5|auctionStatus:item.6 == "Ongoing" %}
         <form method="POST" action="/bid">
