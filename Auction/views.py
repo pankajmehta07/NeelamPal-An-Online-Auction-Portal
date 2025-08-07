@@ -209,7 +209,7 @@ def saveItem(request):
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
 
-        save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
+        save_dir = os.path.join(settings.MEDIA_ROOT, 'item_images')
         os.makedirs(save_dir, exist_ok=True)
         filename = image.name
 
@@ -305,7 +305,7 @@ def updateItem(request):
         end_time = end_time or data[8]
 
         if image:
-            save_dir = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images')   
+            save_dir = os.path.join(settings.MEDIA_ROOT, 'item_images')   
             os.makedirs(save_dir, exist_ok=True)
             filename = image.name
 
