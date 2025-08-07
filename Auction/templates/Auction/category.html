@@ -8,7 +8,7 @@
 {% endblock headjs %} 
 {% block body %} 
 
-<h3 class="mt-4 mb-3 ms-3 fs-1 fw-bold">Ongoing Bids</h3>
+<h3 class="mt-4 mb-4 ms-3 fs-1 fw-bold">Ongoing Bids</h3>
 {% if not activeItemData %}
   <div class="contianer-fluid p-4">
     <p class="fs-3">
@@ -22,7 +22,7 @@
       {% for item in activeItemData %}
           <div class="col-10 col-sm-6 col-md-4 col-lg-3">
             <div class="card card-custom">
-              <div class="image-wrapper">
+              <div class="image-wrapper text-center">
                 <img class="img-fluid" src="{{ item.5 }}" alt="...">
               </div>
               <div class="content-box">
@@ -44,7 +44,7 @@
 </div>
 {% endif %}
   
-<h3 class="mt-5 mb-3 ms-3 fs-1 fw-bold">Upcoming Bids</h3>
+<h3 class="mt-5 mb-4 ms-3 fs-1 fw-bold">Upcoming Bids</h3>
 {% if not upcomingItemData %}
   <div class="contianer-fluid p-4">
     <p class="fs-3">
@@ -58,7 +58,7 @@
       {% for item in upcomingItemData %}
         <div class="col-10 col-sm-6 col-md-4 col-lg-3">
           <div class="card card-custom">
-            <div class="image-wrapper">
+            <div class="image-wrapper text-center">
               <img class="img-fluid" src="{{ item.4 }}" alt="...">
             </div>
             <div class="content-box">
@@ -81,7 +81,7 @@
 {% endif %}
  
 
-<h3 class="mt-5 mb-3 ms-3 fs-1 fw-bold">Closed Bids</h3>
+<h3 class="mt-5 mb-4 ms-3 fs-1 fw-bold">Closed Bids</h3>
 {% if not endedItemData %}
   <div class="contianer-fluid p-4">
     <p class="fs-3">
@@ -95,7 +95,7 @@
         {% for item in endedItemData %}
             <div class="col-10 col-sm-6 col-md-4 col-lg-3">
               <div class="card card-custom">
-                <div class="image-wrapper">
+                <div class="image-wrapper text-center">
                   <img class="img-fluid" src="{{ item.4 }}" alt="...">
                 </div>
                 <div class="content-box">
