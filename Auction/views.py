@@ -209,9 +209,6 @@ def saveItem(request):
         start_time_str = request.POST.get('start_time')  
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
-
-        # save_dir = os.path.join(settings.MEDIA_ROOT, 'item_images')
-        # os.makedirs(save_dir, exist_ok=True)
         filename = image.name
 
         filename = filename.split(".")
@@ -223,10 +220,6 @@ def saveItem(request):
         filename = filename.replace(":",'')
         filename = filename.replace(" ",'')
         filename = filename.replace(".",'')
-        # file_path = os.path.join(save_dir, filename)
-        # with open(file_path, 'wb+') as destination:
-        #         for chunk in image.chunks():
-        #             destination.write(chunk)
         result = cloudinary.uploader.upload(
             image,
             folder='item_images/',
