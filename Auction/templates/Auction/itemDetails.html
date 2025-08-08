@@ -42,7 +42,7 @@
         <form method="POST" action="/deleteItem">
           {% csrf_token %}<div class="row gap-3 ps-5 pe-5 mt-4">
             <input type="hidden" name="item_id" value="{{ item.0 }} ">
-            <button type="submit" class="butt btn btn-light p-2">Delete Item</button>
+            <button type="submit" class="butt btn btn-light p-2 mx-auto">Delete Item</button>
           </div>
         </form>
         {% endif %}
