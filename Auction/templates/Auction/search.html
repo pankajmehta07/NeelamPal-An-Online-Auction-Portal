@@ -7,18 +7,19 @@
 {% endblock headjs %} 
 {% block body %} 
 
-<div class="container-fluid row mt-3 mb-3">
-  {% if not activeItemData %}
+
+  {% if not searchResults %}
   <div class="contianer-fluid p-4">
     <p class="fs-3">
       No Items Found
     </p>
   </div>
   {% else %}
-    <div class="row ms-auto me-auto">
+  <div class="container-fluid col-md mt-3 mb-3" >
+  <div class="row ms-auto me-auto justify-content-center justify-content-md-start"> 
       {% for item in searchResults %}
 
-      <div class="col-8 col-sm-6 col-md-4 col-lg-3">
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
           <div class="card card-custom">
             <div class="image-wrapper text-center">
               <img class="img-fluid" src="{{ item.4 }}" alt="...">
