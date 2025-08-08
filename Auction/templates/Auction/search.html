@@ -8,9 +8,17 @@
 {% block body %} 
 
 <div class="container-fluid row mt-3 mb-3">
+  {% if not activeItemData %}
+  <div class="contianer-fluid p-4">
+    <p class="fs-3">
+      No Items Found
+    </p>
+  </div>
+  {% else %}
     <div class="row ms-auto me-auto">
       {% for item in searchResults %}
-      <div class="col-11 col-sm-6 col-md-4 col-lg-3">
+
+      <div class="col-8 col-sm-6 col-md-4 col-lg-3">
           <div class="card card-custom">
             <div class="image-wrapper text-center">
               <img class="img-fluid" src="{{ item.4 }}" alt="...">
@@ -33,5 +41,6 @@
       {% endfor %}
    </div>
 </div>
+{% endif %}
 
 {% endblock body %}

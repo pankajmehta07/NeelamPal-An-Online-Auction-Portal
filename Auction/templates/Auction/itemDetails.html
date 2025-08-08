@@ -8,13 +8,15 @@
 {% endblock headjs %}
 {% block body %}
 
-<div class="container-fluid p-0 p-md-3 p-lg-4 text-center">
-  <div class="container info-box row m-0 p-0 m-md-4 p-md-4 m-lg-5 p-lg-5">
-    <div class="col-md-5">
-      <div class="image-container mb-5">
-        <img src="{{ item.10 }}" class="img-fluid rounded-4" alt="Item image">
-      </div>
-      {% if user.is_authenticated and user.user_type == "Bidder" and item.5|auctionStatus:item.6 == "Ongoing" %}
+<div class="container-fluid text-center p-4 mx-auto">
+  <div class="row justify-content-center">
+    <div class="container info-box row m-0 p-0 m-md-4 p-md-4 m-lg-5 p-lg-5 rounded-3 shadow col-lg-10 col-xl-10">
+      <div class="col-md-5">
+        <div class="image-container mb-5 mt-3">
+          <img src="{{ item.10 }}" class="img-fluid rounded-4" alt="Item image">
+        </div>
+        
+        {% if user.is_authenticated and user.user_type == "Bidder" and item.5|auctionStatus:item.6 == "Ongoing" %}
         <form method="POST" action="/bid">
           {% csrf_token %}
           <div class="row ps-5 pe-5 gap-3">
@@ -26,8 +28,9 @@
             <button type="submit" class="btn btn-primary p-2">Place Bid</button>
           </div>
         </form>
-      {% endif %}
-      {% if user.is_authenticated and user.user_type == "Organization"  and item.11 == user.id%}
+        {% endif %}
+
+        {% if user.is_authenticated and user.user_type == "Organization"  and item.11 == user.id %}
         <form method="POST" action="/edit">
           {% csrf_token %}
           <div class="row gap-3 ps-5 pe-5">
@@ -36,48 +39,49 @@
           </div>
         </form>
         {% if status == "Upcoming" %}
-          <form method="POST" action="/deleteItem">
-            {% csrf_token %}
-            <div class="row gap-3 ps-5 pe-5 mt-4">
-              <input type="hidden" name="item_id" value="{{ item.0 }} ">
-              <button type="submit" class="btn btn-danger p-2">Delete Item</button>
-            </div>
-          </form>
+        <form method="POST" action="/deleteItem">
+          {% csrf_token %}
+          <div class="row gap-3 ps-5 pe-5 mt-4">
+            <input type="hidden" name="item_id" value="{{ item.0 }} ">
+            <button type="submit" class="btn btn-danger p-2">Delete Item</button>
+          </div>
+        </form>
         {% endif %}
-      {% endif %}
-      
-    </div>
-    <div class="m-0 p-2 mt-4 mt-lg-0 ms-lg-5 mt-md-0 ms-md-5 col-md-5 text-start">
-      <h2 class="text-center">{{ item.1 }}</h2>
-      <br>
-      <p><span class="fw-bold">Category : </span>{{ item.2 }}</p>
-      <p><span class="fw-bold">Organization : </span>{{ item.4 }}</p>
-      <p><span class="fw-bold">Auction Status : </span>{{ status }}</p>
-      {% if status == "Ongoing" %}
-      <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
+        {% endif %}
+        
+      </div>
+
+      <div class="m-0 p-3 mt-4 mt-lg-0 ms-lg-5 mt-md-0 ms-md-5 col-md-5 text-start">
+        <h2 class="text-center">{{ item.1 }}</h2>
+        <br>
+        <p><span class="fw-bold">Category : </span>{{ item.2 }}</p>
+        <p><span class="fw-bold">Organization : </span>{{ item.4 }}</p>
+        <p><span class="fw-bold">Auction Status : </span>{{ status }}</p>
+
+        {% if status == "Ongoing" %}
+        <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
         <p><span class="fw-bold">Remaining Time: </span> {{ item.9|getTimeDiff }}</p>
-        <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Winning{%else%}Losing{% endif %}</p>
-      
+        <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Winning{% else %}Losing{% endif %}</p>
         {% if bid.0.1 == user.id %}
-          <p><span class="fw-bold">Your Bid Amount : </span>$ {{bid.0.0}}</p>
+        <p><span class="fw-bold">Your Bid Amount : </span>$ {{bid.0.0}}</p>
         {% endif %}
 
-      {% elif status == "Upcoming" %}
+        {% elif status == "Upcoming" %}
         <p><span class="fw-bold">Min Bid Amount: </span>$ {{ item.3 }}</p>
         <p><span class="fw-bold">Start Date: </span>{{ item.5 }}</p>
 
-      {% else %}
+        {% else %}
         <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
         <p><span class="fw-bold">End Date: </span>{{ item.6 }}</p>
-        <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Won{%else%}Lost{% endif %}</p>
-      {% endif %}
-      
-      
-      <p><span class="fw-bold">Description:</span><br> 
+        <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Won{% else %}Lost{% endif %}</p>
+        {% endif %}
+
+        <p><span class="fw-bold">Description:</span><br> 
           {{ item.7 }}
-      </p>
-      
+        </p>
+      </div>
     </div>
   </div>
 </div>
+
 {% endblock body %}

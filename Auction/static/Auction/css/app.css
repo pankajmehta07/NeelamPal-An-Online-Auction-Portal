@@ -116,7 +116,7 @@ nav {
 }
 
 .card-title {
- line-height: 20px;
+  line-height: 20px;
 }
 
 .read-more {
@@ -178,7 +178,6 @@ img.rounded-circle:hover {
 
 .editDisabled {
   padding: 1.2vh;
-  background-color: rgb(193, 193, 193);
   border-radius: 10px;
 }
 
@@ -211,7 +210,8 @@ img.rounded-circle:hover {
     width: 310px !important;
     justify-content: space-around;
   }
-  .card-title{
+
+  .card-title {
     line-height: 20px;
   }
 
@@ -257,8 +257,8 @@ img.rounded-circle:hover {
     position: relative;
     overflow: hidden;
     border-radius: 10px;
-    width: auto; 
-     height: auto;
+    width: auto;
+    height: auto;
     box-shadow: 4px 4px 20px #858886;
   }
 
@@ -269,8 +269,9 @@ img.rounded-circle:hover {
     object-fit: cover;
     /* padding: 20px; */
   }
-  .imageContainer{
-    max-width: 100%!important;
+
+  .imageContainer {
+    max-width: 100% !important;
     width: auto;
   }
 
@@ -309,8 +310,8 @@ img.rounded-circle:hover {
   }
 }
 
-@media (min-width: 1350px){
-  .image-wrapper{
+@media (min-width: 1350px) {
+  .image-wrapper {
     height: 200px;
   }
 }
