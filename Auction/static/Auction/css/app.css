@@ -263,7 +263,7 @@ textarea::placeholder {
 
 @media (max-width: 450px) {
   .search {
-    width: 190px !important;
+    width: 210px !important;
     display: flex;
   }
 
@@ -298,7 +298,7 @@ textarea::placeholder {
   }
 
   .search-bar {
-    width: 190px !important;
+    width: 210px !important;
     gap: 0 !important;
   }
 
@@ -318,7 +318,7 @@ textarea::placeholder {
   .image-wrapper {
     position: relative;
     overflow: hidden;
-    border-radius: 10px;
+    border-radius: 0;
     width: auto;
     height: auto;
     box-shadow: 4px 4px 20px #858886;
@@ -327,7 +327,7 @@ textarea::placeholder {
   .image-wrapper img {
     width: 98vh;
     /* height: 80vh; */
-    border-radius: 10px;
+    border-radius: 0;
     object-fit: cover;
     /* padding: 20px; */
   }

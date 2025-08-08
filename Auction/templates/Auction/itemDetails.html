@@ -60,7 +60,9 @@
         {% if status == "Ongoing" %}
         <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
         <p><span class="fw-bold">Remaining Time: </span> {{ item.9|getTimeDiff }}</p>
+        {% if user.is_authenticated and user.user_type == "Bidder" %}
         <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Winning{% else %}Losing{% endif %}</p>
+        {% endif %}
         {% if bid.0.1 == user.id %}
         <p><span class="fw-bold">Your Bid Amount : </span>$ {{bid.0.0}}</p>
         {% endif %}
