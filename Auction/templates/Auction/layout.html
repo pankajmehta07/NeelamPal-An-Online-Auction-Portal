@@ -193,7 +193,7 @@
 
 
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Wider modal -->
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 1.1rem;">
           <div class="card bg-dark text-white" style="border-radius: 1rem;">
             <div class="card-body p-4 text-center">
@@ -204,7 +204,7 @@
                   <h2 class="fw-bold mb-4 text-uppercase">Register</h2>
                   <input type="hidden" name="userType" value="Bidder" id="userType">
 
-                  <div class="btn-group mb-4" role="group" aria-label="User Type Switch">
+                  <div class="btn-group mb-2" role="group" aria-label="User Type Switch">
                     <input type="radio" class="btn-check" name="user_type" id="RegisterBidderRadio" autocomplete="off" value="bidder" checked>
                     <label class="btn btn-outline-light" for="RegisterBidderRadio" onclick="switchRegisterType('bidder')">Bidder</label>
 
@@ -212,30 +212,30 @@
                     <label class="btn btn-outline-light" for="RegisterOrgRadio" onclick="switchRegisterType('organization')">Organization</label>
                   </div>
 
-                  <div class="form-outline form-white mb-3 row p-2">
-                    <label class="form-label pt-2 mt-1 pe-3 text-start col-3" for="nameInput">Name</label>
-                    <input type="text" name="name" id="nameInput" placeholder="Enter full name" class="col form-control form-control-lg" required />
+                  <div class="form-outline form-white row">
+                    <label class="form-label pt-2 mt-1 pe-3 text-start" for="nameInput">Name :</label>
+                    <input type="text" name="name" id="nameInput" placeholder="Enter full name" class="form-control form-control-lg" required />
                   </div>
 
-                  <div class="form-outline form-white mb-3 row p-2">
-                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start col-3" for="contactInput">Contact Number</label>
-                    <input type="tel" pattern="^[0-9]{7,10}$" maxlength="10" minlength="7" name="contact" id="contactInput" placeholder="Enter contact number" class="form-control form-control-lg col"     required />
+                  <div class="form-outline form-white row">
+                    <label class="form-label pt-2 mt-1 pe-3 text-start" for="contactInput">Contact Number :</label>
+                    <input type="tel" pattern="^[0-9]{7,10}$" maxlength="10" minlength="7" name="contact" id="contactInput" placeholder="Enter contact number" class="form-control form-control-lg"     required />
                   </div>
 
-                  <div class="form-outline form-white mb-3 row p-2" >
-                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start col-3" for="addressInput"  >Address</label>
-                    <input type="text" name="address" id="addressInput" placeholder="Enter address" class="form-control form-control-lg col"     required />
+                  <div class="form-outline form-white row" >
+                    <label class="form-label pt-2 mt-1 pe-3 text-start" for="addressInput"  >Address :</label>
+                    <input type="text" name="address" id="addressInput" placeholder="Enter address" class="form-control form-control-lg"     required />
                   </div>
 
-                  <div id="username" class="form-outline form-white mb-3 row p-2" >
-                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start col-3" for="usernameInput"   id="usernameInputLabel">Citizenship No</label>
-                    <input type="text" name="usernameInput" id="usernameInput" placeholder="Enter citizenship number (username)" class="form-control form-control-lg col"     required />
+                  <div id="username" class="form-outline form-white row" >
+                    <label class="form-label pt-2 mt-1 pe-3 text-start" for="usernameInput"   id="usernameInputLabel">Citizenship No :</label>
+                    <input type="text" name="usernameInput" id="usernameInput" placeholder="Enter citizenship number (username)" class="form-control form-control-lg"     required />
                   </div>
 
                   
-                  <div class="form-outline form-white mb-4 row p-2" >
-                    <label class="form-label col-3 pt-2 mt-1 pe-3 text-start col-3" for="registerPassword"  >Password</label>
-                    <div class="input-group col p-0" id="registerPassDiv"    >
+                  <div class="form-outline form-white row" >
+                    <label class="form-label pt-2 mt-1 pe-3 text-start" for="registerPassword"  >Password :</label>
+                    <div class="input-group p-0" id="registerPassDiv"    >
                       <input type="password" placeholder="Create password" name="password" id="registerPassword" class="form-control form-control-lg password border border-end-0" required onfocus="handleFocus(this, 'registerPassDiv')", onblur="handleBlur(this, 'registerPassDiv')"/>
                       <span class="input-group-text bg-white p-0 pe-2" onclick="togglePasswordVisibility('registerPassword', 'toggleRegisterPasswordIcon')" style="cursor: pointer;">
                         <i class="far fa-eye-slash" id="toggleRegisterPasswordIcon"></i>
@@ -244,7 +244,7 @@
                   </div>
 
                   
-                  <button class="btn btn-outline-light btn-lg px-5" type="submit">Register</button>
+                  <button class="btn btn-outline-light btn-lg mt-3 px-5" type="submit">Register</button>
                 </div>
               </form>
 
