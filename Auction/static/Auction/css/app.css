@@ -2,12 +2,7 @@
   font-family: 'Rubik';
 }
 
-.left-nav {
-  display: flex;
-  justify-content: space-between;
-  margin-right: 20px;
-}
-
+.left-nav,
 .right-nav {
   display: flex;
   justify-content: space-between;
@@ -18,17 +13,19 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: #f1f3f4;
-  border: 1px solid #ccc;
-  border-radius: 25px;
+  background-color: #111;
+  border: 2px solid #fff;
+  border-radius: 0;
   padding: 8px 15px;
   width: 500px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .search-bar i {
-  color: #555;
-  cursor: pointer;
+  color: #fff;
+  background-color: #111;
+  padding: 4px;
+  border-radius: 0;
   font-size: 16px;
 }
 
@@ -37,61 +34,57 @@
   flex: 1;
   border: none;
   outline: none;
-  background-color: transparent;
+  background-color: #111;
   font-size: 16px;
+  color: #fff;
   padding: 6px;
 }
 
+.search-bar input::placeholder {
+  color: #ccc;
+  opacity: 1;
+}
 
+.search-bar button {
+  background-color: #111;
+  border: none;
+  color: #fff;
+  padding: 0 8px;
+  border-radius: 0;
+}
 
 @media (max-width: 450px) {
   .search {
     width: 170px !important;
     display: flex;
   }
-
   .right-nav {
     margin-top: 10px;
     width: 310px !important;
     justify-content: space-around;
   }
-
   .navbar-toggler {
     padding: 3px;
   }
-
   .lead {
     font-size: 1rem !important;
   }
-
   .fs-5 {
     font-size: 0.95rem !important;
   }
-
   .fs-6 {
     font-size: 0.85rem !important;
   }
-
   .card-wrapper {
     flex-direction: column;
   }
-
   .search-bar {
     width: 170px !important;
     gap: 0 !important;
   }
-
-  .search-bar i {
-    font-size: 12px;
-  }
-
   .search-bar input {
     width: 100px !important;
     font-size: 12px;
-  }
-
-  .fa-search {
-    border-radius: 10px !important;
   }
 }
 
@@ -99,41 +92,37 @@
   .search {
     width: 350px !important;
   }
-
   .search-bar {
     width: 350px !important;
   }
-
   .search-bar input {
     width: 85%;
   }
-
   .right-nav {
     margin-top: 10px;
     width: 450px !important;
     justify-content: space-evenly;
   }
-
   .lead {
     font-size: 1.1rem !important;
   }
-
   .fs-5 {
     font-size: 1.1rem !important;
   }
-
   .card-wrapper {
     flex-direction: column;
   }
 }
 
 nav {
-  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #53d2d9, #538fd9);
+  background: #111 !important;
   transition: background 0.3s ease-in;
 }
 
-.dropdown>ul {
-  background-color: #69abeb;
+.dropdown>ul,
+.dropdown-menu {
+  background-color: #111 !important;
+  color: #fff !important;
 }
 
 .login-container {
@@ -142,14 +131,18 @@ nav {
 
 .nav-item>a {
   transition: transform 0.5s ease;
+  color: #fff !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 .nav-item>a:hover {
   transform: scale(1.2);
+  background: #fff !important;
+  color: #111 !important;
 }
 
 .navbar-nav {
-  /* background-color: red; */
   width: 22vw;
   display: flex;
   justify-content: space-evenly;
@@ -158,7 +151,7 @@ nav {
 .openBidImages {
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .imageContainer {
@@ -169,90 +162,95 @@ nav {
 .image-wrapper {
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 0;
   width: 100%;
   height: 200px;
-  box-shadow: 4px 4px 20px #858886;
+  box-shadow: none;
+  background: #fff;
 }
 
 .image-wrapper img {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 0;
   object-fit: cover;
+  display: block;
 }
 
 .card-custom {
-  border: none;
+  border: 2px solid #111;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .content-box {
   position: relative;
-  top: -40px;
+  top: 20px;
   margin: 0 auto;
-  background: #f3e7e7;
-  border-radius: 10px;
+  background: #fff;
+  border-radius: 0;
+  border: 2px solid #111;
   padding: 20px;
   width: 90%;
-  box-shadow: 3px 3px 2 10px #f3e7e7;
+  box-shadow: none;
   text-align: center;
 }
 
 .card-title {
   margin-bottom: 15px;
+  color: #111;
 }
 
 .read-more {
-  color: #28a745;
-  text-decoration: none;
-  font-weight: 500;
+  color: #111;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
-.dropdown-toggle::after {
-  display: none !important;
-}
-
+.dropdown-toggle::after,
 .dropdown-toggle::before {
   display: none !important;
 }
 
 img.rounded-circle:hover {
-  border: 2px solid #0d6efd;
-  /* Bootstrap primary color */
+  border: 2px solid #fff;
 }
 
 .dropdown .dropdown-menu[data-bs-popper] {
   position: absolute;
   top: 120%;
-  /* right: 0px; */
   left: -80px;
 }
 
 .navButton:hover {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  /* Darker hover background */
-  color: #ffffff !important;
+  background-color: #fff !important;
+  color: #111 !important;
   transition: 0.05s !important;
 }
 
 .info-box {
-  background-color: #cfd2cf;
+  background-color: #fff;
+  border: 2px solid #111;
 }
 
 .bidInput {
-  border: 1px solid black;
+  border: 2px solid #111;
+  background: #fff;
+  color: #111;
 }
 
 .profile .details {
-  background-color: #959596;
-  /* Light grey background */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  /* Soft shadow */
+  background-color: #fff;
+  box-shadow: none;
+  border: 2px solid #111;
   transition: all 0.3s ease;
 }
 
 .formContainer {
-  box-shadow: 5px 5px 21px #000000ab;
+  box-shadow: none;
+  border: 2px solid #111;
+  background: #fff;
 }
 
 .password {
@@ -262,8 +260,9 @@ img.rounded-circle:hover {
 
 .editDisabled {
   padding: 1.2vh;
-  background-color: rgb(193, 193, 193);
-  border-radius: 10px;
+  background-color: #fff;
+  border-radius: 0;
+  border: 2px solid #111;
 }
 
 #editDisabled {
@@ -272,13 +271,33 @@ img.rounded-circle:hover {
 }
 
 .alert-error {
-  background-color: #d99d53a6;
+  background-color: #fff;
+  color: #d9534f;
+  border: 2px solid #d9534f;
 }
 
 .alert {
-  border-radius: 0px;
+  border-radius: 0;
+  border: 2px solid #111;
+  background: #fff;
+  color: #111;
 }
 
 .card-wrapper {
   min-height: 150px;
+}
+
+/* Inputs and placeholders */
+input,
+textarea,
+select {
+  background: #fff;
+  color: #111;
+  border: 2px solid #111;
+  border-radius: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #888;
 }
