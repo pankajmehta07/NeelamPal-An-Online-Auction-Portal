@@ -8,11 +8,11 @@
     <div class="col">
         <div class="container-fluid px-4">
                 <div class="bg mt-4">
-                    <div class="d-flex flex-column align-items-center bg-white">
+                    <div class="d-flex flex-column align-items-center bg">
                         <h1 class="mb-3">Add Items</h1>
-                        <div class="border p-4 rounded formContainer">
+                        <div class="p-4 formContainer">
                             <h5>Enter the item details:</h5>
-                            <form method="post" action="/saveItem" enctype="multipart/form-data">
+                            <form method="post" action="/saveItem" enctype="multipart/form-data" autocomplete="off">
                                 {% csrf_token %}
                                 <div class="mt-3 mb-3">
                                     <label for="itemName" class="form-label">Name:</label>
@@ -42,7 +42,7 @@
                                     <label for="itemImage" class="form-label">Image of the item (JPG/JPEG/PNG only):</label>
                                     <input type="file" class="form-control" id="itemImage" name="item_image" accept=".png,.jpg,image/jpeg" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Add Item</button>
+                                <button type="submit" class="butt btn btn-light" style="width: 30%;">Add Item</button>
                             </form>
                         </div>
                     </div>

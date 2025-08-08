@@ -10,10 +10,10 @@
 <div class="row mt-5 justify-content-center">
   <div class="col-md-6 col-lg-4">
     <div class="profile container px-4 mt-2 text-center">
-      <div class="d-flex flex-column align-items-center bg-white">
-        <h1 class="header mb-3">Profile Card</h1>
+      <div class="d-flex flex-column align-items-center">
+        <h1 class="header mb-3">Your Profile</h1>
         <br>
-        <div class="formContainer border p-4 rounded-3 w-100">
+        <div class="formContainer p-4 w-100">
           {% if user.user_type == "Bidder" %}
             <h5 class="mb-5"><span class="fw-bold">Citizenship Number : </span>{{ profile.0.0 }}</h5>
           {% endif %}
@@ -23,7 +23,7 @@
           <h5 class="mb-5"><span class="fw-bold">Name : </span>{{ profile.0.1 }}</h5>
           <h5 class="mb-5"><span class="fw-bold">Address : </span>{{ profile.0.2 }}</h5>
           <h5 class="mb-5"><span class="fw-bold">Contact : </span>{{ profile.0.3 }}</h5>
-          <a href="/editProfile" class="btn btn-primary">Edit Info</a>
+          <a href="/editProfile" class="butt btn btn-light">Edit Info</a>
         </div>
       </div>
     </div>

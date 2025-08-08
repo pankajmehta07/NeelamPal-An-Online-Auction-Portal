@@ -25,7 +25,7 @@ def profile(request):
 
         return render(request,"Auction/profile.html", params)
     
-    messages.error(request, "Invalid request")
+    messages.error(request, "❌Invalid request")
     return redirect("/")
 
 def editProfile(request):
@@ -39,12 +39,12 @@ def editProfile(request):
             profile = runQuery(f"SELECT citizenship_no, name, address, contact FROM bidder WHERE citizenship_no = '{user.id}'")
 
         if not profile:
-            messages.error(request, "Profile not found.")
+            messages.error(request, "❌Profile not found.")
             return redirect('/')
 
         params['profile'] = profile
         return render(request, 'Auction/editProfile.html', params)
-    messages.success(request, "Profile updated successfully.")
+    messages.success(request, "✅Profile updated successfully.")
     return redirect('/')   
 
 def home(request):
@@ -94,7 +94,7 @@ def showBids(request):
                    ''')
         return render(request,"Auction/myBids.html", params)    
         
-    messages.error(request, "Invalid request")
+    messages.error(request, "❌Invalid request")
     return redirect("/")
 
 def showItems(request):
@@ -114,7 +114,7 @@ def showItems(request):
                    WHERE item.organization_id = {request.user.id}''')
         
         return render(request,"Auction/showItems.html", params)    
-    messages.error(request, "Invalid request")
+    messages.error(request, "❌Invalid request")
     return redirect("/")
 
 def bid(request):
@@ -123,7 +123,7 @@ def bid(request):
             bid_amount = int(request.POST.get('bid_amount'))
             item_id = int(request.POST.get('item_id'))
         except:
-            messages.error(request, "Invalid bid amount.")
+            messages.error(request, "❌Invalid bid amount.")
             return redirect('item',itemID = item_id)
         highest = runQuery(f"SELECT * FROM highest_bid WHERE item_id = {item_id} ")
         if highest:
@@ -134,7 +134,7 @@ def bid(request):
              current_bid = runQuery(f"SELECT min_bid_amt FROM item WHERE id = {item_id}")[0][0]
         
         if bid_amount <= current_bid:
-            messages.error(request, "Bid amount must be higher than current bid amount.")
+            messages.error(request, "❌Bid amount must be higher than current bid amount.")
             return redirect('item',itemID = item_id)
         
         timestamp = getTimestamp().strftime('%Y-%m-%d %H:%M:%S')
@@ -149,21 +149,21 @@ def bid(request):
         else:
             runQuery(f"INSERT INTO highest_bid VALUES({item_id},{bid_id})" )
         
-        messages.success(request, "Bid placed successfully.")
+        messages.success(request, "✅Bid placed successfully.")
         return redirect('item',itemID = item_id)
 
     return render(request, "Auction/bid.html", {'item': item})
 
 def createTables(request): 
     create_tables()
-    messages.success(request, "Tables created successfully")
+    messages.success(request, "✅Tables created successfully")
     return redirect('home')
 
 def addItem(request): 
     if request.user.is_authenticated and request.user.user_type == "Organization":
         return render(request,"Auction/add_item.html")
     
-    messages.error(request, "Invalid request")
+    messages.error(request, "❌Invalid request")
     if not request.user.is_authenticated:
         return redirect('/#login')
 
@@ -213,7 +213,7 @@ def saveItem(request):
 
         filename = filename.split(".")
         if(filename[-1] not in ['jpg','jpeg', 'png']):
-            messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
+            messages.error(request, "❌Unsupported image file type. You can only upload jpg, jped or png images")
             return redirect('addItem')
         filename = filename[0][:19] + str(datetime.now())
         filename = filename.replace("-",'')
@@ -236,19 +236,19 @@ def saveItem(request):
         min_end_time = start_time + timedelta(minutes=60)
 
         if end_time < min_end_time:
-            messages.error(request, "Start and end time must be at least 60 minutes apart")
+            messages.error(request, "❌Start and end time must be at least 60 minutes apart")
             return redirect('addItem')
 
 
         if not all([name, min_bid_amt, category, start_time_str, end_time_str]):
-            messages.error(request, "Please fill all required fields.")
+            messages.error(request, "❌Please fill all required fields.")
             return redirect('addItem')
         
 
 
         data = runQuery(f"SELECT 1 FROM item WHERE name = '{name}' and organization_id = {request.user.id}", )
         if data:
-            messages.error(request, "Item already exists")
+            messages.error(request, "❌Item already exists")
             return redirect('addItem')
         
         start_time_str = start_time_str.replace("T"," ")+":00"
@@ -259,11 +259,11 @@ def saveItem(request):
                        {request.user.id},'{start_time_str}','{end_time_str}', '{image_url}','{public_id}')''')
         
 
-        messages.success(request, "Item was added successfully.")
+        messages.success(request, "✅Item was added successfully.")
         return redirect('addItem')
 
     else:
-        messages.error(request, "Invalid request")
+        messages.error(request, "❌Invalid request")
         return redirect('/')   
     
 def updateItem(request):
@@ -284,17 +284,17 @@ def updateItem(request):
         min_end_time = start_time + timedelta(minutes=60)
 
         if not item_id:
-            messages.error(request, "Invalid Request.")
+            messages.error(request, "❌Invalid Request.")
             return redirect('home')
 
         if end_time < min_end_time:
-            messages.error(request, "Start and end time must be at least 60 minutes apart")
+            messages.error(request, "❌Start and end time must be at least 60 minutes apart")
             return redirect('item',itemID = item_id)
 
 
         data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}")[0]
         if not data:
-            messages.error(request, "Item doesn't exist")
+            messages.error(request, "❌Item doesn't exist")
             return redirect('item',itemID = str(item_id).strip())
         
         name = name or data[1]
@@ -308,7 +308,7 @@ def updateItem(request):
             filename = image.name
             filename = filename.split(".")
             if(filename[-1] not in ['jpg','jpeg', 'png']):
-                messages.error(request, "Unsupported image file type. You can only upload jpg, jped or png images")
+                messages.error(request, "❌Unsupported image file type. You can only upload jpg, jped or png images")
                 return redirect('item',itemID = str(item_id).strip())
             filename = filename[0][:19] + str(datetime.now())
             filename = filename.replace("-",'')
@@ -341,11 +341,11 @@ def updateItem(request):
                  bid_end_time='{end_time_str}', fileurl='{image_url}', fileid='{public_id}' WHERE id={item_id}''')
         
 
-        messages.success(request, "Item was updated successfully.")
+        messages.success(request, "✅Item was updated successfully.")
         return redirect('item',itemID = str(item_id).strip())
 
     else:
-        messages.error(request, "Invalid request")
+        messages.error(request, "❌Invalid request")
         return redirect('/')   
 
 def item(request, itemID):
@@ -381,13 +381,13 @@ def deleteItem(request):
                 except Exception as e:
                     pass
                 runQuery(f'''DELETE FROM item where id={itemID}''')
-                messages.success(request, "Deletion Successfull")
+                messages.success(request, "✅Deletion Successfull")
             else:
-                messages.error(request, "Only items with auction status 'upcoming' can be deleted")
+                messages.error(request, "❌Only items with auction status 'upcoming' can be deleted")
         else:
-            messages.error(request, "Invalid Request!!!")
+            messages.error(request, "❌Invalid Request!!!")
         return redirect('home')
-    messages.error(request, "Invalid Request!!!")
+    messages.error(request, "❌Invalid Request!!!")
     return redirect('home')
 
 def edit(request):
@@ -410,9 +410,9 @@ def edit(request):
         if request.user.id == params['item'][10]:
             return render(request, "Auction/editItem.html", params) 
         else:
-            messages.error(request, "Invalid Request!!!")
+            messages.error(request, "❌Invalid Request!!!")
             return redirect('/')
-    messages.error(request, "Invalid Request!!!")
+    messages.error(request, "❌Invalid Request!!!")
     return redirect('/')
 
 def logout_user(request):
@@ -420,9 +420,9 @@ def logout_user(request):
         logout(request)
         request.session.pop('user_id', None)
         request.session.pop('user_type', None)
-        messages.success(request, "Log out successful.")
+        messages.success(request, "✅Log out successful.")
     else:
-        messages.error(request, "Invalid Request.")
+        messages.error(request, "❌Invalid Request.")
     return redirect('home')
 
 
@@ -436,7 +436,7 @@ def register_user(request):
         password = request.POST.get('password')
 
         if not all([username, password, name, contact, address]):
-            messages.error(request, "Please fill all required fields.")
+            messages.error(request, "❌Please fill all required fields.")
             return redirect('/')
 
         with connection.cursor() as cursor:
@@ -446,22 +446,22 @@ def register_user(request):
                 cursor.execute("SELECT citizenship_no FROM bidder WHERE citizenship_no = %s", [username])
             
             if cursor.fetchone():
-                messages.error(request, "Username already exists.")
+                messages.error(request, "❌Username already exists.")
                 return redirect('/')
 
             hashed_password = make_password(password)
 
             if user_type=="Organization":
-                messages.success(request, "Registration successful. Please use registration number as username for log in .")
+                messages.success(request, "✅Registration successful. Please use registration number as username for log in.")
                 runQuery(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact}, '{hashed_password}')")
             else:
-                messages.success(request,"Registration successful. Please use citizenship number as username for log in .")
+                messages.success(request,"✅Registration successful. Please use citizenship number as username for log in.")
                 runQuery(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact}, '{hashed_password}')")
         
         return redirect('/')
 
     else:
-        messages.error(request, "Invalid request")
+        messages.error(request, "❌Invalid request")
         return redirect('/')
 
 def login_user(request):
@@ -471,7 +471,7 @@ def login_user(request):
         user_type = request.POST.get('userType')
 
         if not username or not password or not user_type or (user_type!="Organization" and user_type != "Bidder"):
-            messages.error(request, "Invalid credentials.")
+            messages.error(request, "❌Invalid credentials.")
             return redirect('/#login')
 
         user = authenticate(request, username=username, password=password, user_type=user_type)
@@ -481,12 +481,12 @@ def login_user(request):
             request.session['user_id'] = user.id
             request.session['user_type'] = user_type
             request.session.modified = True
-            messages.success(request, "Log in successful.")
+            messages.success(request, "✅Log in successful.")
             return redirect('home')
         else:
-            messages.error(request, "Invalid credentials.")
+            messages.error(request, "❌Invalid credentials.")
             return redirect('home')
-    messages.error(request, "Only POST requests are allowed.")
+    messages.error(request, "❌Only POST requests are allowed.")
     return redirect('home')
 
 def updateProfile(request):
@@ -502,7 +502,7 @@ def updateProfile(request):
             data = runQuery(f"SELECT * FROM bidder WHERE citizenship_no = {request.user.id}")
 
         if not data:
-            messages.error(request, "Unauthorized Request.")
+            messages.error(request, "❌Unauthorized Request.")
             return redirect('home')
 
         data = data[0] 
@@ -525,7 +525,7 @@ def updateProfile(request):
                      contact = {contact}, password = '{hashed_pw}' WHERE 
                      reg_no = {request.user.id}""")
 
-        messages.success(request, "Profile updated successfully.")
+        messages.success(request, "✅Profile updated successfully.")
         return redirect('editProfile')
-    messages.error(request, "Unauthorized Request.")
+    messages.error(request, "❌Unauthorized Request.")
     return redirect('/')

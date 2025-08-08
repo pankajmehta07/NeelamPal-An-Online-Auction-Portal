@@ -10,7 +10,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-4 col-md-8 col-12 px-4">
             <h1 class="text-center mb-4">Edit Profile</h1>
-            <div class="bg-white p-4 rounded formContainer">
+            <div class="bg-white p-4 formContainer">
                 <h5>Enter the profile details:</h5>
             
                     <form method="post" action="/updateProfile" enctype="multipart/form-data" autocomplete="off">
@@ -19,14 +19,14 @@
                     {% if user.user_type == "Bidder" %}
                     <div class="editDisabled mt-4 mb-3">
                         <label for="username" class="form-label">Citizenship Number:</label>
-                        <input type="text" value="{{ profile.0.0 }}" class="form-control" id="username" name="username" readonly>
+                        <input type="text" value="{{ profile.0.0 }}" class="form-control" id="editDisabled" name="username" readonly>
                     </div>
                     {% endif %}
 
                     {% if user.user_type == "Organization" %}
                     <div class="editDisabled mt-4 mb-3">
                         <label for="username" class="form-label">Registration Number:</label>
-                        <input type="text" value="{{ profile.0.0 }}" class="form-control" id="username" name="username" readonly>
+                        <input type="text" value="{{ profile.0.0 }}" class="form-control" id="editDisabled" name="username" readonly>
                     </div>
                     {% endif %}
 
@@ -57,7 +57,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Save Profile</button>
+                    <button type="submit" class="butt btn btn-light w-100">Save Profile</button>
                     </form>
             </div>
         </div>

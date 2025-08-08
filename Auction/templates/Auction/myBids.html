@@ -20,7 +20,7 @@
                             {{ item.1|truncatechars:30 }}
                         </div>
                         <div class="card-bid-amount">
-                            <b>Your Bid Amount :</b> $ {{ item.9 }}
+                            <b>Your Bid Amount :</b> ${{ item.9 }}
                         </div>
                         <div class="card-Bid-Status">
                             <b>Bid Status :</b> {% if item.8 == user.id %}Winning{%else%}Losing{% endif %}

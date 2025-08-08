@@ -20,7 +20,7 @@
 <div class="container-fluid col-md mt-3 mb-3" >
   <div class="row ms-auto me-auto justify-content-center justify-content-sm-start"> 
       {% for item in activeItemData %}
-          <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+          <div class="col-10 col-sm-6 col-md-4 col-lg-3 mb-5 mb-md-0">
             <div class="card card-custom">
               <div class="image-wrapper text-center">
                 <img class="img-fluid" src="{{ item.5 }}" alt="...">
@@ -30,7 +30,7 @@
                   {{ item.1|truncatechars:30 }}
                 </div>
                 <div class="card-bid-amount fw-bold">
-                  ${% if item.3 %}{{ item.3 }}  {% else %} {{ item.2 }} {% endif %}
+                  $ {% if item.3 %}{{ item.3 }}{% else %}{{ item.2 }}{% endif %}
                 </div>
                 <div class="card-time">
                   <b>Remaining time : </b>{{ item.4 | getTimeDiff }}
@@ -53,10 +53,10 @@
   </div>
 {% else %}
 
-  <div class="container-fluid row mt-3 mb-3">
+  <div class="container-fluid col-md mt-3 mb-3">
   <div class="row ms-auto me-auto justify-content-center justify-content-sm-start">
       {% for item in upcomingItemData %}
-        <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-10 col-sm-6 col-md-4 col-lg-3 mb-5 mb-md-0">
           <div class="card card-custom">
             <div class="image-wrapper text-center">
               <img class="img-fluid" src="{{ item.4 }}" alt="...">
@@ -90,10 +90,10 @@
   </div>
 {% else %}
 
-    <div class="container-fluid mt-3 mb-3">
+    <div class="container-fluid col-md mt-3 mb-3">
       <div class="row ms-auto me-auto justify-content-center justify-content-sm-start">
         {% for item in endedItemData %}
-            <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+            <div class="col-10 col-sm-6 col-md-4 col-lg-3 mb-5 mb-md-0">
               <div class="card card-custom">
                 <div class="image-wrapper text-center">
                   <img class="img-fluid" src="{{ item.4 }}" alt="...">
@@ -103,7 +103,7 @@
                     {{ item.1|truncatechars:30 }}
                   </div>
                   <div class="card-bid-amount fw-bold">
-                    $ {% if item.3 %}{{ item.3 }}  {% else %} {{ item.5 }} {% endif %}
+                    $ {% if item.3 %}{{ item.3 }}{% else %}{{ item.5 }}{% endif %}
                   </div>
                   <div class="card-time">
                     <b>End Time :</b> {{ item.2 }}

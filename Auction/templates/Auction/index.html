@@ -15,8 +15,8 @@
     <div class="col">
       <div class="py-4">
         <div class="row align-items-center">
-          <div class="col-md-7 col-12 mb-4 mb-md-0">
-            <h1 class="header mt-4">Welcome to NeelamPal</h1>
+          <div class="col-md-12 col-12 mb-4 mb-md-0">
+            <h1 class="header mt-4 text-center">Welcome to NeelamPal</h1>
             <p class="lead mt-4 me-lg-4">
               NeelamPal is a powerful online auction platform that brings together organizations and bidders in one seamless digital 
               space. Organizations can easily list items, set starting bids, and manage auctions, while bidders can explore listings,
@@ -26,16 +26,6 @@
             <p class="lead mt-4 me-4">
               Join today and experience smarter, faster bidding.
             </p>
-          </div>
-
-          {% load static %}
-          <div class="col-md-5 col-12 text-center">
-            <img
-              src="{% static 'Auction/images/hero_image.jpg' %}"
-              class="img-fluid rounded"
-              alt="Hero Image"
-              style="max-height: 400px;"
-            />
           </div>
         </div>
       </div>
@@ -48,13 +38,13 @@
     <div class="col-lg-7 p-0">
       <h3 class="fw-bold text-decoration-underline" id='open-bids'>Open for bidding</h3>
       {% for item in itemData %}   
-        <div class="d-flex align-items-center mb-5 mt-5 border border-dark border-2 rounded-3 card-wrapper">
+        <div class="d-flex align-items-center mb-5 mt-5 border border-dark border-2 card-wrapper bg-white">
           <div class="imageContainer p-2 col-md-2 col-sm-3 col-lg-2">
             <img class="openBidImages" src="{{ item.10 }}" alt="{{ item.1 }}" >
           </div>
           <div class="col-md-10 col-sm-10 col-12 col-lg-10 row justify-content-evenly">
             <div class="mx-1 col-8 p-1 pt-3 pb-2">
-                <div class="fw-bold mb-2 fs-4 text-decoration-underline col-md-7">
+                <div class="fw-bold mb-2 fs-4 text-decoration-underline col-md-12">
                   {{ item.1 }}
                 </div>
               
