@@ -378,7 +378,7 @@ textarea::placeholder {
   }
 }
 
-@media(max-width: 906.5px) {
+@media(max-width: 891.5px) {
   .right-nav {
     margin-top: 20px !important;
   }
