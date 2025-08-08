@@ -4,50 +4,49 @@
 
 {% endblock headjs %} 
 {% block body %} 
-
-<div class="container-fluid">
-        <div class="row mb-5">
-    <div class="col">
-        <div class="bg mt-4">
-            <div class="d-flex flex-column align-items-center bg-white">
-                <h1 class="mb-3">Edit Item</h1>
-                <div class="border p-4 rounded formContainer" style="width: 580px;">
-                    <h5>Enter the item details:</h5>
-                    <form method="post" action="/updateItem" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="hidden" name="item_id" value="{{ item.0 }} ">
-                        <div class="editDisabled mt-3 mb-3">
-                            <label for="itemName" class="form-label">Name:</label>
-                            <input type="text" value="{{ item.1 }}" class="form-control" id="editDisabled" name="name" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="minBid" class="form-label">Min Bid Amount:</label>
-                            <input type="number" value="{{ item.3 }}" class="form-control" id="minBid" name="min_bid_amount" min="1" step="1" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="category" class="form-label">Category:</label>
-                            <input type="text" value="{{ item.2 }}" class="form-control" id="category" name="category" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description:</label>
-                            <textarea class="form-control" id="description" name="description" rows="6" cols="50" required style="max-height: 200px;">{{ item.6 }}</textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="startTime" class="form-label">Start Time:</label>
-                            <input type="datetime-local" value="{{ item.4 | date:"Y-m-d\TH:i" }}" class="form-control" id="startTime" name="start_time" required  onchange="updateEndTimeMin('startTime','endTime',60)">
-                        </div>
-                        <div class="mb-3">
-                            <label for="endTime" class="form-label">End Time:</label>
-                            <input type="datetime-local"  value="{{ item.5 | date:"Y-m-d\TH:i" }}"class="form-control" id="endTime" name="end_time" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="itemImage" class="form-label">Image of the item (JPG/JPEG/PNG only):</label>
-                            <input type="file" class="form-control" id="itemImage" name="item_image" accept=".png,.jpg,image/jpeg" value="{{ item.9 }}">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Item</button>
-                    </form>
+<div class="row mb-5">
+  <div class="col">
+    <div class="container-fluid px-4">
+            <div class="bg mt-4">
+                <div class="d-flex flex-column align-items-center bg-white">
+                    <h1 class="mb-3">Edit Item</h1>
+                    <div class="border p-4 rounded formContainer">
+                        <h5>Enter the item details:</h5>
+                        <form method="post" action="/updateItem" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="item_id" value="{{ item.0 }} ">
+                            <div class="editDisabled mt-3 mb-3">
+                                <label for="itemName" class="form-label">Name:</label>
+                                <input type="text" value="{{ item.1 }}" class="form-control" id="editDisabled" name="name" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="minBid" class="form-label">Min Bid Amount:</label>
+                                <input type="number" value="{{ item.3 }}" class="form-control" id="minBid" name="min_bid_amount" min="1" step="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category:</label>
+                                <input type="text" value="{{ item.2 }}" class="form-control" id="category" name="category" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description:</label>
+                                <textarea class="form-control" id="description" name="description" rows="6" cols="50" required style="max-height: 200px;">{{ item.6 }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="startTime" class="form-label">Start Time:</label>
+                                <input type="datetime-local" value="{{ item.4 | date:"Y-m-d\TH:i" }}" class="form-control" id="startTime" name="start_time" required  onchange="updateEndTimeMin('startTime','endTime',60)">
+                            </div>
+                            <div class="mb-3">
+                                <label for="endTime" class="form-label">End Time:</label>
+                                <input type="datetime-local"  value="{{ item.5 | date:"Y-m-d\TH:i" }}"class="form-control" id="endTime" name="end_time" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="itemImage" class="form-label">Image of the item (JPG/JPEG/PNG only):</label>
+                                <input type="file" class="form-control" id="itemImage" name="item_image" accept=".png,.jpg,image/jpeg" value="{{ item.9 }}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Item</button>
+                        </form>
+                    </div>
                 </div>
-            </div>
         </div>
     </div>
 </div>

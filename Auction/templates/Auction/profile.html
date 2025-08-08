@@ -7,11 +7,13 @@
 {% endblock headjs %} 
 {% block body %} 
 
-<div class="profile-card container p-4 text-center" style="width: 60%; min-width:500px;">
-  <div class="profile container p-5 ms-5 md-2 text-center">
-      <h1 class="header mb-3">Profile</h1>
+<div class="row mt-5 justify-content-center">
+  <div class="col">
+    <div class="profile container px-2 mt-2 text-center">
+        <div class="d-flex flex-column align-items-center bg-white">
+      <h1 class="header mb-3">Profile Card</h1>
       <br>
-      <div class="details border p-4 rounded">
+      <div class="formContainer border p-4 rounded">
         {% if user.user_type == "Bidder" %}
         <h5 class="mb-5"><span class="fw-bold">Citizenship Number : </span>{{ profile.0.0 }}</h5>
         {% endif %}
@@ -25,5 +27,6 @@
       </div>
     </div>
   </div>
+</div> 
 
 {% endblock body %}
