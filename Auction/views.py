@@ -202,10 +202,10 @@ def category(request):
 def saveItem(request):
     if request.method == 'POST' and request.user.is_authenticated and request.user.user_type == "Organization":
         # Extract fields from POST
-        name = filter(request.POST.get('name'))
+        name = filter(request.POST.get('name')[:100])
         min_bid_amt = request.POST.get('min_bid_amount')
-        category = filter(request.POST.get('category'))
-        description = filter(request.POST.get('description'))
+        category = filter(request.POST.get('category')[:50])
+        description = filter(request.POST.get('description')[:500])
         start_time_str = request.POST.get('start_time')  
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
@@ -269,11 +269,11 @@ def saveItem(request):
 def updateItem(request):
     if request.method == 'POST' and request.user.is_authenticated and request.user.user_type == "Organization":
         # Extract fields from POST
-        name = filter(request.POST.get('name'))
+        name = filter(request.POST.get('name')[:100])
         item_id = filter(request.POST.get('item_id'))
         min_bid_amt = request.POST.get('min_bid_amount')
-        category = filter(request.POST.get('category'))
-        description = filter(request.POST.get('description'))
+        category = filter(request.POST.get('category')[:50])
+        description = filter(request.POST.get('description')[:500])
         start_time_str = request.POST.get('start_time')  
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
@@ -428,9 +428,9 @@ def logout_user(request):
 
 def register_user(request):
     if request.method == 'POST':
-        name = filter(request.POST.get('name'))
+        name = filter(request.POST.get('name')[:100])
         contact = re.sub(r'\D', '',request.POST.get('contact'))
-        address = filter(request.POST.get('address'))
+        address = filter(request.POST.get('address')[:100])
         user_type = filter(request.POST.get('userType')  )
         username = re.sub(r'\D', '', request.POST.get('usernameInput'))
         password = request.POST.get('password')
@@ -491,9 +491,9 @@ def login_user(request):
 
 def updateProfile(request):
     if request.method == 'POST' and request.user.is_authenticated:
-        name = filter(request.POST.get('name'))
+        name = filter(request.POST.get('name')[:100])
         contact = re.sub(r'\D', '', request.POST.get('contact'))
-        address = filter(request.POST.get('address'))
+        address = filter(request.POST.get('address')[:100])
         password = request.POST.get('password')
 
         if request.user.user_type == "Organization":
