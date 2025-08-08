@@ -47,7 +47,7 @@
     <div class="col-lg-7 p-0">
       <h3 class="fw-bold text-decoration-underline" id='open-bids'>Open for bidding</h3>
       {% for item in itemData %}   
-        <div class="d-flex align-items-center mb-5 mt-5 border border-dark border-2 rounded-3 card-wrapper">
+        <div class="d-flex align-items-center mb-5 mt-5 border border-dark border-2 card-wrapper">
           <div class="imageContainer p-2 col-md-2 col-sm-3 col-lg-2">
             <img class="openBidImages" src="{% static 'Auction/images/item_images/' %}{{ item.10 }}" alt="{{ item.1 }}" >
           </div>
