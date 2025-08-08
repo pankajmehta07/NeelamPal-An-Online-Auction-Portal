@@ -17,7 +17,11 @@ def create_tables():
 
 
 def getTimestamp():
-    return datetime.now()
+    if platform.system()=="Linux":
+        return datetime.now() + timedelta(hours=5, minutes=45)
+    else:
+        return datetime.now()
+  
 
 def runQuery(query):
     try:
