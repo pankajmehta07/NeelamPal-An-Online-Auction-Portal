@@ -4,6 +4,7 @@ venv/
 .vscode/
 node_modules/
 item_images/
+/staticfiles/
 
 # Files
 db.sqlite3
