@@ -26,7 +26,7 @@ function handleBlur(element,divID){
 
 function switchRegisterType(type) {
   if (type === 'bidder') {        
-    document.getElementById('usernameInputLabel').innerText = "Citizenship No";
+    document.getElementById('usernameInputLabel').innerText = "Citizenship No :";
     document.getElementById('userType').value = "Bidder";
     document.getElementById('usernameInput').placeholder = "Enter citizenship number (username)";
     document.getElementById('nameInput').placeholder = "Enter full name";
@@ -36,7 +36,7 @@ function switchRegisterType(type) {
     document.getElementById('addressInput').value = "";
     document.getElementById('registerPassword').value = "";
   } else {
-      document.getElementById('usernameInputLabel').innerText = "Registration No";
+      document.getElementById('usernameInputLabel').innerText = "Registration No :";
     document.getElementById('userType').value = "Organization";
     document.getElementById('usernameInput').value = "";
     document.getElementById('nameInput').value = "";
