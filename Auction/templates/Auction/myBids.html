@@ -18,19 +18,19 @@
                         </div>
                     </a>
                     <div class="content-box">
-                        <div class="card-title fs-4 fw-bold">
-                            {{ item.1|truncatechars:30 }}
+                        <div class="card-title fs-5 fw-bold">
+                            {{ item.1|truncatechars:25 }}
                         </div>
-                        <div class="card-bid-amount">
+                        <div class="card-bid-amount fs-6">
                             <b>Your Bid Amount :</b> ${{ item.9 }}
                         </div>
-                        <div class="card-Bid-Status">
+                        <div class="card-Bid-Status fs-6">
                             <b>Bid Status :</b> {% if item.8 == user.id %}Winning{%else%}Losing{% endif %}
                         </div>
-                        <div class="card-Auction-Status">
+                        <div class="card-Auction-Status fs-6">
                             <b>Auction Status :</b> {{ item.3 | auctionStatus:item.5 }}
                         </div>
-                            <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+                            <a class="read-more fs-6" href="/item/{{ item.0 }}"> Show Full Info</a>
                     </div>
                 </div>
             </div>

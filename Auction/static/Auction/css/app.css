@@ -342,6 +342,13 @@ textarea::placeholder {
     width: auto;
   }
 
+  .dropdown .dropdown-menu[data-bs-popper] {
+    position: absolute;
+    top: 120%;
+    left: -62px;
+    min-width: 7rem !important;
+  }
+
 }
 
 

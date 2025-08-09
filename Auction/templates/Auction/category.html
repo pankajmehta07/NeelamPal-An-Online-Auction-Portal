@@ -20,7 +20,7 @@
 <div class="container-fluid col-md mt-3 mb-3" >
   <div class="row ms-auto me-auto justify-content-center justify-content-sm-start"> 
       {% for item in activeItemData %}
-          <div class="col-10 col-sm-6 col-md-4 col-lg-3 mb-5">
+          <div class="col-11 col-sm-6 col-md-4 col-lg-3 mb-5">
             <div class="card card-custom">
               <a href="/item/{{ item.0 }}">
                 <div class="image-wrapper text-center">
@@ -28,16 +28,16 @@
                 </div>
               </a>
               <div class="content-box">
-                <div class="card-title fs-4 fw-bold">
-                  {{ item.1|truncatechars:30 }}
+                <div class="card-title fs-5 fw-bold">
+                  {{ item.1|truncatechars:25 }}
                 </div>
-                <div class="card-bid-amount fw-bold">
+                <div class="card-bid-amount fw-bold fs-6">
                   $ {% if item.3 %}{{ item.3 }}{% else %}{{ item.2 }}{% endif %}
                 </div>
-                <div class="card-time">
+                <div class="card-time fs-6">
                   <b>Remaining time : </b>{{ item.4 | getTimeDiff }}
                 </div>
-                <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+                <a class="read-more fs-6" href="/item/{{ item.0 }}"> Show Full Info</a>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@
   <div class="container-fluid col-md mt-3 mb-3">
   <div class="row ms-auto me-auto justify-content-center justify-content-sm-start">
       {% for item in upcomingItemData %}
-        <div class="col-10 col-sm-6 col-md-4 col-lg-3 mb-5">
+        <div class="col-11 col-sm-6 col-md-4 col-lg-3 mb-5">
           <div class="card card-custom">
             <a href="/item/{{ item.0 }}">
               <div class="image-wrapper text-center">
@@ -66,16 +66,16 @@
               </div>
             </a>
             <div class="content-box">
-              <div class="card-title fs-4 fw-bold">
-                {{ item.1|truncatechars:30 }}
+              <div class="card-title fs-5 fw-bold">
+                {{ item.1|truncatechars:25 }}
               </div>
-              <div class="card-bid-amount fw-bold">
+              <div class="card-bid-amount fs-6 fw-bold">
                 $ {{ item.2 }}
               </div>
-              <div class="card-time">
+              <div class="card-time fs-6">
                 <b>Start Time :</b> {{ item.3 }}
               </div>
-              <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+              <a class="read-more fs-6" href="/item/{{ item.0 }}"> Show Full Info</a>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@
     <div class="container-fluid col-md mt-3 mb-3">
       <div class="row ms-auto me-auto justify-content-center justify-content-sm-start">
         {% for item in endedItemData %}
-            <div class="col-10 col-sm-6 col-md-4 col-lg-3 mb-5">
+            <div class="col-11 col-sm-6 col-md-4 col-lg-3 mb-5">
               <div class="card card-custom">
                 <a href="/item/{{ item.0 }}">
                 <div class="image-wrapper text-center">
@@ -105,16 +105,16 @@
                 </div>
                </a>
                 <div class="content-box">
-                  <div class="card-title fs-4 fw-bold">
-                    {{ item.1|truncatechars:30 }}
+                  <div class="card-title fw-bold fs-5">
+                    {{ item.1|truncatechars:25 }}
                   </div>
-                  <div class="card-bid-amount fw-bold">
+                  <div class="card-bid-amount fw-bold fs-6">
                     $ {% if item.3 %}{{ item.3 }}{% else %}{{ item.5 }}{% endif %}
                   </div>
-                  <div class="card-time">
+                  <div class="card-time fs-6">
                     <b>End Time :</b> {{ item.2 }}
                   </div>
-                  <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+                  <a class="read-more fs-6" href="/item/{{ item.0 }}"> Show Full Info</a>
                 </div>
               </div>
             </div>

@@ -18,19 +18,19 @@
                         </div>
                     </a>
                     <div class="content-box">
-                    <div class="card-title fs-4 fw-bold">
-                        {{ item.1|truncatechars:30 }}
+                    <div class="card-title fs-5 fw-bold">
+                        {{ item.1|truncatechars:25 }}
                     </div>
-                    <div class="card-bid-amount fw-bold">
+                    <div class="card-bid-amount fw-bold fs-6">
                         $ {{ item.2 }}
                     </div>
-                    <div class="card-auction-status">
+                    <div class="card-auction-status fs-6">
                     <b>Auction Status :</b>  {{ item.3|auctionStatus:item.5 }}
                     </div>
-                    <div class="card-time">
+                    <div class="card-time fs-6">
                         <b>Start Time :</b> {{ item.3 }}
                     </div>
-                    <a class="read-more" href="/item/{{ item.0 }}"> Show Full Info</a>
+                    <a class="read-more fs-6" href="/item/{{ item.0 }}"> Show Full Info</a>
                     </div>
                 </div>
             </div>
