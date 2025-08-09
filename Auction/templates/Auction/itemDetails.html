@@ -54,12 +54,16 @@
         <h2 class="text-center">{{ item.1 }}</h2>
         <br>
         <p><span class="fw-bold">Category : </span>{{ item.2 }}</p>
-        <p><span class="fw-bold">Organization : </span>{{ item.4 }}</p>
+        <p><span class="fw-bold">Organization : </span><a class="profile-a" href="/profile/organization/{{item.11}}">{{ item.4 }}</a></p>
         <p><span class="fw-bold">Auction Status : </span>{{ status }}</p>
 
         {% if status == "Ongoing" %}
-        <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
-        <p><span class="fw-bold">Remaining Time: </span> {{ item.9|getTimeDiff }}</p>
+        <p><span class="fw-bold">Min Bid Amount : </span>$ {{ item.3 }}</p>
+        <p><span class="fw-bold">Highest Bid Amount : </span>$ {{ item.8|default:"No bids yet" }}</p>
+        {% if item.8 %}
+        <p><span class="fw-bold">Highest Bidder ID : </span><a class="profile-a" href="/profile/bidder/{{item.12}}">{{item.12}}</a></p>        
+        {% endif %}
+        <p><span class="fw-bold">Remaining Time : </span> {{ item.9|getTimeDiff }}</p>
         {% if user.is_authenticated and user.user_type == "Bidder" %}
         <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Winning{% else %}Losing{% endif %}</p>
         {% endif %}
@@ -68,16 +72,19 @@
         {% endif %}
 
         {% elif status == "Upcoming" %}
-        <p><span class="fw-bold">Min Bid Amount: </span>$ {{ item.3 }}</p>
-        <p><span class="fw-bold">Start Date: </span>{{ item.5 }}</p>
+        <p><span class="fw-bold">Min Bid Amount : </span>$ {{ item.3 }}</p>
+        <p><span class="fw-bold">Start Date : </span>{{ item.5 }}</p>
 
         {% else %}
-        <p><span class="fw-bold">Highest Bid Amount: </span>$ {{ item.8|default:"No bids yet" }}</p>
-        <p><span class="fw-bold">End Date: </span>{{ item.6 }}</p>
+        <p><span class="fw-bold">Highest Bid Amount : </span>$ {{ item.8|default:"No bids yet" }}</p>
+        {% if item.8 %}
+        <p><span class="fw-bold">Winner ID : </span><a class="profile-a" href="/profile/bidder/{{item.12}}">{{item.12}}</a></p>        
+        {% endif %}
+        <p><span class="fw-bold">End Date : </span>{{ item.6 }}</p>
         <p><span class="fw-bold">Bid Status : </span>{% if bid.0.1 == user.id %}Won{% else %}Lost{% endif %}</p>
         {% endif %}
 
-        <p><span class="fw-bold">Description:</span><br> 
+        <p><span class="fw-bold">Description :</span><br> 
           {{ item.7 }}
         </p>
       </div>

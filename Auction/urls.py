@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 from django.contrib.auth import views as auth_views
 
@@ -18,7 +18,7 @@ urlpatterns = [
     path("edit",views.edit, name="edit"),
     path("updateItem",views.updateItem, name="updateItem"),
     path("deleteItem",views.deleteItem, name="deleteItem"),
-    path("profile",views.profile, name="profile"),
+    re_path(r"^profile/(?P<profile_type>bidder|organization)/(?P<id>\d+)",views.profile, name="profile"),
     path("editProfile",views.editProfile, name="editProfile"),
     path("updateProfile", views.updateProfile, name="updateProfile"),
     path("myBids", views.showBids, name="showBids")

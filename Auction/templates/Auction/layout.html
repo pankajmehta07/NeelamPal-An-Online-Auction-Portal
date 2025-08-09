@@ -101,7 +101,7 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink">
           <li>
-            <a class="dropdown-item text-white p-2 border-bottom border-2 border-white" href="/profile">Profile</a>
+            <a class="dropdown-item text-white p-2 border-bottom border-2 border-white" href="/profile/{{user.user_type | lower}}/{{user.id}}">Profile</a>
           </li>
           {% if user.user_type == "Organization" %}
             <li>

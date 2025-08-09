@@ -13,20 +13,23 @@ from .templatetags.custom_filters import auctionStatus
 import cloudinary.uploader
 # Create your views here.
 
-def profile(request):
-    if request.user.is_authenticated:
-        params = {}
-        if request.user.user_type == "Organization":
-            params['profile'] = runQuery(f'''SELECT * from organization
-                    WHERE reg_no = {request.user.id}''')
-        else:
-            params['profile'] = runQuery(f'''SELECT * from bidder
-                    WHERE citizenship_no = {request.user.id}''')
-
-        return render(request,"Auction/profile.html", params)
+def profile(request, id, profile_type):
+    params = {}
+    if profile_type == "organization":
+        params['profile'] = runQuery(f'''SELECT * from organization
+                WHERE reg_no = {id}''')
+    elif profile_type == "bidder":
+        params['profile'] = runQuery(f'''SELECT * from bidder
+                WHERE citizenship_no = {id}''')
+    else:
+        return redirect("/")
     
-    messages.error(request, "❌Invalid request")
-    return redirect("/")
+    if not params['profile']:
+        messages.error(request, "❌ Profile not found")
+        return redirect("/")
+    params['type'] = profile_type
+    return render(request,"Auction/profile.html", params)
+    
 
 def editProfile(request):
     if request.user.is_authenticated and request.method == 'GET':
@@ -53,7 +56,7 @@ def home(request):
     # Active items
     param['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl,organization.reg_no 
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -62,6 +65,12 @@ def home(request):
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
                    WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' limit 5''')
+    
+    param['winner'] = runQuery(f''' SELECT highest_bid.item_id, item.name, bid.bidder_id FROM highest_bid 
+                               JOIN item ON item.id = highest_bid.item_id
+                               JOIN bid ON highest_bid.bid_id = bid.id
+                               ORDER BY bid.created_at
+                               LIMIT 10 ''')
 
     return render(request,"Auction/index.html", param)
 
@@ -354,11 +363,11 @@ def item(request, itemID):
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
     params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl, organization.reg_no 
+                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl, organization.reg_no, bidInfo.bidder_id
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
-                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
+                   LEFT JOIN (SELECT highest_bid.item_id, bid.amount, bid.bidder_id 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
@@ -526,6 +535,7 @@ def updateProfile(request):
                      reg_no = {request.user.id}""")
 
         messages.success(request, "✅Profile updated successfully.")
-        return redirect('editProfile')
+        return redirect(f'profile/{request.user.user_type.lower()}/{request.user.id}')
     messages.error(request, "❌Unauthorized Request.")
     return redirect('/')
+

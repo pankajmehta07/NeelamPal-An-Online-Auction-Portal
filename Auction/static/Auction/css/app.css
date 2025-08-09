@@ -163,6 +163,11 @@ nav {
   font-weight: bold;
 }
 
+.profile-a {
+  color: #111;
+  text-decoration: underline;
+}
+
 .dropdown-toggle::after,
 .dropdown-toggle::before {
   display: none !important;
