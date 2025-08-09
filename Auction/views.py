@@ -382,13 +382,18 @@ def deleteItem(request):
         data = runQuery(f'''SELECT id, bid_start_time, bid_end_time, organization_id, fileid
                     FROM item
                     WHERE id = {itemID}''')[0]
-        file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[4])           
+        file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[4])
+                
         if request.user.id == data[3]:
             if auctionStatus(data[1], data[2]) == "Upcoming":
+                if  runQuery(f"SELECT * from highest_bid where item_id={itemID}"):
+                    messages.error(request, "❌Item which has bids already cannot be deleted")   
+                    return redirect('home')
                 try:
                     cloudinary.uploader.destroy(data[4])
                 except Exception as e:
                     pass
+                
                 runQuery(f'''DELETE FROM item where id={itemID}''')
                 messages.success(request, "✅Deletion Successfull")
             else:
