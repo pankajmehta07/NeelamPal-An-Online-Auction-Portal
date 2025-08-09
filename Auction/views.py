@@ -120,7 +120,8 @@ def showItems(request):
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.organization_id = {request.user.id}''')
+                   WHERE item.organization_id = {request.user.id}
+                   ORDER BY item.bid_end_time DESC''')
         
         return render(request,"Auction/showItems.html", params)    
     messages.error(request, "❌Invalid request")
@@ -190,7 +191,7 @@ def category(request):
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' order by time_remaining limit 18''')
+                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' order by time_remaining''')
     # Upcoming items
     param['upcomingItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
                    item.bid_start_time, item.fileurl

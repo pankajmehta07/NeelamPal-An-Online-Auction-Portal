@@ -39,9 +39,11 @@
       <h3 class="fw-bold text-decoration-underline" id='open-bids'>Open for bidding</h3>
       {% for item in itemData %}   
         <div class="d-flex align-items-center mb-5 mt-5 border border-dark border-2 card-wrapper bg-white">
-          <div class="imageContainer p-2 col-md-2 col-sm-3 col-lg-2">
-            <img class="openBidImages" src="{{ item.10 }}" alt="{{ item.1 }}" >
-          </div>
+          <a href="/item/{{ item.0 }}">
+            <div class="imageContainer p-2 col-md-2 col-sm-3 col-lg-2">
+              <img class="openBidImages" src="{{ item.10 }}" alt="{{ item.1 }}" >
+            </div>
+          </a>              
           <div class="col-md-10 col-sm-10 col-12 col-lg-10 row justify-content-evenly">
             <div class="mx-1 col-8 col-lg-7 p-1 pt-3 pb-2">
                 <div class="fw-bold mb-2 fs-4 text-decoration-underline col-md-12">
