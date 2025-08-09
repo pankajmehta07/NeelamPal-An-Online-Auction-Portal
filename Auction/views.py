@@ -69,9 +69,8 @@ def home(request):
     param['winner'] = runQuery(f''' SELECT highest_bid.item_id, item.name, bid.bidder_id FROM highest_bid 
                                JOIN item ON item.id = highest_bid.item_id
                                JOIN bid ON highest_bid.bid_id = bid.id
-                               ORDER BY bid.created_at
-                               LIMIT 10 ''')
-
+                               ORDER BY bid.created_at DESC
+                               LIMIT 18 ''')
     return render(request,"Auction/index.html", param)
 
 def search(request):
