@@ -64,7 +64,7 @@ def home(request):
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' limit 5''')
+                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' ORDER BY time_remaining limit 5''')
     
     param['winner'] = runQuery(f''' SELECT highest_bid.item_id, item.name, bid.bidder_id FROM highest_bid 
                                JOIN item ON item.id = highest_bid.item_id
