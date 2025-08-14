@@ -387,7 +387,7 @@ def deleteItem(request):
         if request.user.id == data[3]:
             if auctionStatus(data[1], data[2]) == "Upcoming":
                 if  runQuery(f"SELECT * from highest_bid where item_id={itemID}"):
-                    messages.error(request, "❌Item which has bids already cannot be deleted")   
+                    messages.error(request, "❌Item which already have bids cannot be deleted")   
                     return redirect('home')
                 try:
                     cloudinary.uploader.destroy(data[4])
