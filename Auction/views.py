@@ -16,11 +16,11 @@ import cloudinary.uploader
 def profile(request, id, profile_type):
     params = {}
     if profile_type == "organization":
-        params['profile'] = runQuery(f'''SELECT * from organization
-                WHERE reg_no = {id}''')
+        params['profile'] = runQuery('''SELECT * from organization
+                WHERE reg_no = %s''',[id])
     elif profile_type == "bidder":
-        params['profile'] = runQuery(f'''SELECT * from bidder
-                WHERE citizenship_no = {id}''')
+        params['profile'] = runQuery('''SELECT * from bidder
+                WHERE citizenship_no = %s''',[id])
     else:
         return redirect("/")
     
@@ -37,9 +37,9 @@ def editProfile(request):
         params = {}
 
         if user.user_type == "Organization":
-            profile = runQuery(f"SELECT reg_no, name, address, contact FROM organization WHERE reg_no = '{user.id}'")
+            profile = runQuery("SELECT reg_no, name, address, contact FROM organization WHERE reg_no =",[user.id])
         else:
-            profile = runQuery(f"SELECT citizenship_no, name, address, contact FROM bidder WHERE citizenship_no = '{user.id}'")
+            profile = runQuery("SELECT citizenship_no, name, address, contact FROM bidder WHERE citizenship_no = ", [user.id])
 
         if not profile:
             messages.error(request, "❌Profile not found.")
@@ -54,9 +54,9 @@ def home(request):
     param = {}
     timestamp = getTimestamp().strftime('%Y-%m-%d %H:%M:%S')
     # Active items
-    param['itemData'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
+    param['itemData'] = runQuery('''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl,organization.reg_no 
+                   EXTRACT(EPOCH FROM (item.bid_end_time - %s::timestamp))::int AS time_remaining, item.fileurl,organization.reg_no 
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -64,9 +64,10 @@ def home(request):
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' ORDER BY time_remaining limit 5''')
+                   WHERE item.bid_start_time <= %s and item.bid_end_time > %s ORDER BY time_remaining limit 5''',
+                   [timestamp, timestamp, timestamp])
     
-    param['winner'] = runQuery(f''' SELECT highest_bid.item_id, item.name, bid.bidder_id FROM highest_bid 
+    param['winner'] = runQuery(''' SELECT highest_bid.item_id, item.name, bid.bidder_id FROM highest_bid 
                                JOIN item ON item.id = highest_bid.item_id
                                JOIN bid ON highest_bid.bid_id = bid.id
                                ORDER BY bid.created_at DESC
@@ -74,12 +75,12 @@ def home(request):
     return render(request,"Auction/index.html", param)
 
 def search(request):
-    searchTerm = filter(request.GET.get('search'))
+    searchTerm = request.GET.get('search')
     params = {}
-    params['searchResults'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
+    params['searchResults'] = runQuery('''SELECT item.id, item.name, item.min_bid_amt, 
                    item.bid_start_time, item.fileurl
                    FROM item
-                   where item.name like '%{searchTerm}%' or item.category like '%{searchTerm}%' limit 20 ''')
+                   where item.name like '%%s%' or item.category like '%%s%' limit 20 ''', [searchTerm,searchTerm])
 
 
     return render(request,"Auction/search.html", params)
@@ -88,18 +89,18 @@ def showBids(request):
     if request.user.is_authenticated and request.user.user_type == "Bidder":
         params = {}
         timestamp = getTimestamp()
-        params['itemData'] = runQuery(f'''SELECT DISTINCT item.id, item.name, item.min_bid_amt, 
+        params['itemData'] = runQuery('''SELECT DISTINCT item.id, item.name, item.min_bid_amt, 
                     item.bid_start_time, item.fileurl, item.bid_end_time, bidInfo.amount,
-                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, bidInfo.bidder_id, bids.amount
+                    EXTRACT(EPOCH FROM (item.bid_end_time - %s::timestamp))::int AS time_remaining, bidInfo.bidder_id, bids.amount
                    FROM item 
                    JOIN (SELECT bid.item_id, Max(bid.amount) as amount, bid.bidder_id
-                    from bid where bidder_id = {request.user.id} group by item_id) as bids
+                    from bid where bidder_id = %s group by item_id) as bids
                    ON item.id = bids.item_id
                    LEFT JOIN (SELECT highest_bid.item_id, bid.bidder_id, bid.amount 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id ORDER BY item.bid_end_time DESC
-                   ''')
+                   ''', [timestamp, request.user.id])
         return render(request,"Auction/myBids.html", params)    
         
     messages.error(request, "❌Invalid request")
@@ -109,9 +110,9 @@ def showItems(request):
     if request.user.is_authenticated and request.user.user_type == "Organization":
         params = {}
         timestamp = getTimestamp()
-        params['itemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
+        params['itemData'] = runQuery('''SELECT item.id, item.name, item.min_bid_amt, 
                     item.bid_start_time, item.fileurl, item.bid_end_time, bidInfo.amount,
-                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining
+                    EXTRACT(EPOCH FROM (item.bid_end_time - %s::timestamp))::int AS time_remaining
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -119,8 +120,8 @@ def showItems(request):
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.organization_id = {request.user.id}
-                   ORDER BY item.bid_end_time DESC''')
+                   WHERE item.organization_id = %s
+                   ORDER BY item.bid_end_time DESC''', [timestamp, request.user.id])
         
         return render(request,"Auction/showItems.html", params)    
     messages.error(request, "❌Invalid request")
@@ -134,29 +135,30 @@ def bid(request):
         except:
             messages.error(request, "❌Invalid bid amount.")
             return redirect('item',itemID = item_id)
-        highest = runQuery(f"SELECT * FROM highest_bid WHERE item_id = {item_id} ")
+        highest = runQuery("SELECT * FROM highest_bid WHERE item_id = %s", [item_id])
         if highest:
             bid_id = highest[0][1]
-            current_bid = runQuery(f"SELECT amount FROM bid WHERE id = {bid_id}")[0][0]
+            current_bid = runQuery("SELECT amount FROM bid WHERE id = %s",[bid_id])[0][0]
 
         else:
-             current_bid = runQuery(f"SELECT min_bid_amt FROM item WHERE id = {item_id}")[0][0]
+             current_bid = runQuery("SELECT min_bid_amt FROM item WHERE id = %s", [item_id])[0][0]
         
         if bid_amount <= current_bid:
             messages.error(request, "❌Bid amount must be higher than current bid amount.")
             return redirect('item',itemID = item_id)
         
         timestamp = getTimestamp().strftime('%Y-%m-%d %H:%M:%S')
-        runQuery(f''' INSERT INTO bid (created_at, item_id, bidder_id, amount)
-            VALUES ('{timestamp}', {item_id}, {request.user.id}, {bid_amount})''')
+        runQuery(''' INSERT INTO bid (created_at, item_id, bidder_id, amount)
+            VALUES (%s, %s, %s, %s)''',
+            [timestamp, item_id, request.user.id, bid_amount])
         
-        bid_id = runQuery(f"SELECT id FROM bid WHERE item_id = {item_id} ORDER BY amount DESC LIMIT 1")[0][0]
+        bid_id = runQuery("SELECT id FROM bid WHERE item_id = %s ORDER BY amount DESC LIMIT 1", [item_id])[0][0]
         
         if highest:
-            runQuery(f"UPDATE highest_bid SET bid_id ={bid_id} WHERE item_id ={item_id}" )
+            runQuery("UPDATE highest_bid SET bid_id =%s WHERE item_id =%s",[bid_id, item_id] )
 
         else:
-            runQuery(f"INSERT INTO highest_bid VALUES({item_id},{bid_id})" )
+            runQuery("INSERT INTO highest_bid VALUES(%s,%s)",[item_id, bid_id] )
         
         messages.success(request, "✅Bid placed successfully.")
         return redirect('item',itemID = item_id)
@@ -183,38 +185,39 @@ def category(request):
     timestamp = getTimestamp()
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
-    param['activeItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl
+    param['activeItemData'] = runQuery('''SELECT item.id, item.name, item.min_bid_amt, bidInfo.amount,
+                   EXTRACT(EPOCH FROM (item.bid_end_time - %s::timestamp))::int AS time_remaining, item.fileurl
                    FROM item 
                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_start_time <= '{timestamp}' and item.bid_end_time > '{timestamp}' order by time_remaining''')
+                   WHERE item.bid_start_time <= %s and item.bid_end_time > %s order by time_remaining''',
+                   [timestamp, timestamp, timestamp])
     # Upcoming items
-    param['upcomingItemData'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
+    param['upcomingItemData'] = runQuery('''SELECT item.id, item.name, item.min_bid_amt, 
                    item.bid_start_time, item.fileurl
                    FROM item
-                   WHERE item.bid_start_time > '{timestamp}'  order by item.bid_start_time limit 6''')
+                   WHERE item.bid_start_time > %s order by item.bid_start_time limit 6''', [timestamp])
     # Closed items
-    param['endedItemData'] = runQuery(f'''SELECT item.id, item.name, 
+    param['endedItemData'] = runQuery('''SELECT item.id, item.name, 
                    item.bid_end_time, bidInfo.amount, item.fileurl, item.min_bid_amt
                    FROM item 
                    LEFT JOIN (SELECT highest_bid.item_id, bid.amount 
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.bid_end_time <= '{timestamp}' order by item.bid_end_time desc limit 6''')
+                   WHERE item.bid_end_time <= %s order by item.bid_end_time desc limit 6''',[timestamp])
 
     return render(request, "Auction/category.html", param)
 
 def saveItem(request):
     if request.method == 'POST' and request.user.is_authenticated and request.user.user_type == "Organization":
         # Extract fields from POST
-        name = filter(request.POST.get('name')[:100])
+        name = request.POST.get('name')[:100]
         min_bid_amt = request.POST.get('min_bid_amount')
-        category = filter(request.POST.get('category')[:50])
-        description = filter(request.POST.get('description')[:500])
+        category = request.POST.get('category')[:50]
+        description = request.POST.get('description')[:500]
         start_time_str = request.POST.get('start_time')  
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
@@ -255,17 +258,17 @@ def saveItem(request):
         
 
 
-        data = runQuery(f"SELECT 1 FROM item WHERE name = '{name}' and organization_id = {request.user.id}", )
+        data = runQuery("SELECT 1 FROM item WHERE name = %s and organization_id = %s", [name, request.user.id])
         if data:
             messages.error(request, "❌Item already exists")
             return redirect('addItem')
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
-        runQuery(f'''INSERT INTO item(name, category, description, min_bid_amt,
+        runQuery('''INSERT INTO item(name, category, description, min_bid_amt,
                        organization_id, bid_start_time, bid_end_time, fileurl, fileid) 
-                       VALUES('{name}','{category}','{description}',{min_bid_amt},
-                       {request.user.id},'{start_time_str}','{end_time_str}', '{image_url}','{public_id}')''')
+                       VALUES (%s, %s, %s, %s,%s, %s, %s, %s, %s)''',[name,category,description,min_bid_amt,
+                       request.user.id,start_time_str,end_time_str, image_url,public_id])
         
 
         messages.success(request, "✅Item was added successfully.")
@@ -278,11 +281,11 @@ def saveItem(request):
 def updateItem(request):
     if request.method == 'POST' and request.user.is_authenticated and request.user.user_type == "Organization":
         # Extract fields from POST
-        name = filter(request.POST.get('name')[:100])
-        item_id = filter(request.POST.get('item_id'))
+        name = request.POST.get('name')[:100]
+        item_id = request.POST.get('item_id')
         min_bid_amt = request.POST.get('min_bid_amount')
-        category = filter(request.POST.get('category')[:50])
-        description = filter(request.POST.get('description')[:500])
+        category = request.POST.get('category')[:50]
+        description = request.POST.get('description')[:500]
         start_time_str = request.POST.get('start_time')  
         end_time_str = request.POST.get('end_time')
         image = request.FILES.get('item_image')
@@ -301,7 +304,7 @@ def updateItem(request):
             return redirect('item',itemID = item_id)
 
 
-        data = runQuery(f"SELECT * FROM item WHERE id = '{item_id}' and organization_id = {request.user.id}")[0]
+        data = runQuery("SELECT * FROM item WHERE id = %s and organization_id = %s",[item_id, request.user.id])[0]
         if not data:
             messages.error(request, "❌Item doesn't exist")
             return redirect('item',itemID = str(item_id).strip())
@@ -345,9 +348,10 @@ def updateItem(request):
         
         start_time_str = start_time_str.replace("T"," ")+":00"
         end_time_str = end_time_str.replace("T"," ")+":00"
-        runQuery(f'''UPDATE item set name='{name}', category='{category}', description='{description}', 
-                 min_bid_amt={min_bid_amt},organization_id={request.user.id}, bid_start_time='{start_time_str}', 
-                 bid_end_time='{end_time_str}', fileurl='{image_url}', fileid='{public_id}' WHERE id={item_id}''')
+        runQuery('''UPDATE item set name=%s, category=%s, description=%s, 
+                 min_bid_amt=%s,organization_id=%s, bid_start_time=%s, 
+                 bid_end_time=%s, fileurl=%s, fileid=%s WHERE id=%s''',
+                 [name, category, description, min_bid_amt, request.user.id,start_time_str,end_time_str,image_url, public_id, item_id])
         
 
         messages.success(request, "✅Item was updated successfully.")
@@ -361,9 +365,9 @@ def item(request, itemID):
     params = {}
     timestamp = getTimestamp()    
     timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-    params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
+    params['item'] = runQuery('''SELECT item.id, item.name, item.category, item.min_bid_amt, organization.name, 
                    item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                   TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl, organization.reg_no, bidInfo.bidder_id
+                   EXTRACT(EPOCH FROM (item.bid_end_time - %s::timestamp))::int AS time_remaining, item.fileurl, organization.reg_no, bidInfo.bidder_id
                    FROM item 
                    JOIN organization 
                    ON item.organization_id = organization.reg_no 
@@ -371,22 +375,21 @@ def item(request, itemID):
                    FROM highest_bid join bid ON 
                    highest_bid.bid_id = bid.id) AS bidInfo 
                    ON item.id = bidInfo.item_id 
-                   WHERE item.id = {itemID}''')[0]
-    params['bid'] = runQuery(f"SELECT bid.amount, bid.bidder_id FROM bid where item_id = {itemID} ORDER BY created_at DESC LIMIT 1")
+                   WHERE item.id = %s''', [timestamp, itemID])[0]
+    params['bid'] = runQuery("SELECT bid.amount, bid.bidder_id FROM bid where item_id = %s ORDER BY created_at DESC LIMIT 1", [itemID])
     params['status'] = auctionStatus(params['item'][5],params['item'][6])
     return render(request, "Auction/itemDetails.html", params) 
 
 def deleteItem(request):
     if request.user.is_authenticated and request.user.user_type == "Organization" and request.method =='POST':
         itemID = request.POST.get('item_id')
-        data = runQuery(f'''SELECT id, bid_start_time, bid_end_time, organization_id, fileid
+        data = runQuery('''SELECT id, bid_start_time, bid_end_time, organization_id, fileid
                     FROM item
-                    WHERE id = {itemID}''')[0]
-        file_path = os.path.join(settings.BASE_DIR,'Auction', 'static', 'Auction', 'images','item_images',data[4])
+                    WHERE id = %s''',[itemID])[0]
                 
         if request.user.id == data[3]:
             if auctionStatus(data[1], data[2]) == "Upcoming":
-                if  runQuery(f"SELECT * from highest_bid where item_id={itemID}"):
+                if  runQuery("SELECT * from highest_bid where item_id=%s",[itemID]):
                     messages.error(request, "❌Item which already have bids cannot be deleted")   
                     return redirect('home')
                 try:
@@ -394,7 +397,7 @@ def deleteItem(request):
                 except Exception as e:
                     pass
                 
-                runQuery(f'''DELETE FROM item where id={itemID}''')
+                runQuery('''DELETE FROM item where id=%s''',[itemID])
                 messages.success(request, "✅Deletion Successfull")
             else:
                 messages.error(request, "❌Only items with auction status 'upcoming' can be deleted")
@@ -410,9 +413,9 @@ def edit(request):
         params = {}
         timestamp = getTimestamp()    
         timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
-        params['item'] = runQuery(f'''SELECT item.id, item.name, item.category, item.min_bid_amt, 
+        params['item'] = runQuery('''SELECT item.id, item.name, item.category, item.min_bid_amt, 
                     item.bid_start_time, item.bid_end_time, item.description, bidInfo.amount,
-                    TIMESTAMPDIFF(SECOND,'{timestamp}',item.bid_end_time) AS time_remaining, item.fileurl, organization.reg_no
+                    EXTRACT(EPOCH FROM (item.bid_end_time - %s::timestamp))::int AS time_remaining, item.fileurl, organization.reg_no
                     FROM item 
                     JOIN organization 
                     ON item.organization_id = organization.reg_no 
@@ -420,7 +423,7 @@ def edit(request):
                     FROM highest_bid join bid ON 
                     highest_bid.bid_id = bid.id) AS bidInfo 
                     ON item.id = bidInfo.item_id 
-                    WHERE item.id = {itemID}''')[0]
+                    WHERE item.id = %s''', [timestamp, itemID])[0]
         if request.user.id == params['item'][10]:
             return render(request, "Auction/editItem.html", params) 
         else:
@@ -442,10 +445,10 @@ def logout_user(request):
 
 def register_user(request):
     if request.method == 'POST':
-        name = filter(request.POST.get('name')[:100])
+        name = request.POST.get('name')[:100]
         contact = re.sub(r'\D', '',request.POST.get('contact'))
-        address = filter(request.POST.get('address')[:100])
-        user_type = filter(request.POST.get('userType')  )
+        address = request.POST.get('address')[:100]
+        user_type = request.POST.get('userType')
         username = re.sub(r'\D', '', request.POST.get('usernameInput'))
         password = request.POST.get('password')
 
@@ -467,10 +470,12 @@ def register_user(request):
 
             if user_type=="Organization":
                 messages.success(request, "✅Registration successful. Please use registration number as username for log in.")
-                runQuery(f"INSERT INTO organization VALUES({username},'{name}','{address}',{contact}, '{hashed_password}')")
+                runQuery("INSERT INTO organization VALUES(%s,%s, %s, %s, %s)",
+                         [username, name, address, contact, hashed_password])
             else:
                 messages.success(request,"✅Registration successful. Please use citizenship number as username for log in.")
-                runQuery(f"INSERT INTO bidder VALUES({username},'{name}','{address}',{contact}, '{hashed_password}')")
+                runQuery("INSERT INTO bidder VALUES(%s,%s, %s, %s, %s)",
+                         [username, name, address, contact, hashed_password])
         
         return redirect('/')
 
@@ -505,15 +510,15 @@ def login_user(request):
 
 def updateProfile(request):
     if request.method == 'POST' and request.user.is_authenticated:
-        name = filter(request.POST.get('name')[:100])
+        name = request.POST.get('name')[:100]
         contact = re.sub(r'\D', '', request.POST.get('contact'))
-        address = filter(request.POST.get('address')[:100])
+        address = request.POST.get('address')[:100]
         password = request.POST.get('password')
 
         if request.user.user_type == "Organization":
-            data = runQuery(f"SELECT * FROM organization WHERE reg_no = {request.user.id}")
+            data = runQuery("SELECT * FROM organization WHERE reg_no = %s",[request.user.id])
         else:
-            data = runQuery(f"SELECT * FROM bidder WHERE citizenship_no = {request.user.id}")
+            data = runQuery("SELECT * FROM bidder WHERE citizenship_no = %s",[request.user.id])
 
         if not data:
             messages.error(request, "❌Unauthorized Request.")
@@ -531,13 +536,15 @@ def updateProfile(request):
         
 
         if request.user.user_type == 'Bidder':
-            runQuery(f"""UPDATE bidder SET name = '{name}', address = '{address}', 
-                     contact = {contact}, password = '{hashed_pw}' WHERE 
-                     citizenship_no = {request.user.id}""")
+            runQuery("""UPDATE bidder SET name = %s, address = %s, 
+                     contact %s, password = %s WHERE 
+                     citizenship_no = %s""",
+                     [name, address, contact, hashed_pw, request.user.id])
         elif request.user.user_type == 'Organization':
-            runQuery(f"""UPDATE organization SET name = '{name}', address = '{address}', 
-                     contact = {contact}, password = '{hashed_pw}' WHERE 
-                     reg_no = {request.user.id}""")
+            runQuery("""UPDATE organization SET name = %s, address = %s, 
+                     contact = %s, password = %s WHERE 
+                     reg_no = %s""",
+                     [name, address, contact, hashed_pw, request.user.id])
 
         messages.success(request, "✅Profile updated successfully.")
         return redirect(f'profile/{request.user.user_type.lower()}/{request.user.id}')
