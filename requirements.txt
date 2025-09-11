@@ -3,9 +3,8 @@ certifi==2025.8.3
 cloudinary==1.44.1
 Django==5.2.4
 gunicorn==23.0.0
-mysql-connector-python==9.3.0
-mysqlclient==2.2.7
 packaging==25.0
+psycopg2-binary==2.9.10
 python-dotenv==1.1.1
 six==1.17.0
 sqlparse==0.5.3
