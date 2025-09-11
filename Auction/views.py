@@ -93,8 +93,8 @@ def showBids(request):
                     item.bid_start_time, item.fileurl, item.bid_end_time, bidInfo.amount,
                     EXTRACT(EPOCH FROM (item.bid_end_time - %s::timestamp))::int AS time_remaining, bidInfo.bidder_id, bids.amount
                    FROM item 
-                   JOIN (SELECT bid.item_id, Max(bid.amount) as amount, bid.bidder_id
-                    from bid where bidder_id = %s group by item_id) as bids
+                   JOIN (SELECT DISTINCT ON (bid.item_id) bid.item_id, bid.amount, bid.bidder_id 
+                FROM bid WHERE bidder_id = %s ORDER BY bid.item_id, bid.amount DESC) as bids
                    ON item.id = bids.item_id
                    LEFT JOIN (SELECT highest_bid.item_id, bid.bidder_id, bid.amount 
                    FROM highest_bid join bid ON 
