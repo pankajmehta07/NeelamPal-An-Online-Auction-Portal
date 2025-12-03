@@ -77,10 +77,10 @@ def home(request):
 def search(request):
     searchTerm = request.GET.get('search')
     params = {}
-    params['searchResults'] = runQuery('''SELECT item.id, item.name, item.min_bid_amt, 
+    params['searchResults'] = runQuery(f'''SELECT item.id, item.name, item.min_bid_amt, 
                    item.bid_start_time, item.fileurl
                    FROM item
-                   where item.name like '%%s%' or item.category like '%%s%' limit 20 ''', [searchTerm,searchTerm])
+                   where item.name ilike '%{searchTerm}%' or item.category ilike '%{searchTerm}%' limit 20 ''')
 
 
     return render(request,"Auction/search.html", params)
